@@ -4,27 +4,13 @@ using System.Linq;
 using EmbedIO;
 using EmbedIO.Routing;
 using Newtonsoft.Json;
+using SensorThings.Server.Repositories;
 
 namespace SensorThings.Server.Controllers
 {
-
-
     public class ResourceV1Controller : BaseController
     {
-        private class ResourceEntry
-        {
-            [JsonProperty("name")]
-            public string Name { get; set; }
-
-            [JsonProperty("url")]
-            public string Url { get; set; }
-        }
-
-        private class ResourceEntries
-        {
-            [JsonProperty("value")]
-            public IEnumerable<ResourceEntry> Entries { get; set; }
-        }
+        public ResourceV1Controller(IRepositoryFactory repositoryFactory) : base(repositoryFactory) { }
 
         private ResourceEntries BuildEntries(string url)
         {
@@ -46,6 +32,21 @@ namespace SensorThings.Server.Controllers
         {
             var json = JsonConvert.SerializeObject(BuildEntries(Request.Url.AbsoluteUri));
             return json;
+        }
+
+        private class ResourceEntry
+        {
+            [JsonProperty("name")]
+            public string Name { get; set; }
+
+            [JsonProperty("url")]
+            public string Url { get; set; }
+        }
+
+        private class ResourceEntries
+        {
+            [JsonProperty("value")]
+            public IEnumerable<ResourceEntry> Entries { get; set; }
         }
     }
 }

@@ -2,14 +2,16 @@
 using System.Threading.Tasks;
 using EmbedIO;
 using EmbedIO.Routing;
-using EmbedIO.WebApi;
 using Newtonsoft.Json;
 using SensorThings.Entities;
+using SensorThings.Server.Repositories;
 
 namespace SensorThings.Server.Controllers
 {
-    public class DatastreamsV1Controller : WebApiController
+    public class DatastreamsV1Controller : BaseController
     {
+        public DatastreamsV1Controller(IRepositoryFactory repoFactory) : base(repoFactory) { }
+
         [Route(HttpVerbs.Post, "/Datastreams")]
         public async Task<string> CreateDatastream()
         {

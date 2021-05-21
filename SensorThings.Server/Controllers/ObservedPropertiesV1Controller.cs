@@ -2,14 +2,16 @@
 using System.Threading.Tasks;
 using EmbedIO;
 using EmbedIO.Routing;
-using EmbedIO.WebApi;
 using Newtonsoft.Json;
 using SensorThings.Entities;
+using SensorThings.Server.Repositories;
 
 namespace SensorThings.Server.Controllers
 {
-    public class ObservedPropertiesV1Controller : WebApiController
+    public class ObservedPropertiesV1Controller : BaseController
     {
+        public ObservedPropertiesV1Controller(IRepositoryFactory repoFactory) : base(repoFactory) { }
+
         [Route(HttpVerbs.Post, "/ObservedProperties")]
         public async Task<string> CreateObservedProperty()
         {

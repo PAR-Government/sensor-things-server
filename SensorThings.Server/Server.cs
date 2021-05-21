@@ -27,14 +27,14 @@ namespace SensorThings.Server
             _server.WithWebApi("/echo", m => m.WithController<EchoController>());
             _server.WithModule(
                 new WebApiModule("/v1.0")
-                .WithController<ResourceV1Controller>()
-                .WithController<SensorsV1Controller>()
-                .WithController<ObservedPropertiesV1Controller>()
-                .WithController<FeaturesOfInterestV1Controller>()
-                .WithController<ObservationsV1Controller>()
-                .WithController<DatastreamsV1Controller>());
+                .WithController(() => new ResourceV1Controller(RepoFactory))
                 .WithController(() => new ThingsV1Controller(RepoFactory))
                 .WithController(() => new LocationsV1Controller(RepoFactory))
+                .WithController(() => new SensorsV1Controller(RepoFactory))
+                .WithController(() => new ObservedPropertiesV1Controller(RepoFactory))
+                .WithController(() => new FeaturesOfInterestV1Controller(RepoFactory))
+                .WithController(() => new ObservationsV1Controller(RepoFactory))
+                .WithController(() => new DatastreamsV1Controller(RepoFactory)));
         }
 
         public Task RunAsync()
