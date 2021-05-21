@@ -1,0 +1,130 @@
+﻿using System;
+using System.Collections.Generic;
+using System.Data;
+using System.Text;
+using System.Threading.Tasks;
+using Dapper;
+using SensorThings.Entities;
+
+namespace SensorThings.Server.Repositories
+{
+    public class SqliteThingsRepository : IThingsRepository
+    {
+        private readonly IDbTransaction _transaction;
+        private IDbConnection Connection { get { return _transaction.Connection; } }
+
+        public SqliteThingsRepository(IDbTransaction transaction)
+        {
+            SqlMapper.AddTypeHandler(DapperJObjectHandler.Instance);
+            _transaction = transaction;
+
+            if (!SqliteUtil.CheckForTable(Connection, "things"))
+            {
+                CreateTable();
+            }
+
+            if (!SqliteUtil.CheckForTable(Connection, "things_locations"))
+            {
+                CreateThingLocationTable();
+            }
+        }
+
+        public async Task<long> AddAsync(Thing item)
+        {
+            var sql = @"INSERT INTO things (Name, Description) 
+                        Values(@Name, @Description); 
+                        SELECT last_insert_rowid();";
+            var id = await Connection.ExecuteScalarAsync<long>(sql, item, _transaction);
+
+            return id;
+        }
+
+        public async Task<IEnumerable<Thing>> GetAllAsync()
+        {
+            var sql = @"SELECT ID, Name, Description FROM things;";
+            var things = await Connection.QueryAsync<Thing>(sql, _transaction);
+
+            return things;
+        }
+
+        public async Task<Thing> GetByIdAsync(long id)
+        {
+            var sql = @"SELECT ID, Name, Description FROM things WHERE id=@ID;";
+            var thing = await Connection.QueryFirstAsync<Thing>(sql, new { ID = id }, _transaction);
+
+            return thing;
+        }
+
+        public async Task Remove(long id)
+        {
+            var sql = @"DELETE FROM things WHERE id = @Id";
+            await Connection.ExecuteAsync(sql, new { Id = id }, _transaction);
+        }
+
+        public async Task UpdateAsync(Thing item)
+        {
+            var sql = @"UPDATE things
+                        SET Name = @Name,
+                            Description = @Description
+                        WHERE id = @ID";
+            await Connection.ExecuteAsync(sql, item, _transaction);
+        }
+
+        public async Task AddLocationLinkAsync(Thing thing, Location location)
+        {
+            await AddLocationLinkAsync(thing.ID, location.ID);
+        }
+
+        public async Task AddLocationLinkAsync(long thingId, long locationId)
+        {
+            var sql = @"INSERT INTO things_locations(thing_id, location_id) VALUES(@ThingId, @LocationId);";
+            await Connection.ExecuteAsync(sql, new { ThingId = thingId, LocationId = locationId }, _transaction);
+        }
+
+        public async Task RemoveLocationLinkAsync(long thingId, long locationId)
+        {
+            var sql = @"DELETE FROM things_locations WHERE thing_id = @thingId AND location_id = @locationId";
+            await Connection.ExecuteAsync(sql, new { thingId, locationId }, _transaction);
+        }
+
+        public async Task RemoveLocationLinksAsync(long thingId)
+        {
+            var sql = @"DELETE FROM things_locations WHERE thing_id = @thingId";
+            await Connection.ExecuteAsync(sql, new { thingId }, _transaction);
+        }
+
+        public async Task<IEnumerable<Location>> GetLinkedLocations(long thingId)
+        {
+            var sql = @"SELECT locations.ID as ID, locations.Name as Name, locations.Description as Description, locations.EncodingType as EncodingType, locations.Location as FeatureLocation 
+                        FROM things
+                        INNER JOIN things_locations on (things.id = things_locations.thing_id)
+                        INNER JOIN locations on (locations.id = things_locations.location_id)
+                        WHERE things.id = @thingId;";
+            return await Connection.QueryAsync<Location>(sql, new { thingId }, _transaction);
+        }
+
+        private void CreateTable()
+        {
+            var sql =
+                @"Create Table things (
+                    id INTEGER PRIMARY KEY AUTOINCREMENT,
+                    Name VARCHAR(100) NOT NULL,
+                    Description VARCHAR(1000) NULL);";
+            Connection.Execute(sql, _transaction);
+        }
+
+        private void CreateThingLocationTable()
+        {
+            var sql =
+                @"CREATE Table things_locations(
+                    thing_id int NOT NULL,
+                    location_id int NOT NULL,
+                    FOREIGN KEY(thing_id) REFERENCES things(id) ON DELETE RESTRICT ON UPDATE CASCADE,
+                    FOREIGN KEY(location_id) REFERENCES locations(id) ON DELETE RESTRICT ON UPDATE CASCADE,
+                    PRIMARY KEY(thing_id, location_id)
+                );";
+
+            Connection.Execute(sql, _transaction);
+        }
+    }
+}

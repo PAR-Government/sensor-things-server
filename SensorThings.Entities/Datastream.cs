@@ -1,0 +1,44 @@
+﻿using System;
+using GeoJSON.Net.Feature;
+using Newtonsoft.Json;
+
+namespace SensorThings.Entities
+{
+    public class Datastream : BaseEntity
+    {
+        [JsonProperty("name")]
+        public string Name { get; set; }
+
+        [JsonProperty("description")]
+        public string Description { get; set; }
+
+        [JsonProperty("observationType")]
+        public ObservationTypes ObservationType { get; set; }
+
+        [JsonProperty("unitOfMeasurement")]
+        public string UnitOfMeasurement { get; set; }
+
+        [JsonProperty("observedArea")]
+        public Feature ObservedArea { get; set; }
+
+        [JsonProperty("phenomenonTime")]
+        public OGCTime PhenomenonTime { get; set; }
+
+        [JsonProperty("resultTime")]
+        public OGCTime ResultTime { get; set; }
+
+        public override string SelfLink { get => $"{BaseUrl}/Datastreams({ID})"; }
+
+        [JsonProperty("Observations@iot.navigationLink")]
+        public string ObservationsLink { get => $"{SelfLink}/Observations"; }
+
+        [JsonProperty("ObservedProperty@iot.navigationLink")]
+        public string ObservedPropertyLink { get => $"{SelfLink}/ObservedProperty"; }
+
+        [JsonProperty("Sensor@iot.navigationLink")]
+        public string SensorLink { get => $"{SelfLink}/Sensor"; }
+
+        [JsonProperty("Thing@iot.navigationLink")]
+        public string ThingLink { get => $"{SelfLink}/Thing"; }
+    }
+}
