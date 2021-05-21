@@ -13,6 +13,8 @@ namespace SensorThings.Server.Controllers
 {
     public class LocationsV1Controller : BaseController
     {
+        public LocationsV1Controller(IRepositoryFactory repoFactory) : base(repoFactory) { }
+
         [Route(HttpVerbs.Post, "/Locations")]
         public async Task<string> CreateLocationAsync()
         {
@@ -20,7 +22,7 @@ namespace SensorThings.Server.Controllers
             var location = JsonConvert.DeserializeObject<Location>(data);
             location.BaseUrl = GetBaseUrl(HttpContext);
 
-            using var uow = new RepositoryUnitOfWork();
+            using var uow = RepoFactory.CreateUnitOfWork();
             var id = await uow.LocationsRepository.AddAsync(location);
             uow.Commit();
 
@@ -33,7 +35,7 @@ namespace SensorThings.Server.Controllers
         [Route(HttpVerbs.Get, "/Locations({id})")]
         public async Task<string> GetLocationAsync(int id)
         {
-            using var uow = new RepositoryUnitOfWork();
+            using var uow = RepoFactory.CreateUnitOfWork();
             var location = await uow.LocationsRepository.GetByIdAsync(id);
             location.BaseUrl = GetBaseUrl(HttpContext);
 
@@ -46,7 +48,7 @@ namespace SensorThings.Server.Controllers
             var data = await HttpContext.GetRequestBodyAsStringAsync();
             var updates = JObject.Parse(data);
 
-            using var uow = new RepositoryUnitOfWork();
+            using var uow = RepoFactory.CreateUnitOfWork();
             var location = await uow.LocationsRepository.GetByIdAsync(id);
 
             // Convert the Location to JSON to make it easier to merge the updates
@@ -68,7 +70,7 @@ namespace SensorThings.Server.Controllers
         {
             var baseUrl = GetBaseUrl(HttpContext);
 
-            using var uow = new RepositoryUnitOfWork();
+            using var uow = RepoFactory.CreateUnitOfWork();
             var locations = await uow.LocationsRepository.GetAllAsync();
 
             foreach (var location in locations)

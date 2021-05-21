@@ -6,7 +6,7 @@ using System.Text;
 
 namespace SensorThings.Server.Repositories
 {
-    public class RepositoryUnitOfWork : IDisposable
+    public class SqliteRepositoryUnitOfWork : IRepositoryUnitOfWork
     {
         private IDbConnection _connection;
         private IDbTransaction _transaction;
@@ -14,26 +14,19 @@ namespace SensorThings.Server.Repositories
         private IThingsRepository _thingsRepository;
         private IRepository<Location> _locationsRepository;
 
-
         public IThingsRepository ThingsRepository
         {
-            get
-            {
-                return _thingsRepository ??= Server.RepoFactory.CreateThingsRepository(_transaction);
-            }
+            get => _thingsRepository ??= new SqliteThingsRepository(_transaction);
         }
 
         public IRepository<Location> LocationsRepository
         {
-            get
-            {
-                return _locationsRepository ??= Server.RepoFactory.CreateLocationsRepository(_transaction);
-            }
+            get => _locationsRepository ??= new SqliteLocationsRepository(_transaction);
         }
 
-        public RepositoryUnitOfWork()
+        public SqliteRepositoryUnitOfWork(IDbConnection connection)
         {
-            _connection = Server.RepoFactory.CreateConnection();
+            _connection = connection;
             _connection.Open();
             _transaction = _connection.BeginTransaction();
         }
@@ -75,6 +68,7 @@ namespace SensorThings.Server.Repositories
         private void Reset()
         {
             _thingsRepository = null;
+            _locationsRepository = null;
         }
     }
 }

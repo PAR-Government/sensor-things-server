@@ -9,12 +9,13 @@ using Newtonsoft.Json.Linq;
 using SensorThings.Entities;
 using SensorThings.Server.Repositories;
 using SensorThings.Server.Utils;
-using Swan;
 
 namespace SensorThings.Server.Controllers
 {
     public class ThingsV1Controller : BaseController
     {
+        public ThingsV1Controller(IRepositoryFactory repoFactory) : base(repoFactory) {}
+
         [Route(HttpVerbs.Post, "/Things")]
         public async Task<string> CreateThingAsync()
         {
@@ -23,7 +24,7 @@ namespace SensorThings.Server.Controllers
 
             thing.BaseUrl = GetBaseUrl(HttpContext);
 
-            using var uow = new RepositoryUnitOfWork();
+            using var uow = RepoFactory.CreateUnitOfWork();
             var id = await uow.ThingsRepository.AddAsync(thing);
             uow.Commit();
 
@@ -37,7 +38,7 @@ namespace SensorThings.Server.Controllers
         {
             var baseUrl = GetBaseUrl(HttpContext);
 
-            using var uow = new RepositoryUnitOfWork();
+            using var uow = RepoFactory.CreateUnitOfWork();
             var things = await uow.ThingsRepository.GetAllAsync();
 
             foreach (var thing in things)
@@ -53,7 +54,7 @@ namespace SensorThings.Server.Controllers
         [Route(HttpVerbs.Get, "/Things({id})")]
         public async Task<string> GetThingAsync(int id)
         {
-            using var uow = new RepositoryUnitOfWork();
+            using var uow = RepoFactory.CreateUnitOfWork();
             var thing = await uow.ThingsRepository.GetByIdAsync(id);
             thing.BaseUrl = GetBaseUrl(HttpContext);
 
@@ -63,7 +64,7 @@ namespace SensorThings.Server.Controllers
         [Route(HttpVerbs.Get, "/Things({id})/Locations")]
         public async Task<string> GetLocationsForThingAsync(int id)
         {
-            using var uow = new RepositoryUnitOfWork();
+            using var uow = RepoFactory.CreateUnitOfWork();
             var locations = await uow.ThingsRepository.GetLinkedLocations(id);
             var baseUrl = GetBaseUrl(HttpContext);
 
@@ -83,7 +84,7 @@ namespace SensorThings.Server.Controllers
             var data = await HttpContext.GetRequestBodyAsStringAsync();
             var updates = JObject.Parse(data);
 
-            using var uow = new RepositoryUnitOfWork();
+            using var uow = RepoFactory.CreateUnitOfWork();
             var thing = await uow.ThingsRepository.GetByIdAsync(id);
 
             // Convert the Thing to JSON to make it easier to merge the updates
@@ -103,7 +104,7 @@ namespace SensorThings.Server.Controllers
         [Route(HttpVerbs.Delete, "/Things({id})")]
         public async Task RemoveThingAsync(int id)
         {
-            using var uow = new RepositoryUnitOfWork();
+            using var uow = RepoFactory.CreateUnitOfWork();
             await uow.ThingsRepository.RemoveLocationLinksAsync(id);
             await uow.ThingsRepository.Remove(id);
             uow.Commit();

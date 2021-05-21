@@ -26,15 +26,9 @@ namespace SensorThings.Server.Repositories
             return new SqliteConnection(cs);
         }
 
-        public IThingsRepository CreateThingsRepository(IDbTransaction transaction)
+        public IRepositoryUnitOfWork CreateUnitOfWork()
         {
-            return new SqliteThingsRepository(transaction);
+            return new SqliteRepositoryUnitOfWork(CreateConnection());
         }
-
-        public IRepository<Location> CreateLocationsRepository(IDbTransaction transaction)
-        {
-            return new SqliteLocationsRepository(transaction);
-        }
-
     }
 }

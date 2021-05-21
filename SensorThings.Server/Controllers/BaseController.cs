@@ -1,11 +1,18 @@
 ﻿using System;
 using EmbedIO;
 using EmbedIO.WebApi;
+using SensorThings.Server.Repositories;
 
 namespace SensorThings.Server.Controllers
 {
     public abstract class BaseController : WebApiController
     {
+        protected IRepositoryFactory RepoFactory { get; private set; }
+        public BaseController(IRepositoryFactory repositoryFactory)
+        {
+            RepoFactory = repositoryFactory;
+        }
+
         protected string GetBaseUrl(IHttpContext ctx)
         {
             var fullUrl = ctx.Request.Url.AbsoluteUri;

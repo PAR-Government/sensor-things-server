@@ -3,14 +3,13 @@ using System.Threading.Tasks;
 using EmbedIO;
 using EmbedIO.WebApi;
 using SensorThings.Server.Controllers;
-using SensorThings.Entities;
 using SensorThings.Server.Repositories;
 
 namespace SensorThings.Server
 {
     public class Server
     {
-        internal static IRepositoryFactory RepoFactory;
+        private IRepositoryFactory RepoFactory { get; set; }
 
         private WebServer _server;
 
@@ -29,13 +28,13 @@ namespace SensorThings.Server
             _server.WithModule(
                 new WebApiModule("/v1.0")
                 .WithController<ResourceV1Controller>()
-                .WithController<ThingsV1Controller>()
-                .WithController<LocationsV1Controller>()
                 .WithController<SensorsV1Controller>()
                 .WithController<ObservedPropertiesV1Controller>()
                 .WithController<FeaturesOfInterestV1Controller>()
                 .WithController<ObservationsV1Controller>()
                 .WithController<DatastreamsV1Controller>());
+                .WithController(() => new ThingsV1Controller(RepoFactory))
+                .WithController(() => new LocationsV1Controller(RepoFactory))
         }
 
         public Task RunAsync()
