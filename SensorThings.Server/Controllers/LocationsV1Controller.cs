@@ -20,7 +20,7 @@ namespace SensorThings.Server.Controllers
         {
             var data = await HttpContext.GetRequestBodyAsStringAsync();
             var location = JsonConvert.DeserializeObject<Location>(data);
-            location.BaseUrl = GetBaseUrl(HttpContext);
+            location.BaseUrl = GetBaseUrl();
 
             using var uow = RepoFactory.CreateUnitOfWork();
             var id = await uow.LocationsRepository.AddAsync(location);
@@ -37,7 +37,7 @@ namespace SensorThings.Server.Controllers
         {
             using var uow = RepoFactory.CreateUnitOfWork();
             var location = await uow.LocationsRepository.GetByIdAsync(id);
-            location.BaseUrl = GetBaseUrl(HttpContext);
+            location.BaseUrl = GetBaseUrl();
 
             return JsonConvert.SerializeObject(location);
         }
@@ -68,7 +68,7 @@ namespace SensorThings.Server.Controllers
         [Route(HttpVerbs.Get, "/Locations")]
         public async Task<string> GetLocationsAsync()
         {
-            var baseUrl = GetBaseUrl(HttpContext);
+            var baseUrl = GetBaseUrl();
 
             using var uow = RepoFactory.CreateUnitOfWork();
             var locations = await uow.LocationsRepository.GetAllAsync();
