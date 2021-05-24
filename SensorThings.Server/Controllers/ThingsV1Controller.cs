@@ -8,6 +8,7 @@ using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
 using SensorThings.Entities;
 using SensorThings.Server.Repositories;
+using SensorThings.Server.Services;
 using SensorThings.Server.Utils;
 
 namespace SensorThings.Server.Controllers
@@ -22,13 +23,11 @@ namespace SensorThings.Server.Controllers
             var data = await HttpContext.GetRequestBodyAsStringAsync();
             var thing = JsonConvert.DeserializeObject<Thing>(data);
 
-            thing.BaseUrl = GetBaseUrl(HttpContext);
+            var service = new ThingsService(RepoFactory);
+            thing = await service.AddThing(thing);
 
-            using var uow = RepoFactory.CreateUnitOfWork();
-            var id = await uow.ThingsRepository.AddAsync(thing);
-            uow.Commit();
+            thing.BaseUrl = GetBaseUrl();
 
-            thing.ID = id;
             Response.StatusCode = (int) HttpStatusCode.Created;
             return JsonConvert.SerializeObject(thing);
         }
@@ -36,10 +35,9 @@ namespace SensorThings.Server.Controllers
         [Route(HttpVerbs.Get, "/Things")]
         public async Task<string> GetThingsAsync()
         {
-            var baseUrl = GetBaseUrl(HttpContext);
-
-            using var uow = RepoFactory.CreateUnitOfWork();
-            var things = await uow.ThingsRepository.GetAllAsync();
+            var baseUrl = GetBaseUrl();
+            var service = new ThingsService(RepoFactory);
+            var things = await service.GetThings();
 
             foreach (var thing in things)
             {
@@ -54,9 +52,16 @@ namespace SensorThings.Server.Controllers
         [Route(HttpVerbs.Get, "/Things({id})")]
         public async Task<string> GetThingAsync(int id)
         {
-            using var uow = RepoFactory.CreateUnitOfWork();
-            var thing = await uow.ThingsRepository.GetByIdAsync(id);
-            thing.BaseUrl = GetBaseUrl(HttpContext);
+            var service = new ThingsService(RepoFactory);
+            var thing = await service.GetThingById(id);
+
+            if (thing == null) 
+            {
+                Response.StatusCode = (int) HttpStatusCode.NotFound;
+                return null;
+            }
+
+            thing.BaseUrl = GetBaseUrl();
 
             return ThingsSerializer.Serialize(thing, null);
         }
@@ -66,7 +71,7 @@ namespace SensorThings.Server.Controllers
         {
             using var uow = RepoFactory.CreateUnitOfWork();
             var locations = await uow.ThingsRepository.GetLinkedLocations(id);
-            var baseUrl = GetBaseUrl(HttpContext);
+            var baseUrl = GetBaseUrl();
 
             foreach (var location in locations)
             {
@@ -84,30 +89,15 @@ namespace SensorThings.Server.Controllers
             var data = await HttpContext.GetRequestBodyAsStringAsync();
             var updates = JObject.Parse(data);
 
-            using var uow = RepoFactory.CreateUnitOfWork();
-            var thing = await uow.ThingsRepository.GetByIdAsync(id);
-
-            // Convert the Thing to JSON to make it easier to merge the updates
-            var thingJson = JObject.FromObject(thing);
-            foreach (var property in updates.Properties())
-            {
-                thingJson[property.Name] = property.Value;
-            }
-
-            // Go back to an actual Thing instance
-            thing = thingJson.ToObject<Thing>();
-
-            await uow.ThingsRepository.UpdateAsync(thing);
-            uow.Commit();
+            var service = new ThingsService(RepoFactory);
+            await service.UpdateThing(updates, id);
         }
 
         [Route(HttpVerbs.Delete, "/Things({id})")]
         public async Task RemoveThingAsync(int id)
         {
-            using var uow = RepoFactory.CreateUnitOfWork();
-            await uow.ThingsRepository.RemoveLocationLinksAsync(id);
-            await uow.ThingsRepository.Remove(id);
-            uow.Commit();
+            var service = new ThingsService(RepoFactory);
+            await service.RemoveThing(id);
         }
     }
 }
