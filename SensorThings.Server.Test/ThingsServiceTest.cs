@@ -10,7 +10,7 @@ using Xunit;
 
 namespace SensorThings.Server.Test
 {
-    public partial class ThingsServiceTest
+    public class ThingsServiceTest
     {
         [Fact]
         public async Task Test_GetThingById_NonExistentAsync()
@@ -67,7 +67,7 @@ namespace SensorThings.Server.Test
             var things = await service.GetThings();
 
             thingRepoMock.Verify(m => m.GetAllAsync());
-            Assert.NotEmpty(thingsCollection);
+            Assert.NotEmpty(things);
         }
 
         [Fact]
