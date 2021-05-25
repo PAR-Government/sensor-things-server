@@ -3,14 +3,14 @@ using Newtonsoft.Json.Linq;
 using SensorThings.Entities;
 using SensorThings.Server.Repositories;
 using SensorThings.Server.Services;
-using System;
+using SensorThings.Server.Test.TestObjects;
 using System.Collections.Generic;
 using System.Threading.Tasks;
 using Xunit;
 
 namespace SensorThings.Server.Test
 {
-    public class ThingsServiceTest
+    public partial class ThingsServiceTest
     {
         [Fact]
         public async Task Test_GetThingById_NonExistentAsync()
@@ -115,29 +115,35 @@ namespace SensorThings.Server.Test
             Assert.Equal("FOO BAR", updatedThing.Name);
         }
 
-        public class TestRepoFactory : IRepositoryFactory
+        [Fact]
+        public async Task Test_GetLocations_NoneAssociated()
         {
-            public IThingsRepository ThingsRepository { get; set; }
+            int id = 42;
+            Mock<IThingsRepository> thingRepoMock = new Mock<IThingsRepository>();
+            thingRepoMock.Setup(m => m.GetLinkedLocations(id)).ReturnsAsync(new List<Location>());
+            var repoFactory = new TestRepoFactory { ThingsRepository = thingRepoMock.Object };
+            var service = new ThingsService(repoFactory);
 
-            public IRepositoryUnitOfWork CreateUnitOfWork()
-            {
-                return new TestUOW() { ThingsRepository = ThingsRepository };
-            }
+            var locations = await service.GetLocationsAsync(id);
 
-            public class TestUOW : IRepositoryUnitOfWork
-            {
-                public IThingsRepository ThingsRepository { get; set; }
+            thingRepoMock.Verify(m => m.GetLinkedLocations(id));
+            Assert.Empty(locations);
+        }
 
-                public IRepository<Location> LocationsRepository => throw new NotImplementedException();
+        [Fact]
+        public async Task Test_GetLocation_Associated()
+        {
+            var locations = new List<Location> { new Location { ID = 1 }, new Location { ID = 2 }, new Location { ID = 3 } };
+            int id = 42;
+            Mock<IThingsRepository> thingRepoMock = new Mock<IThingsRepository>();
+            thingRepoMock.Setup(m => m.GetLinkedLocations(id)).ReturnsAsync(locations);
+            var repoFactory = new TestRepoFactory { ThingsRepository = thingRepoMock.Object };
+            var service = new ThingsService(repoFactory);
 
-                public void Commit()
-                {
-                }
+            var retrievedLocations = await service.GetLocationsAsync(id);
 
-                public void Dispose()
-                {
-                }
-            }
+            thingRepoMock.Verify(m => m.GetLinkedLocations(id));
+            Assert.NotEmpty(retrievedLocations);
         }
     }
 }

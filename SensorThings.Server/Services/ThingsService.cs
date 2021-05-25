@@ -67,5 +67,11 @@ namespace SensorThings.Server.Services
             await uow.ThingsRepository.Remove(id);
             uow.Commit();
         }
+
+        public async Task<IEnumerable<Location>> GetLocationsAsync(int id)
+        {
+            using var uow = RepoFactory.CreateUnitOfWork();
+            return await uow.ThingsRepository.GetLinkedLocations(id);
+        }
     }
 }

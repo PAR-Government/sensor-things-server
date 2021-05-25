@@ -69,9 +69,9 @@ namespace SensorThings.Server.Controllers
         [Route(HttpVerbs.Get, "/Things({id})/Locations")]
         public async Task<string> GetLocationsForThingAsync(int id)
         {
-            using var uow = RepoFactory.CreateUnitOfWork();
-            var locations = await uow.ThingsRepository.GetLinkedLocations(id);
             var baseUrl = GetBaseUrl();
+            var service = new ThingsService(RepoFactory);
+            var locations = await service.GetLocationsAsync(id);
 
             foreach (var location in locations)
             {
