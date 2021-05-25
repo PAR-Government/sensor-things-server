@@ -48,21 +48,8 @@ namespace SensorThings.Server.Controllers
             var data = await HttpContext.GetRequestBodyAsStringAsync();
             var updates = JObject.Parse(data);
 
-            using var uow = RepoFactory.CreateUnitOfWork();
-            var location = await uow.LocationsRepository.GetByIdAsync(id);
-
-            // Convert the Location to JSON to make it easier to merge the updates
-            var locationJson = JObject.FromObject(location);
-            foreach (var property in updates.Properties())
-            {
-                locationJson[property.Name] = property.Value;
-            }
-
-            // Go back to an actual Thing instance
-            location = locationJson.ToObject<Location>();
-
-            await uow.LocationsRepository.UpdateAsync(location);
-            uow.Commit();
+            var service = new LocationsService(RepoFactory);
+            await service.UpdateLocation(updates, id);
         }
 
         [Route(HttpVerbs.Get, "/Locations")]

@@ -1,4 +1,5 @@
-﻿using SensorThings.Entities;
+﻿using Newtonsoft.Json.Linq;
+using SensorThings.Entities;
 using SensorThings.Server.Repositories;
 using System;
 using System.Collections.Generic;
@@ -37,6 +38,27 @@ namespace SensorThings.Server.Services
         {
             using var uow = RepoFactory.CreateUnitOfWork();
             return await uow.LocationsRepository.GetAllAsync();
+        }
+
+        public async Task<Location> UpdateLocation(JObject updates, int id)
+        {
+            var location = await GetLocationById(id);
+
+            // Convert the Location to JSON to make it easier to merge the updates
+            var locationJson = JObject.FromObject(location);
+            foreach (var property in updates.Properties())
+            {
+                locationJson[property.Name] = property.Value;
+            }
+
+            // Go back to an actual Thing instance
+            location = locationJson.ToObject<Location>();
+
+            using var uow = RepoFactory.CreateUnitOfWork();
+            await uow.LocationsRepository.UpdateAsync(location);
+            uow.Commit();
+
+            return location;
         }
     }
 }

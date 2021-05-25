@@ -1,4 +1,5 @@
 ﻿using Moq;
+using Newtonsoft.Json.Linq;
 using SensorThings.Entities;
 using SensorThings.Server.Repositories;
 using SensorThings.Server.Services;
@@ -21,9 +22,9 @@ namespace SensorThings.Server.Test
             var repoFactory = new TestRepoFactory { LocationsRepository = locationRepoMock.Object };
             var service = new LocationsService(repoFactory);
 
-            var recoveredThing = await service.AddLocation(location);
+            var createdLocation = await service.AddLocation(location);
 
-            locationRepoMock.Verify(m => m.AddAsync(location));
+            locationRepoMock.Verify(m => m.AddAsync(createdLocation));
         }
 
         [Fact]
@@ -70,6 +71,40 @@ namespace SensorThings.Server.Test
 
             locationRepoMock.Verify(m => m.GetAllAsync());
             Assert.NotEmpty(locations);
+        }
+
+        [Fact]
+        public async Task Test_Update_EmptyFields()
+        {
+            int id = 42;
+            var updates = JObject.Parse("{}");
+            Location location = new Location { Name = "FOO" };
+            Mock<IRepository<Location>> locationRepoMock = new Mock<IRepository<Location>>();
+            locationRepoMock.Setup(m => m.GetByIdAsync(id)).ReturnsAsync(location);
+            var repoFactory = new TestRepoFactory { LocationsRepository = locationRepoMock.Object };
+            var service = new LocationsService(repoFactory);
+
+            var updatedLocation = await service.UpdateLocation(updates, id);
+
+            locationRepoMock.Verify(m => m.UpdateAsync(updatedLocation));
+            Assert.Equal("FOO", updatedLocation.Name);
+        }
+
+        [Fact]
+        public async Task Test_Update_NonEmptyFields()
+        {
+            int id = 42;
+            var updates = JObject.Parse("{\"Name\": \"FOO BAR\"}");
+            Location location = new Location { Name = "FOO" };
+            Mock<IRepository<Location>> locationRepoMock = new Mock<IRepository<Location>>();
+            locationRepoMock.Setup(m => m.GetByIdAsync(id)).ReturnsAsync(location);
+            var repoFactory = new TestRepoFactory { LocationsRepository = locationRepoMock.Object };
+            var service = new LocationsService(repoFactory);
+
+            var updatedLocation = await service.UpdateLocation(updates, id);
+
+            locationRepoMock.Verify(m => m.UpdateAsync(updatedLocation));
+            Assert.Equal("FOO BAR", updatedLocation.Name);
         }
     }
 }
