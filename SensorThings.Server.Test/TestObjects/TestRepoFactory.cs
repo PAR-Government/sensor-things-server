@@ -9,16 +9,22 @@ namespace SensorThings.Server.Test.TestObjects
     {
         public IThingsRepository ThingsRepository { get; set; }
 
+        public IRepository<Location> LocationsRepository { get; set; }
+
         public IRepositoryUnitOfWork CreateUnitOfWork()
         {
-            return new TestUOW() { ThingsRepository = ThingsRepository };
+            return new TestUOW()
+            {
+                ThingsRepository = ThingsRepository,
+                LocationsRepository = LocationsRepository
+            };
         }
 
         public class TestUOW : IRepositoryUnitOfWork
         {
             public IThingsRepository ThingsRepository { get; set; }
 
-            public IRepository<Location> LocationsRepository => throw new NotImplementedException();
+            public IRepository<Location> LocationsRepository { get; set; }
 
             public void Commit()
             {
