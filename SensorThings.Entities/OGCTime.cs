@@ -1,23 +1,24 @@
-﻿using System;
+﻿using Newtonsoft.Json;
+using SensorThings.Entities.JsonConverters;
+using System;
 
 namespace SensorThings.Entities
 {
+    [JsonConverter(typeof(JsonOGCTimeConverter))]
     public class OGCTime
     {
-        private readonly DateTime _begin;
-        private readonly DateTime _end;
+        public DateTime Start { get; set; }
+        public DateTime Stop { get; set; }
 
-        public OGCTime(DateTime instant)
+        public OGCTime(DateTime start)
         {
-            _begin = instant;
+            Start = start;
         }
 
-        public OGCTime(DateTime begin, DateTime end)
+        public OGCTime(DateTime start, DateTime stop)
         {
-            _begin = begin;
-            _end = end;
+            Start = start;
+            Stop = stop;
         }
     }
-
-    // TODO: This class needs a custom JSON converter
 }
