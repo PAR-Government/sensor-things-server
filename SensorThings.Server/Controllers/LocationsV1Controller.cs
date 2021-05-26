@@ -8,6 +8,7 @@ using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
 using SensorThings.Entities;
 using SensorThings.Server.Repositories;
+using SensorThings.Server.Services;
 
 namespace SensorThings.Server.Controllers
 {
@@ -20,13 +21,12 @@ namespace SensorThings.Server.Controllers
         {
             var data = await HttpContext.GetRequestBodyAsStringAsync();
             var location = JsonConvert.DeserializeObject<Location>(data);
+
+            var service = new LocationsService(RepoFactory);
+            location = await service.AddLocation(location);
+
             location.BaseUrl = GetBaseUrl();
 
-            using var uow = RepoFactory.CreateUnitOfWork();
-            var id = await uow.LocationsRepository.AddAsync(location);
-            uow.Commit();
-
-            location.ID = id;
             Response.StatusCode = (int)HttpStatusCode.Created;
 
             return JsonConvert.SerializeObject(location);
@@ -35,8 +35,8 @@ namespace SensorThings.Server.Controllers
         [Route(HttpVerbs.Get, "/Locations({id})")]
         public async Task<string> GetLocationAsync(int id)
         {
-            using var uow = RepoFactory.CreateUnitOfWork();
-            var location = await uow.LocationsRepository.GetByIdAsync(id);
+            var service = new LocationsService(RepoFactory);
+            var location = await service.GetLocationById(id);
             location.BaseUrl = GetBaseUrl();
 
             return JsonConvert.SerializeObject(location);
@@ -48,30 +48,16 @@ namespace SensorThings.Server.Controllers
             var data = await HttpContext.GetRequestBodyAsStringAsync();
             var updates = JObject.Parse(data);
 
-            using var uow = RepoFactory.CreateUnitOfWork();
-            var location = await uow.LocationsRepository.GetByIdAsync(id);
-
-            // Convert the Location to JSON to make it easier to merge the updates
-            var locationJson = JObject.FromObject(location);
-            foreach (var property in updates.Properties())
-            {
-                locationJson[property.Name] = property.Value;
-            }
-
-            // Go back to an actual Thing instance
-            location = locationJson.ToObject<Location>();
-
-            await uow.LocationsRepository.UpdateAsync(location);
-            uow.Commit();
+            var service = new LocationsService(RepoFactory);
+            await service.UpdateLocation(updates, id);
         }
 
         [Route(HttpVerbs.Get, "/Locations")]
         public async Task<string> GetLocationsAsync()
         {
             var baseUrl = GetBaseUrl();
-
-            using var uow = RepoFactory.CreateUnitOfWork();
-            var locations = await uow.LocationsRepository.GetAllAsync();
+            var service = new LocationsService(RepoFactory);
+            var locations = await service.GetLocations();
 
             foreach (var location in locations)
             {
@@ -81,6 +67,13 @@ namespace SensorThings.Server.Controllers
             var listing = new Listing<Location>() { Items = locations.ToList() };
 
             return JsonConvert.SerializeObject(listing);
+        }
+
+        [Route(HttpVerbs.Delete, "/Locations({id})")]
+        public async Task RemoveLocationAsync(int id)
+        {
+            var service = new LocationsService(RepoFactory);
+            await service.RemoveLocation(id);
         }
     }
 }
