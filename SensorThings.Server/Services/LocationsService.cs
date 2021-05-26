@@ -60,5 +60,12 @@ namespace SensorThings.Server.Services
 
             return location;
         }
+
+        public async Task RemoveLocation(int id)
+        {
+            using var uow = RepoFactory.CreateUnitOfWork();
+            await uow.LocationsRepository.Remove(id);
+            uow.Commit();
+        }
     }
 }

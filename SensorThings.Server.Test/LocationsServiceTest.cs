@@ -106,5 +106,19 @@ namespace SensorThings.Server.Test
             locationRepoMock.Verify(m => m.UpdateAsync(updatedLocation));
             Assert.Equal("FOO BAR", updatedLocation.Name);
         }
+
+        [Fact]
+        public async Task Test_RemoveLocation()
+        {
+            int id = 42;
+            Location location = new Location { Name = "FOO" };
+            Mock<IRepository<Location>> locationRepoMock = new Mock<IRepository<Location>>();
+            var repoFactory = new TestRepoFactory { LocationsRepository = locationRepoMock.Object };
+            var service = new LocationsService(repoFactory);
+
+            await service.RemoveLocation(id);
+
+            locationRepoMock.Verify(m => m.Remove(id));
+        }
     }
 }

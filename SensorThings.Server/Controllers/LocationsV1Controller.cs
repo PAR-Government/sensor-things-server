@@ -68,5 +68,12 @@ namespace SensorThings.Server.Controllers
 
             return JsonConvert.SerializeObject(listing);
         }
+
+        [Route(HttpVerbs.Delete, "/Locations({id})")]
+        public async Task RemoveLocationAsync(int id)
+        {
+            var service = new LocationsService(RepoFactory);
+            await service.RemoveLocation(id);
+        }
     }
 }
