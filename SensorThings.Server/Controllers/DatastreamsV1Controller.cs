@@ -56,5 +56,12 @@ namespace SensorThings.Server.Controllers
 
             return JsonConvert.SerializeObject(datastream);
         }
+
+        [Route(HttpVerbs.Delete, "/Datastreams({id})")]
+        public async Task RemoveDatastreamAsync(int id)
+        {
+            var service = new DatastreamsService(RepoFactory);
+            await service.RemoveDatastream(id);
+        }
     }
 }

@@ -58,9 +58,10 @@ namespace SensorThings.Server.Repositories
             return datastream;
         }
 
-        public Task Remove(long id)
+        public async Task Remove(long id)
         {
-            throw new NotImplementedException();
+            var sql = @"DELETE FROM datastreams WHERE id = @Id";
+            await Connection.ExecuteAsync(sql, new { Id = id }, _transaction);
         }
 
         public Task UpdateAsync(Datastream item)

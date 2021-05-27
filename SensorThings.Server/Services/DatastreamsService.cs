@@ -40,5 +40,12 @@ namespace SensorThings.Server.Services
             using var uow = RepoFactory.CreateUnitOfWork();
             return await uow.DatastreamsRepository.GetAllAsync();
         }
+
+        public async Task RemoveDatastream(int id)
+        {
+            using var uow = RepoFactory.CreateUnitOfWork();
+            await uow.DatastreamsRepository.Remove(id);
+            uow.Commit();
+        }
     }
 }
