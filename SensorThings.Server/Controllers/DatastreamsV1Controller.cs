@@ -16,7 +16,7 @@ namespace SensorThings.Server.Controllers
         public DatastreamsV1Controller(IRepositoryFactory repoFactory) : base(repoFactory) { }
 
         [Route(HttpVerbs.Post, "/Datastreams")]
-        public async Task<string> CreateDatastream()
+        public async Task<string> CreateDatastreamAsync()
         {
             var data = await HttpContext.GetRequestBodyAsStringAsync();
             var datastream = JsonConvert.DeserializeObject<Datastream>(data);
@@ -31,7 +31,7 @@ namespace SensorThings.Server.Controllers
         }
 
         [Route(HttpVerbs.Get, "/Datastreams")]
-        public async Task<string> GetDatastreams()
+        public async Task<string> GetDatastreamsAsync()
         {
             var service = new DatastreamsService(RepoFactory);
             var datastreams = await service.GetDatastreams();
@@ -47,7 +47,7 @@ namespace SensorThings.Server.Controllers
         }
 
         [Route(HttpVerbs.Get, "/Datastreams({id})")]
-        public async Task<String> GetDatastream(int id)
+        public async Task<String> GetDatastreamAsync(int id)
         {
             var service = new DatastreamsService(RepoFactory);
             var datastream = await service.GetDatastreamById(id);
