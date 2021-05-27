@@ -28,13 +28,6 @@ namespace SensorThings.Server.Repositories
         {
             var sql = @"INSERT INTO locations (Name, Description, EncodingType, Location)
                         VALUES(@Name, @Description, @EncodingType, @FeatureLocation); SELECT last_insert_rowid();";
-            //var param = new
-            //{
-            //    Name = item.Name,
-            //    Description = item.Description,
-            //    EncodingType = item.EncodingType,
-            //    FeatureLocation = item.FeatureLocation.()
-            //};
             var id = await Connection.ExecuteScalarAsync<long>(sql, item, _transaction);
 
             return id;
