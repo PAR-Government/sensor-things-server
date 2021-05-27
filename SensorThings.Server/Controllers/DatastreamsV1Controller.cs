@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Linq;
 using System.Net;
 using System.Threading.Tasks;
 using EmbedIO;
@@ -29,10 +30,31 @@ namespace SensorThings.Server.Controllers
             return JsonConvert.SerializeObject(datastream);
         }
 
-        [Route(HttpVerbs.Get, "/Datastreams({id})")]
-        public string GetDatastream(int id)
+        [Route(HttpVerbs.Get, "/Datastreams")]
+        public async Task<string> GetDatastreams()
         {
-            return $"Datastream with id: {id}";
+            var service = new DatastreamsService(RepoFactory);
+            var datastreams = await service.GetDatastreams();
+            var baseUrl = GetBaseUrl();
+
+            foreach(var datastream in datastreams)
+            {
+                datastream.BaseUrl = baseUrl;
+            }
+
+            var listing = new Listing<Datastream> { Items = datastreams.ToList() };
+            return JsonConvert.SerializeObject(listing);
+        }
+
+        [Route(HttpVerbs.Get, "/Datastreams({id})")]
+        public async Task<String> GetDatastream(int id)
+        {
+            var service = new DatastreamsService(RepoFactory);
+            var datastream = await service.GetDatastreamById(id);
+
+            datastream.BaseUrl = GetBaseUrl();
+
+            return JsonConvert.SerializeObject(datastream);
         }
     }
 }

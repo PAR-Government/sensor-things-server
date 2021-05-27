@@ -37,14 +37,25 @@ namespace SensorThings.Server.Repositories
             return id;
         }
 
-        public Task<IEnumerable<Datastream>> GetAllAsync()
+        public async Task<IEnumerable<Datastream>> GetAllAsync()
         {
-            throw new NotImplementedException();
+            var sql = @"SELECT
+                        ID, Name, Description, ObservationType, UnitOfMeasurement, ObservedArea, PhenomenonTime, ResultTime
+                        FROM datastreams;";
+            var datastreams = await Connection.QueryAsync<Datastream>(sql, _transaction);
+
+            return datastreams;
         }
 
-        public Task<Datastream> GetByIdAsync(long id)
+        public async Task<Datastream> GetByIdAsync(long id)
         {
-            throw new NotImplementedException();
+            var sql = @"SELECT
+                        ID, Name, Description, ObservationType, UnitOfMeasurement, ObservedArea, PhenomenonTime, ResultTime
+                        FROM datastreams
+                        WHERE id = @ID;";
+            var datastream = await Connection.QueryFirstAsync<Datastream>(sql, new { ID = id }, _transaction);
+
+            return datastream;
         }
 
         public Task Remove(long id)

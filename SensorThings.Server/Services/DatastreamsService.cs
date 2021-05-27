@@ -26,5 +26,19 @@ namespace SensorThings.Server.Services
 
             return datastream;
         }
+
+        public async Task<Datastream> GetDatastreamById(int id)
+        {
+            using var uow = RepoFactory.CreateUnitOfWork();
+            var datastream = await uow.DatastreamsRepository.GetByIdAsync(id);
+
+            return datastream;
+        }
+
+        public async Task<IEnumerable<Datastream>> GetDatastreams()
+        {
+            using var uow = RepoFactory.CreateUnitOfWork();
+            return await uow.DatastreamsRepository.GetAllAsync();
+        }
     }
 }
