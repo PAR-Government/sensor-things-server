@@ -8,7 +8,10 @@ namespace SensorThings.Server.Repositories
     public interface IRepositoryUnitOfWork : IDisposable
     {
         IThingsRepository ThingsRepository { get; }
+
         IRepository<Location> LocationsRepository { get; }
+
+        IRepository<Datastream> DatastreamsRepository { get; }
 
         public void Commit();
     }

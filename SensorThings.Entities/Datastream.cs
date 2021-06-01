@@ -1,6 +1,7 @@
 ﻿using System;
 using GeoJSON.Net.Feature;
 using Newtonsoft.Json;
+using Newtonsoft.Json.Linq;
 
 namespace SensorThings.Entities
 {
@@ -19,7 +20,7 @@ namespace SensorThings.Entities
         public string UnitOfMeasurement { get; set; }
 
         [JsonProperty("observedArea")]
-        public Feature ObservedArea { get; set; }
+        public JObject ObservedArea { get; set; }
 
         [JsonProperty("phenomenonTime")]
         public OGCTime PhenomenonTime { get; set; }
