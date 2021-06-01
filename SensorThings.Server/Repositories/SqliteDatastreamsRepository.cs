@@ -64,9 +64,18 @@ namespace SensorThings.Server.Repositories
             await Connection.ExecuteAsync(sql, new { Id = id }, _transaction);
         }
 
-        public Task UpdateAsync(Datastream item)
+        public async Task UpdateAsync(Datastream item)
         {
-            throw new NotImplementedException();
+            var sql = @"UPDATE datastreams
+                        SET Name = @Name,
+                            Description = @Description,
+                            ObservationType = @ObservationType
+                            UnitOfMeasurement = @UnitOfMeasurement,
+                            ObservedArea = @ObservedArea,
+                            PhenomenonTime = @PhenomenonTime,
+                            ResultTime = @ResultTime
+                        WHERE id = @ID";
+            await Connection.ExecuteAsync(sql, item, _transaction);
         }
 
         private void CreateTable()
@@ -78,7 +87,7 @@ namespace SensorThings.Server.Repositories
                     Description VARCHAR(1000) NULL,
                     ObservationType VARCHAR(100) NULL,
                     UnitOfMeasurement VARCHAR(100) NULL,
-                    ObservedArea VARCHR(1000),
+                    ObservedArea VARCHAR(1000),
                     PhenomenonTime TEXT,
                     ResultTime TEXT);";
             Connection.Execute(sql, _transaction);

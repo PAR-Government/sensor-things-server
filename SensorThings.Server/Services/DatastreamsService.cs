@@ -1,4 +1,5 @@
-﻿using SensorThings.Entities;
+﻿using Newtonsoft.Json.Linq;
+using SensorThings.Entities;
 using SensorThings.Server.Repositories;
 using System;
 using System.Collections.Generic;
@@ -46,6 +47,27 @@ namespace SensorThings.Server.Services
             using var uow = RepoFactory.CreateUnitOfWork();
             await uow.DatastreamsRepository.Remove(id);
             uow.Commit();
+        }
+
+        public async Task<Datastream> UpdateDatastream(JObject updates, int id)
+        {
+            var datastream = await GetDatastreamById(id);
+
+            // Convert to JSON to make it easier to merge updates
+            var datastreamJson = JObject.FromObject(datastream);
+            foreach (var property in updates.Properties())
+            {
+                datastreamJson[property.Name] = property.Value;
+            }
+
+            // Convert back
+            datastream = datastreamJson.ToObject<Datastream>();
+
+            using var uow = RepoFactory.CreateUnitOfWork();
+            await uow.DatastreamsRepository.UpdateAsync(datastream);
+            uow.Commit();
+
+            return datastream;
         }
     }
 }

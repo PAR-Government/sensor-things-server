@@ -5,6 +5,7 @@ using System.Threading.Tasks;
 using EmbedIO;
 using EmbedIO.Routing;
 using Newtonsoft.Json;
+using Newtonsoft.Json.Linq;
 using SensorThings.Entities;
 using SensorThings.Server.Repositories;
 using SensorThings.Server.Services;
@@ -55,6 +56,16 @@ namespace SensorThings.Server.Controllers
             datastream.BaseUrl = GetBaseUrl();
 
             return JsonConvert.SerializeObject(datastream);
+        }
+
+        [Route(HttpVerbs.Patch, "/Datastreams({id})")]
+        public async Task UpdateDatastreamAsync(int id)
+        {
+            var data = await HttpContext.GetRequestBodyAsStringAsync();
+            var updates = JObject.Parse(data);
+
+            var service = new DatastreamsService(RepoFactory);
+            await service.UpdateDatastream(updates, id);
         }
 
         [Route(HttpVerbs.Delete, "/Datastreams({id})")]
