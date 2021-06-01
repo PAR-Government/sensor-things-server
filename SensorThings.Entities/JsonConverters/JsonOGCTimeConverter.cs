@@ -13,6 +13,11 @@ namespace SensorThings.Entities.JsonConverters
         {
             string s = (string)reader.Value;
 
+            if (s == null || string.IsNullOrWhiteSpace(s))
+            {
+                return new OGCTime(DateTime.MinValue, DateTime.MinValue);
+            }
+
             // Split into date halves
             var dates = s.Split('/');
 
