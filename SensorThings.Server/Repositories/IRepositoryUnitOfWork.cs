@@ -13,6 +13,8 @@ namespace SensorThings.Server.Repositories
 
         IRepository<Datastream> DatastreamsRepository { get; }
 
+        IRepository<Sensor> SensorsRepository { get; }
+
         public void Commit();
     }
 }

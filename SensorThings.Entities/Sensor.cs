@@ -1,5 +1,6 @@
 ﻿using System;
 using Newtonsoft.Json;
+using Newtonsoft.Json.Linq;
 
 namespace SensorThings.Entities
 {
@@ -15,8 +16,11 @@ namespace SensorThings.Entities
         public string EncodingType { get; set; }
 
         [JsonProperty("metadata")]
-        public Object Metadata { get; set; }
+        public JObject Metadata { get; set; }
 
-        public override string SelfLink => throw new NotImplementedException();
+        public override string SelfLink { get => $"{BaseUrl}/Sensors({ID})"; }
+
+        [JsonProperty("Datastreams@iot.id")]
+        public string DatastreamsLink { get => $"{SelfLink}/Datastreams"; }
     }
 }
