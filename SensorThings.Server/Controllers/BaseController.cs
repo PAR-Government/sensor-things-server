@@ -17,7 +17,7 @@ namespace SensorThings.Server.Controllers
         protected string GetBaseUrl()
         {
             var fullUrl = HttpContext.Request.Url.AbsoluteUri;
-            var path = HttpContext.Route.Path;
+            var path = HttpContext.Route.SubPath;
             var index = fullUrl.LastIndexOf(path);
             return fullUrl.Remove(index, path.Length);
         }
