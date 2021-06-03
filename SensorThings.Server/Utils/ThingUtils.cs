@@ -19,6 +19,7 @@ namespace SensorThings.Server.Utils
             j.Add("Datastreams@iot.navigationLink", thing.DatastreamsLink);
             j.Add("HistoricalLocations@iot.navigationLink", thing.HistoricalLocationsLink);
             j.Add("Locations@iot.navigationLink", thing.LocationsLink);
+            j.Add("@iot.selfLink", thing.SelfLink);
 
             j.Add("name", thing.Name);
             j.Add("description", thing.Description);
