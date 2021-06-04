@@ -14,6 +14,6 @@ namespace SensorThings.Entities
         [JsonProperty("description")]
         public string Description { get; set; }
 
-        public override string SelfLink => throw new NotImplementedException();
+        public override string SelfLink { get => $"{BaseUrl}/ObservedProperties({ID})"; }
     }
 }

@@ -15,6 +15,8 @@ namespace SensorThings.Server.Repositories
 
         IRepository<Sensor> SensorsRepository { get; }
 
+        IRepository<ObservedProperty> ObservedPropertiesRepository { get; }
+
         public void Commit();
     }
 }

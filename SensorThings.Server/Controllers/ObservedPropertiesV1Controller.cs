@@ -1,10 +1,14 @@
 ﻿using System;
+using System.Linq;
+using System.Net;
 using System.Threading.Tasks;
 using EmbedIO;
 using EmbedIO.Routing;
 using Newtonsoft.Json;
+using Newtonsoft.Json.Linq;
 using SensorThings.Entities;
 using SensorThings.Server.Repositories;
+using SensorThings.Server.Services;
 
 namespace SensorThings.Server.Controllers
 {
@@ -13,18 +17,63 @@ namespace SensorThings.Server.Controllers
         public ObservedPropertiesV1Controller(IRepositoryFactory repoFactory) : base(repoFactory) { }
 
         [Route(HttpVerbs.Post, "/ObservedProperties")]
-        public async Task<string> CreateObservedProperty()
+        public async Task<string> CreateObservedPropertyAsync()
         {
             var data = await HttpContext.GetRequestBodyAsStringAsync();
             var property = JsonConvert.DeserializeObject<ObservedProperty>(data);
 
-            return $"name: {property.Name}, definition: {property.Definition}, description: {property.Description}";
+            var service = new ObservedPropertiesService(RepoFactory);
+            property = await service.AddObservedProperty(property);
+
+            property.BaseUrl = GetBaseUrl();
+
+            Response.StatusCode = (int)HttpStatusCode.Created;
+
+            return JsonConvert.SerializeObject(property);
         }
 
         [Route(HttpVerbs.Get, "/ObservedProperties({id})")]
-        public string GetObservedProperty(int id)
+        public async Task<string> GetObservedPropertyAsync(int id)
         {
-            return $"ObservedProperty with id: {id}";
+            var service = new ObservedPropertiesService(RepoFactory);
+            var property = await service.GetObservedPropertyById(id);
+            property.BaseUrl = GetBaseUrl();
+
+            return JsonConvert.SerializeObject(property);
+        }
+
+        [Route(HttpVerbs.Get, "/ObservedProperties")]
+        public async Task<string> GetObservedPropertiesAsync()
+        {
+            var baseUrl = GetBaseUrl();
+            var service = new ObservedPropertiesService(RepoFactory);
+            var properties = await service.GetObservedProperties();
+
+            foreach (var property in properties)
+            {
+                property.BaseUrl = baseUrl;
+            }
+
+            var listing = new Listing<ObservedProperty>() { Items = properties.ToList() };
+
+            return JsonConvert.SerializeObject(listing);
+        }
+
+        [Route(HttpVerbs.Patch, "/ObservedProperties({id})")]
+        public async Task UpdateObservedPropertyAsync(int id)
+        {
+            var data = await HttpContext.GetRequestBodyAsStringAsync();
+            var updates = JObject.Parse(data);
+
+            var service = new ObservedPropertiesService(RepoFactory);
+            await service.UpdateObservedProperty(updates, id);
+        }
+
+        [Route(HttpVerbs.Delete, "/ObservedProperties({id})")]
+        public async Task RemoveObservedPropertyAsync(int id)
+        {
+            var service = new ObservedPropertiesService(RepoFactory);
+            await service.RemoveObservedProperty(id);
         }
     }
 }

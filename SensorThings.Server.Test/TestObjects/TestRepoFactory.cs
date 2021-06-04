@@ -15,6 +15,8 @@ namespace SensorThings.Server.Test.TestObjects
 
         public IRepository<Sensor> SensorsRepository { get; set; }
 
+        public IRepository<ObservedProperty> ObservedPropertiesRepository { get; set; }
+
         public IRepositoryUnitOfWork CreateUnitOfWork()
         {
             return new TestUOW()
@@ -22,7 +24,8 @@ namespace SensorThings.Server.Test.TestObjects
                 ThingsRepository = ThingsRepository,
                 LocationsRepository = LocationsRepository,
                 DatastreamsRepository = DatastreamsRepository,
-                SensorsRepository = SensorsRepository
+                SensorsRepository = SensorsRepository,
+                ObservedPropertiesRepository = ObservedPropertiesRepository
             };
         }
 
@@ -35,6 +38,8 @@ namespace SensorThings.Server.Test.TestObjects
             public IRepository<Datastream> DatastreamsRepository { get; set; }
 
             public IRepository<Sensor> SensorsRepository { get; set; }
+
+            public IRepository<ObservedProperty> ObservedPropertiesRepository { get; set; }
 
             public void Commit()
             {
