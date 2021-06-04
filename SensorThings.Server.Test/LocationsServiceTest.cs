@@ -111,7 +111,6 @@ namespace SensorThings.Server.Test
         public async Task Test_RemoveLocation()
         {
             int id = 42;
-            Location location = new Location { Name = "FOO" };
             Mock<IRepository<Location>> locationRepoMock = new Mock<IRepository<Location>>();
             var repoFactory = new TestRepoFactory { LocationsRepository = locationRepoMock.Object };
             var service = new LocationsService(repoFactory);
