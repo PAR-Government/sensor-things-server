@@ -33,10 +33,10 @@ namespace SensorThings.Server.Repositories
             return id;
         }
 
-        public Task<IEnumerable<Location>> GetAllAsync()
+        public async Task<IEnumerable<Location>> GetAllAsync()
         {
             var sql = @"SELECT ID, Name, Description, EncodingType, Location as FeatureLocation FROM locations;";
-            var locations = Connection.QueryAsync<Location>(sql, _transaction);
+            var locations = await Connection.QueryAsync<Location>(sql, _transaction);
 
             return locations;
         }
