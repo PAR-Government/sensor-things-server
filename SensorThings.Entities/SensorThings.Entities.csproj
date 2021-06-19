@@ -2,7 +2,7 @@
 
   <PropertyGroup>
     <TargetFramework>netstandard2.1</TargetFramework>
-    <Version>1.0.0-alpha</Version>
+    <Version>1.0.0-alpha2</Version>
     <Company>PAR Government Systems Corporation</Company>
     <Authors>PAR Government Systems Corporation</Authors>
     <GeneratePackageOnBuild>true</GeneratePackageOnBuild>
