@@ -8,6 +8,7 @@
   <ItemGroup>
     <PackageReference Include="Newtonsoft.Json" Version="13.0.1" />
     <PackageReference Include="EmbedIO" Version="3.4.3" />
+    <PackageReference Include="SensorThings.Entities" Version="1.0.0-alpha2" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\SensorThings.Entities\SensorThings.Entities.csproj" />

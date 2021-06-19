@@ -19,28 +19,51 @@ namespace SensorThings.Server.Services
 
         public async Task<Observation> AddObservation(Observation observation)
         {
-            throw new NotImplementedException();
+            using var uow = RepoFactory.CreateUnitOfWork();
+            var id = await uow.ObservationsRepository.AddAsync(observation);
+            uow.Commit();
+
+            observation.ID = id;
+
+            return observation;
         }
 
         public async Task<Observation> GetObservationById(int id)
         {
-            throw new NotImplementedException();
+            using var uow = RepoFactory.CreateUnitOfWork();
+            return await uow.ObservationsRepository.GetByIdAsync(id);
         }
 
         public async Task<IEnumerable<Observation>> GetObservations()
         {
-            throw new NotImplementedException();
+            using var uow = RepoFactory.CreateUnitOfWork();
+            return await uow.ObservationsRepository.GetAllAsync();
         }
 
         public async Task<Observation> UpdateObservation(JObject updates, int id)
         {
-            throw new NotImplementedException();
+            var observation = await GetObservationById(id);
 
+            var observationJson = JObject.FromObject(observation);
+            foreach (var property in updates.Properties())
+            {
+                observationJson[property.Name] = property.Value;
+            }
+
+            observation = observationJson.ToObject<Observation>();
+
+            using var uow = RepoFactory.CreateUnitOfWork();
+            await uow.ObservationsRepository.UpdateAsync(observation);
+            uow.Commit();
+
+            return observation;
         }
 
         public async Task RemoveObservation(int id)
         {
-            throw new NotImplementedException();
+            using var uow = RepoFactory.CreateUnitOfWork();
+            await uow.ObservationsRepository.Remove(id);
+            uow.Commit();
         }
     }
 }

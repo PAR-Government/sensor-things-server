@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using Newtonsoft.Json;
+using Newtonsoft.Json.Linq;
 
 namespace SensorThings.Entities
 {
@@ -13,7 +14,7 @@ namespace SensorThings.Entities
         public DateTime ResultTime { get; set; }
 
         [JsonProperty("result")]
-        public Object Result { get; set; }
+        public JToken Result { get; set; }
 
         // TODO: ResultQuality is not implemented
 
@@ -21,7 +22,7 @@ namespace SensorThings.Entities
         public OGCTime ValidTime { get; set; }
 
         [JsonProperty("parameters")]
-        public List<Object> Parameters { get; set; }
+        public JObject Parameters { get; set; }
 
         public override string SelfLink { get => $"{BaseUrl}/Observations({ID})"; }
 
