@@ -63,13 +63,7 @@ namespace SensorThings.Server.Repositories
                             EncodingType = @EncodingType,
                             Location = @FeatureLocation
                         WHERE id = @ID";
-            //var param = new
-            //{
-            //    Name = item.Name,
-            //    Description = item.Description,
-            //    EncodingType = item.EncodingType,
-            //    FeatureLocation = item.FeatureLocation.ToString()
-            //};
+
             await Connection.ExecuteAsync(sql, item, _transaction);
         }
 
