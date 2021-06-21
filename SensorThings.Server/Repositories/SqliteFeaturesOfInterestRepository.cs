@@ -81,7 +81,7 @@ namespace SensorThings.Server.Repositories
         private void CreateTable()
         {
             var sql =
-                @"Create Table datastreams (
+                @"Create Table featuresOfInterest (
                     id INTEGER PRIMARY KEY AUTOINCREMENT,
                     Name TEXT NOT NULL,
                     Description TEXT NULL,
