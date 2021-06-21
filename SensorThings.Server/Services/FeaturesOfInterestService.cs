@@ -19,27 +19,51 @@ namespace SensorThings.Server.Services
 
         public async Task<FeatureOfInterest> AddFeature(FeatureOfInterest feature)
         {
-            throw new NotImplementedException();
+            using var uow = RepoFactory.CreateUnitOfWork();
+            var id = await uow.FeaturesOfInterestRepository.AddAsync(feature);
+            uow.Commit();
+
+            feature.ID = id;
+
+            return feature;
         }
 
         public async Task<FeatureOfInterest> GetFeatureById(int id)
         {
-            throw new NotImplementedException();
+            using var uow = RepoFactory.CreateUnitOfWork();
+            return await uow.FeaturesOfInterestRepository.GetByIdAsync(id);
         }
 
         public async Task<IEnumerable<FeatureOfInterest>> GetFeatures()
         {
-            throw new NotImplementedException();
+            using var uow = RepoFactory.CreateUnitOfWork();
+            return await uow.FeaturesOfInterestRepository.GetAllAsync();
         }
 
         public async Task<FeatureOfInterest> UpdateFeature(JObject updates, int id)
         {
-            throw new NotImplementedException();
+            var feature = await GetFeatureById(id);
+
+            var featureJson = JObject.FromObject(feature);
+            foreach (var property in updates.Properties())
+            {
+                featureJson[property.Name] = property.Value;
+            }
+
+            feature = featureJson.ToObject<FeatureOfInterest>();
+
+            using var uow = RepoFactory.CreateUnitOfWork();
+            await uow.FeaturesOfInterestRepository.UpdateAsync(feature);
+            uow.Commit();
+
+            return feature;
         }
 
         public async Task RemoveFeature(int id)
         {
-            throw new NotImplementedException();
+            using var uow = RepoFactory.CreateUnitOfWork();
+            await uow.FeaturesOfInterestRepository.Remove(id);
+            uow.Commit();
         }
     }
 }
