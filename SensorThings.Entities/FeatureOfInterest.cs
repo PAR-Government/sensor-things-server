@@ -1,5 +1,6 @@
 ﻿using System;
 using Newtonsoft.Json;
+using Newtonsoft.Json.Linq;
 
 namespace SensorThings.Entities
 {
@@ -15,7 +16,7 @@ namespace SensorThings.Entities
         public ValueCodes EncodingType { get; set; }
 
         [JsonProperty("feature")]
-        public Object Feature { get; set; }
+        public JObject Feature { get; set; }
 
         public override string SelfLink { get => $"{BaseUrl}/FeaturesOfInterest({ID})"; }
 

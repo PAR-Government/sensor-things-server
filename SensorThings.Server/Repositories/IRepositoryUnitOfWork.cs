@@ -19,6 +19,8 @@ namespace SensorThings.Server.Repositories
 
         IRepository<Observation> ObservationsRepository { get; }
 
+        IRepository<FeatureOfInterest> FeaturesOfInterestRepository { get; }
+
         public void Commit();
     }
 }

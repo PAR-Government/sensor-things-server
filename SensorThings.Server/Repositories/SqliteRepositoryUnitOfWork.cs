@@ -17,6 +17,7 @@ namespace SensorThings.Server.Repositories
         private IRepository<Sensor> _sensorsRepository;
         private IRepository<ObservedProperty> _observedPropertiesRepository;
         private IRepository<Observation> _observationsRepository;
+        private IRepository<FeatureOfInterest> _featuresOfInterestRepository;
 
         public IThingsRepository ThingsRepository
         {
@@ -46,6 +47,11 @@ namespace SensorThings.Server.Repositories
         public IRepository<Observation> ObservationsRepository
         {
             get => _observationsRepository ??= new SqliteObservationsRepository(_transaction);
+        }
+
+        public IRepository<FeatureOfInterest> FeaturesOfInterestRepository
+        {
+            get => _featuresOfInterestRepository ??= new SqliteFeaturesOfInterestRepository(_transaction);
         }
 
         public SqliteRepositoryUnitOfWork(IDbConnection connection)
@@ -96,6 +102,8 @@ namespace SensorThings.Server.Repositories
             _datastreamsRepository = null;
             _sensorsRepository = null;
             _observedPropertiesRepository = null;
+            _observationsRepository = null;
+            _featuresOfInterestRepository = null;
         }
     }
 }
