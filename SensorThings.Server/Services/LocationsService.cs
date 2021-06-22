@@ -44,14 +44,12 @@ namespace SensorThings.Server.Services
         {
             var location = await GetLocationById(id);
 
-            // Convert the Location to JSON to make it easier to merge the updates
             var locationJson = JObject.FromObject(location);
             foreach (var property in updates.Properties())
             {
                 locationJson[property.Name] = property.Value;
             }
 
-            // Go back to an actual Thing instance
             location = locationJson.ToObject<Location>();
 
             using var uow = RepoFactory.CreateUnitOfWork();
