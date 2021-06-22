@@ -9,8 +9,6 @@ namespace SensorThings.Server.Repositories
     public interface IThingsRepository : IRepository<Thing>
     {
         public Task<IEnumerable<Location>> GetLinkedLocations(long thingId);
-
-        public Task AddLocationLinkAsync(Thing thing, Location location);
         
         public Task AddLocationLinkAsync(long thingId, long locationId);
 

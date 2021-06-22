@@ -70,11 +70,6 @@ namespace SensorThings.Server.Repositories
             await Connection.ExecuteAsync(sql, item, _transaction);
         }
 
-        public async Task AddLocationLinkAsync(Thing thing, Location location)
-        {
-            await AddLocationLinkAsync(thing.ID, location.ID);
-        }
-
         public async Task AddLocationLinkAsync(long thingId, long locationId)
         {
             var sql = @"INSERT INTO things_locations(thing_id, location_id) VALUES(@ThingId, @LocationId);";
