@@ -27,6 +27,11 @@ namespace SensorThings.Server.Repositories
             {
                 CreateThingLocationTable();
             }
+
+            if (!SqliteUtil.CheckForTable(Connection, "things_historical_locations"))
+            {
+                CreateThingHistoricalLocationTable();
+            }
         }
 
         public async Task<long> AddAsync(Thing item)
@@ -98,6 +103,37 @@ namespace SensorThings.Server.Repositories
             return await Connection.QueryAsync<Location>(sql, new { thingId }, _transaction);
         }
 
+        public async Task AddHistoricalLocationLinkAsync(long thingId, long historicalLocationId)
+        {
+            var sql = @"INSERT INTO things_historical_locations(thing_id, historical_location_id) VALUES(@thingId, @historicalLocationId);";
+            await Connection.ExecuteAsync(sql, new { thingId, historicalLocationId }, _transaction);
+        }
+
+        public async Task<IEnumerable<HistoricalLocation>> GetLinkedHistoricalLocationsAsync(long thingId)
+        {
+            var sql = @"SELECT historical_locations.ID as ID, historical_locations.Time as Time 
+                        FROM things
+                        INNER JOIN things_historical_locations on (things.id = things_historical_locations.thing_id)
+                        INNER JOIN historical_locations on (historical_locations.id = things_historical_locations.historical_location_id)
+                        WHERE things.id = @thingId;";
+            return await Connection.QueryAsync<HistoricalLocation>(sql, new { thingId }, _transaction);
+        }
+
+        public async Task RemoveHistoricalLocationLinkAsync(long thingId, long historicalLocationId)
+        {
+            var sql = 
+                @"DELETE FROM things_historical_locations 
+                    WHERE thing_id = @thingId AND historical_location_id = @historicalLocationId";
+            await Connection.ExecuteAsync(sql, new { thingId, historicalLocationId }, _transaction);
+        }
+
+        public async Task RemoveHistoricalLocationLinksAsync(long thingId)
+        {
+            var sql = @"DELETE FROM things_locations WHERE thing_id = @thingId";
+            await Connection.ExecuteAsync(sql, new { thingId }, _transaction);
+            throw new NotImplementedException();
+        }
+
         private void CreateTable()
         {
             var sql =
@@ -119,6 +155,19 @@ namespace SensorThings.Server.Repositories
                     PRIMARY KEY(thing_id, location_id)
                 );";
 
+            Connection.Execute(sql, _transaction);
+        }
+
+        private void CreateThingHistoricalLocationTable()
+        {
+            var sql =
+                @"CREATE Table things_historical_locations (
+                    thing_id int NOT NULL,
+                    historical_location_id int NOT NULL,
+                    FOREIGN KEY(thing_id) REFERENCES things(id) ON DELETE RESTRICT ON UPDATE CASCADE,
+                    FOREIGN KEY(location_id) REFERENCES historical_locations(id) ON DELETE RESTRICT ON UPDATE CASCADE,
+                    PRIMARY KEY(thing_id, historical_location_id)
+                );";
             Connection.Execute(sql, _transaction);
         }
     }

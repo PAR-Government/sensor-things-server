@@ -100,5 +100,32 @@ namespace SensorThings.Server.Services
             await uow.ThingsRepository.RemoveLocationLinkAsync(thingId, locationId);
             uow.Commit();
         }
+
+        public async Task AssociateHistoricalLocation(long thingId, long historicalLocationId)
+        {
+            using var uow = RepoFactory.CreateUnitOfWork();
+            await uow.ThingsRepository.AddHistoricalLocationLinkAsync(thingId, historicalLocationId);
+            uow.Commit();
+        }
+
+        public async Task<IEnumerable<HistoricalLocation>> GetAssociatedHistoricalLocations(long thingId)
+        {
+            using var uow = RepoFactory.CreateUnitOfWork();
+            return await uow.ThingsRepository.GetLinkedHistoricalLocationsAsync(thingId);
+        }
+
+        public async Task UnassociateHistoricalLocations(long thingId)
+        {
+            using var uow = RepoFactory.CreateUnitOfWork();
+            await uow.ThingsRepository.RemoveHistoricalLocationLinksAsync(thingId);
+            uow.Commit();
+        }
+
+        public async Task UnassociateHistoricalLocation(long thingId, long historicalLocationId)
+        {
+            using var uow = RepoFactory.CreateUnitOfWork();
+            await uow.ThingsRepository.RemoveHistoricalLocationLinkAsync(thingId, historicalLocationId);
+            uow.Commit();
+        }
     }
 }
