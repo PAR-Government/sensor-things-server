@@ -30,6 +30,7 @@ namespace SensorThings.Server
                 .WithController(() => new ResourceV1Controller(RepoFactory))
                 .WithController(() => new ThingsV1Controller(RepoFactory))
                 .WithController(() => new LocationsV1Controller(RepoFactory))
+                .WithController(() => new HistoricalLocationsV1Controller(RepoFactory))
                 .WithController(() => new SensorsV1Controller(RepoFactory))
                 .WithController(() => new ObservedPropertiesV1Controller(RepoFactory))
                 .WithController(() => new FeaturesOfInterestV1Controller(RepoFactory))

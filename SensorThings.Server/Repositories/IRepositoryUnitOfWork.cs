@@ -11,6 +11,8 @@ namespace SensorThings.Server.Repositories
 
         IRepository<Location> LocationsRepository { get; }
 
+        IRepository<HistoricalLocation> HistoricalLocationsRepository { get; }
+
         IRepository<Datastream> DatastreamsRepository { get; }
 
         IRepository<Sensor> SensorsRepository { get; }
