@@ -23,5 +23,13 @@ namespace SensorThings.Server.Repositories
         public Task RemoveHistoricalLocationLinkAsync(long thingId, long historicalLocationId);
 
         public Task RemoveHistoricalLocationLinksAsync(long thingId);
+
+        public Task<IEnumerable<Datastream>> GetLinkedDatastreamsAsync(long thingId);
+
+        public Task AddDatastreamLinkAsync(long thingId, long datastreamId);
+
+        public Task RemoveDatastreamLinkAsync(long thingId, long datastreamId);
+
+        public Task RemoveDatastreamLinksAsync(long thingId);
     }
 }

@@ -32,6 +32,11 @@ namespace SensorThings.Server.Repositories
             {
                 CreateThingHistoricalLocationTable();
             }
+
+            if (!SqliteUtil.CheckForTable(Connection, "things_datastreams"))
+            {
+                CreateThingDatastreamsTable();
+            }
         }
 
         public async Task<long> AddAsync(Thing item)
@@ -83,7 +88,8 @@ namespace SensorThings.Server.Repositories
 
         public async Task RemoveLocationLinkAsync(long thingId, long locationId)
         {
-            var sql = @"DELETE FROM things_locations WHERE thing_id = @thingId AND location_id = @locationId";
+            var sql = @"DELETE FROM things_locations 
+                        WHERE thing_id = @thingId AND location_id = @locationId";
             await Connection.ExecuteAsync(sql, new { thingId, locationId }, _transaction);
         }
 
@@ -95,7 +101,12 @@ namespace SensorThings.Server.Repositories
 
         public async Task<IEnumerable<Location>> GetLinkedLocations(long thingId)
         {
-            var sql = @"SELECT locations.ID as ID, locations.Name as Name, locations.Description as Description, locations.EncodingType as EncodingType, locations.Location as FeatureLocation 
+            var sql = @"SELECT 
+                            locations.ID as ID, 
+                            locations.Name as Name, 
+                            locations.Description as Description, 
+                            locations.EncodingType as EncodingType, 
+                            locations.Location as FeatureLocation 
                         FROM things
                         INNER JOIN things_locations on (things.id = things_locations.thing_id)
                         INNER JOIN locations on (locations.id = things_locations.location_id)
@@ -105,13 +116,16 @@ namespace SensorThings.Server.Repositories
 
         public async Task AddHistoricalLocationLinkAsync(long thingId, long historicalLocationId)
         {
-            var sql = @"INSERT INTO things_historical_locations(thing_id, historical_location_id) VALUES(@thingId, @historicalLocationId);";
+            var sql = @"INSERT INTO things_historical_locations(thing_id, historical_location_id) 
+                        VALUES(@thingId, @historicalLocationId);";
             await Connection.ExecuteAsync(sql, new { thingId, historicalLocationId }, _transaction);
         }
 
         public async Task<IEnumerable<HistoricalLocation>> GetLinkedHistoricalLocationsAsync(long thingId)
         {
-            var sql = @"SELECT historical_locations.ID as ID, historical_locations.Time as Time 
+            var sql = @"SELECT 
+                            historical_locations.ID as ID, 
+                            historical_locations.Time as Time 
                         FROM things
                         INNER JOIN things_historical_locations on (things.id = things_historical_locations.thing_id)
                         INNER JOIN historical_locations on (historical_locations.id = things_historical_locations.historical_location_id)
@@ -131,7 +145,45 @@ namespace SensorThings.Server.Repositories
         {
             var sql = @"DELETE FROM things_locations WHERE thing_id = @thingId";
             await Connection.ExecuteAsync(sql, new { thingId }, _transaction);
-            throw new NotImplementedException();
+        }
+
+        public async Task<IEnumerable<Datastream>> GetLinkedDatastreamsAsync(long thingId)
+        {
+            var sql =
+                @"SELECT 
+                        datastreams.ID as ID, 
+                        datastreams.Name as Name,
+                        datastreams.Description as Description,
+                        datastreams.ObservationType as ObservationType,
+                        datastreams.UnitOfMeasurement as UnitOfMeasurement,
+                        datastreams.ObservedArea as ObservedArea,
+                        datastreams.PhenomenonTime as PhenomenonTime,
+                        datastreams.ResultTime as ResultTime
+                    FROM things
+                    INNER JOIN things_datstreams on (things.id = things_datastreams.thing_id)
+                    INNER JOIN datastreams on (datastreams.id = things_datadatstreams.datastream_id)
+                    WHERE things.id = @thingId;";
+            return await Connection.QueryAsync<Datastream>(sql, new { thingId }, _transaction);
+        }
+
+        public async Task AddDatastreamLinkAsync(long thingId, long datastreamId)
+        {
+            var sql = @"INSERT INTO things_datastreams(thing_id, datastream_id) 
+                        VALUES(@thingId, @datastreamId);";
+            await Connection.ExecuteAsync(sql, new { thingId, datastreamId }, _transaction);
+        }
+
+        public async Task RemoveDatastreamLinkAsync(long thingId, long datastreamId)
+        {
+            var sql = @"DELETE FROM things_datastreams 
+                        WHERE thing_id = @thingId and datastream_id = @datastreamId";
+            await Connection.ExecuteAsync(sql, new { thingId, datastreamId }, _transaction);
+        }
+
+        public async Task RemoveDatastreamLinksAsync(long thingId)
+        {
+            var sql = @"DELETE FROM things_datastreams WHERE thing_id = @thingId";
+            await Connection.ExecuteAsync(sql, new { thingId }, _transaction);
         }
 
         private void CreateTable()
@@ -139,8 +191,8 @@ namespace SensorThings.Server.Repositories
             var sql =
                 @"Create Table things (
                     id INTEGER PRIMARY KEY AUTOINCREMENT,
-                    Name VARCHAR(100) NOT NULL,
-                    Description VARCHAR(1000) NULL);";
+                    Name TEXT NOT NULL,
+                    Description TEXT NULL);";
             Connection.Execute(sql, _transaction);
         }
 
@@ -167,6 +219,19 @@ namespace SensorThings.Server.Repositories
                     FOREIGN KEY(thing_id) REFERENCES things(id) ON DELETE RESTRICT ON UPDATE CASCADE,
                     FOREIGN KEY(location_id) REFERENCES historical_locations(id) ON DELETE RESTRICT ON UPDATE CASCADE,
                     PRIMARY KEY(thing_id, historical_location_id)
+                );";
+            Connection.Execute(sql, _transaction);
+        }
+
+        private void CreateThingDatastreamsTable()
+        {
+            var sql =
+                @"CREATE TABLE things_datastreams (
+                    thing_id int NOT NULL,
+                    datastream_id int NOT NULL,
+                    FOREIGN KEY(thing_id) REFERENCES things(id) ON DELETE RESTRICT ON UPDATE CASCADE,
+                    FOREIGN KEY(datastream_id) REFERENCES datastreams(id) ON DELETE RESTRICT ON UPDATE CASCADE,
+                    PRIMARY KEY(thing_id, datastream_id)
                 );";
             Connection.Execute(sql, _transaction);
         }
