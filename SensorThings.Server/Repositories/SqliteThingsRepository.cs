@@ -217,7 +217,7 @@ namespace SensorThings.Server.Repositories
                     thing_id int NOT NULL,
                     historical_location_id int NOT NULL,
                     FOREIGN KEY(thing_id) REFERENCES things(id) ON DELETE RESTRICT ON UPDATE CASCADE,
-                    FOREIGN KEY(location_id) REFERENCES historical_locations(id) ON DELETE RESTRICT ON UPDATE CASCADE,
+                    FOREIGN KEY(historical_location_id) REFERENCES historical_locations(id) ON DELETE RESTRICT ON UPDATE CASCADE,
                     PRIMARY KEY(thing_id, historical_location_id)
                 );";
             Connection.Execute(sql, _transaction);
