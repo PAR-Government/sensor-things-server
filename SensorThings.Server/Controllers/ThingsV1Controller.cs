@@ -99,5 +99,76 @@ namespace SensorThings.Server.Controllers
             var service = new ThingsService(RepoFactory);
             await service.RemoveThing(id);
         }
+
+        [Route(HttpVerbs.Get, "/Things({id})/Datastreams")]
+        public async Task<string> GetDatastreamsAsync(int id)
+        {
+            var service = new ThingsService(RepoFactory);
+            var datastreams = await service.GetAssociatedDatastreamsAsync(id);
+            var listing = new Listing<Datastream> { Items = datastreams.ToList() };
+
+            return JsonConvert.SerializeObject(listing);
+        }
+
+        [Route(HttpVerbs.Get, "/Things({id})/Locations")]
+        public async Task<string> GetLocationsAsync(int id)
+        {
+            var service = new ThingsService(RepoFactory);
+            var locations = await service.GetAssociatedLocations(id);
+            var listing = new Listing<Location> { Items = locations.ToList() };
+
+            return JsonConvert.SerializeObject(listing);
+        }
+
+        [Route(HttpVerbs.Get, "/Things({id})/HistoricalLocations")]
+        public async Task<string> GetHistoricalLocationsAsync(int id)
+        {
+            var service = new ThingsService(RepoFactory);
+            var locations = await service.GetAssociatedHistoricalLocations(id);
+            var listing = new Listing<HistoricalLocation> { Items = locations.ToList() };
+
+            return JsonConvert.SerializeObject(listing);
+        }
+
+        [Route(HttpVerbs.Get, "/Things({id})/{propertyName}")]
+        public async Task<string> GetThingPropertyAsync(int id, string propertyName)
+        {
+            var service = new ThingsService(RepoFactory);
+            var thing = await service.GetThingById(id);
+
+            var jsonThing = JObject.FromObject(thing);
+
+            var propertyValue = jsonThing.GetValue(propertyName);
+
+            if (propertyValue == null)
+            {
+                Response.StatusCode = (int)HttpStatusCode.NotFound;
+                return null;
+            }
+
+            var resultObject = new JObject();
+            resultObject.Add(propertyName, propertyValue);
+
+            return JsonConvert.SerializeObject(resultObject);
+        }
+
+        [Route(HttpVerbs.Get, "/Things({id})/{propertyName}/$value")]
+        public async Task<string> GetThingPropertyValueAsync(int id, string propertyName)
+        {
+            var service = new ThingsService(RepoFactory);
+            var thing = await service.GetThingById(id);
+
+            var jsonThing = JObject.FromObject(thing);
+
+            var propertyValue = jsonThing.GetValue(propertyName);
+
+            if (propertyValue == null)
+            {
+                Response.StatusCode = (int)HttpStatusCode.NotFound;
+                return null;
+            }
+
+            return propertyValue.ToString();
+        }
     }
 }
