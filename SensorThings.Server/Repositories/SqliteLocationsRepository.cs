@@ -14,13 +14,14 @@ namespace SensorThings.Server.Repositories
 
         public SqliteLocationsRepository(IDbTransaction transaction)
         {
-            SqlMapper.AddTypeHandler(DapperJObjectHandler.Instance);
-
             _transaction = transaction;
+        }
 
-            if (!SqliteUtil.CheckForTable(Connection, "locations"))
+        public static void CheckForTables(IDbConnection connection)
+        {
+            if (!SqliteUtil.CheckForTable(connection, "locations"))
             {
-                CreateTable();
+                CreateTable(connection);
             }
         }
 
@@ -67,7 +68,7 @@ namespace SensorThings.Server.Repositories
             await Connection.ExecuteAsync(sql, item, _transaction);
         }
 
-        private void CreateTable()
+        private static void CreateTable(IDbConnection connection)
         {
             var sql =
                 @"Create Table locations (
@@ -76,7 +77,7 @@ namespace SensorThings.Server.Repositories
                     Description VARCHAR(1000) NULL,
                     EncodingType VARCHAR(100) NULL,
                     Location VARCHAR(1000) NULL);";
-            Connection.Execute(sql, _transaction);
+            connection.Execute(sql);
         }
     }
 }

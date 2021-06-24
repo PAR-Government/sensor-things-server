@@ -14,13 +14,14 @@ namespace SensorThings.Server.Repositories
 
         public SqliteFeaturesOfInterestRepository(IDbTransaction transaction)
         {
-            SqlMapper.AddTypeHandler(DapperJObjectHandler.Instance);
-
             _transaction = transaction;
+        }
 
-            if (!SqliteUtil.CheckForTable(Connection, "featuresOfInterest"))
+        public static void CheckForTables(IDbConnection connection)
+        {
+            if (!SqliteUtil.CheckForTable(connection, "featuresOfInterest"))
             {
-                CreateTable();
+                CreateTable(connection);
             }
         }
 
@@ -78,7 +79,7 @@ namespace SensorThings.Server.Repositories
             await Connection.ExecuteAsync(sql, item, _transaction);
         }
 
-        private void CreateTable()
+        private static void CreateTable(IDbConnection connection)
         {
             var sql =
                 @"Create Table featuresOfInterest (
@@ -87,7 +88,7 @@ namespace SensorThings.Server.Repositories
                     Description TEXT NULL,
                     EncodingType TEXT,
                     Feature TEXT);";
-            Connection.Execute(sql, _transaction);
+            connection.Execute(sql);
         }
     }
 }

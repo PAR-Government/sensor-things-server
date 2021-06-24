@@ -15,14 +15,14 @@ namespace SensorThings.Server.Repositories
 
         public SqliteObservedPropertiesRepository(IDbTransaction transaction)
         {
-            SqlMapper.AddTypeHandler(DapperJObjectHandler.Instance);
-            SqlMapper.AddTypeHandler(DapperURIMapper.Instance);
-
             _transaction = transaction;
+        }
 
-            if (!SqliteUtil.CheckForTable(Connection, "observed_properties"))
+        public static void CheckForTables(IDbConnection connection)
+        {
+            if (!SqliteUtil.CheckForTable(connection, "observed_properties"))
             {
-                CreateTable();
+                CreateTable(connection);
             }
         }
 
@@ -77,7 +77,7 @@ namespace SensorThings.Server.Repositories
             await Connection.ExecuteAsync(sql, item, _transaction);
         }
 
-        private void CreateTable()
+        private static void CreateTable(IDbConnection connection)
         {
             var sql =
                 @"CREATE TABLE observed_properties (
@@ -85,7 +85,7 @@ namespace SensorThings.Server.Repositories
                     Name TEXT NOT NULL,
                     Definition TEXT,
                     Description TEXT);";
-            Connection.Execute(sql, _transaction);
+            connection.Execute(sql);
         }
     }
 }

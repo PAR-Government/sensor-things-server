@@ -15,27 +15,29 @@ namespace SensorThings.Server.Repositories
 
         public SqliteThingsRepository(IDbTransaction transaction)
         {
-            SqlMapper.AddTypeHandler(DapperJObjectHandler.Instance);
             _transaction = transaction;
+        }
 
-            if (!SqliteUtil.CheckForTable(Connection, "things"))
+        public static void CheckForTables(IDbConnection connection)
+        {
+            if (!SqliteUtil.CheckForTable(connection, "things"))
             {
-                CreateTable();
+                CreateTable(connection);
             }
 
-            if (!SqliteUtil.CheckForTable(Connection, "things_locations"))
+            if (!SqliteUtil.CheckForTable(connection, "things_locations"))
             {
-                CreateThingLocationTable();
+                CreateThingLocationTable(connection);
             }
 
-            if (!SqliteUtil.CheckForTable(Connection, "things_historical_locations"))
+            if (!SqliteUtil.CheckForTable(connection, "things_historical_locations"))
             {
-                CreateThingHistoricalLocationTable();
+                CreateThingHistoricalLocationTable(connection);
             }
 
-            if (!SqliteUtil.CheckForTable(Connection, "things_datastreams"))
+            if (!SqliteUtil.CheckForTable(connection, "things_datastreams"))
             {
-                CreateThingDatastreamsTable();
+                CreateThingDatastreamsTable(connection);
             }
         }
 
@@ -186,17 +188,17 @@ namespace SensorThings.Server.Repositories
             await Connection.ExecuteAsync(sql, new { thingId }, _transaction);
         }
 
-        private void CreateTable()
+        private static void CreateTable(IDbConnection connection)
         {
             var sql =
                 @"Create Table things (
                     id INTEGER PRIMARY KEY AUTOINCREMENT,
                     Name TEXT NOT NULL,
                     Description TEXT NULL);";
-            Connection.Execute(sql, _transaction);
+            connection.Execute(sql);
         }
 
-        private void CreateThingLocationTable()
+        private static void CreateThingLocationTable(IDbConnection connection)
         {
             var sql =
                 @"CREATE Table things_locations(
@@ -207,10 +209,10 @@ namespace SensorThings.Server.Repositories
                     PRIMARY KEY(thing_id, location_id)
                 );";
 
-            Connection.Execute(sql, _transaction);
+            connection.Execute(sql);
         }
 
-        private void CreateThingHistoricalLocationTable()
+        private static void CreateThingHistoricalLocationTable(IDbConnection connection)
         {
             var sql =
                 @"CREATE Table things_historical_locations (
@@ -220,10 +222,10 @@ namespace SensorThings.Server.Repositories
                     FOREIGN KEY(historical_location_id) REFERENCES historical_locations(id) ON DELETE RESTRICT ON UPDATE CASCADE,
                     PRIMARY KEY(thing_id, historical_location_id)
                 );";
-            Connection.Execute(sql, _transaction);
+            connection.Execute(sql);
         }
 
-        private void CreateThingDatastreamsTable()
+        private static void CreateThingDatastreamsTable(IDbConnection connection)
         {
             var sql =
                 @"CREATE TABLE things_datastreams (
@@ -233,7 +235,7 @@ namespace SensorThings.Server.Repositories
                     FOREIGN KEY(datastream_id) REFERENCES datastreams(id) ON DELETE RESTRICT ON UPDATE CASCADE,
                     PRIMARY KEY(thing_id, datastream_id)
                 );";
-            Connection.Execute(sql, _transaction);
+            connection.Execute(sql);
         }
     }
 }

@@ -16,10 +16,13 @@ namespace SensorThings.Server.Repositories
         public SqliteHistoricalLocationsRepository(IDbTransaction transaction)
         {
             _transaction = transaction;
+        }
 
-            if (!SqliteUtil.CheckForTable(Connection, "historical_locations"))
+        public static void CheckForTables(IDbConnection connection)
+        {
+            if (!SqliteUtil.CheckForTable(connection, "historical_locations"))
             {
-                CreateTable();
+                CreateTable(connection);
             }
         }
 
@@ -74,13 +77,13 @@ namespace SensorThings.Server.Repositories
             await Connection.ExecuteAsync(sql, item, _transaction);
         }
 
-        private void CreateTable()
+        private static void CreateTable(IDbConnection connection)
         {
             var sql =
                 @"CREATE TABLE historical_locations (
                     id INTEGER PRIMARY KEY AUTOINCREMENT,
                     Time TEXT);";
-            Connection.Execute(sql, _transaction);
+            connection.Execute(sql);
         }
     }
 }
