@@ -13,7 +13,7 @@ namespace SensorThings.Server.Repositories
 
         private IThingsRepository _thingsRepository;
         private IRepository<Location> _locationsRepository;
-        private IRepository<HistoricalLocation> _historicalLocationsRepository;
+        private IHistoricalLocationsRepository _historicalLocationsRepository;
         private IRepository<Datastream> _datastreamsRepository;
         private IRepository<Sensor> _sensorsRepository;
         private IRepository<ObservedProperty> _observedPropertiesRepository;
@@ -30,7 +30,7 @@ namespace SensorThings.Server.Repositories
             get => _locationsRepository ??= new SqliteLocationsRepository(_transaction);
         }
 
-        public IRepository<HistoricalLocation> HistoricalLocationsRepository
+        public IHistoricalLocationsRepository HistoricalLocationsRepository
         {
             get => _historicalLocationsRepository ??= new SqliteHistoricalLocationsRepository(_transaction);
         }
@@ -105,6 +105,7 @@ namespace SensorThings.Server.Repositories
         {
             _thingsRepository = null;
             _locationsRepository = null;
+            _historicalLocationsRepository = null;
             _datastreamsRepository = null;
             _sensorsRepository = null;
             _observedPropertiesRepository = null;

@@ -8,8 +8,8 @@ using System.Threading.Tasks;
 
 namespace SensorThings.Server.Repositories
 {
-    public class SqliteHistoricalLocationsRepository : IRepository<HistoricalLocation>
-    {
+    public class SqliteHistoricalLocationsRepository : IHistoricalLocationsRepository
+    { 
         private readonly IDbTransaction _transaction;
         private IDbConnection Connection { get { return _transaction.Connection; } }
 
@@ -23,6 +23,11 @@ namespace SensorThings.Server.Repositories
             if (!SqliteUtil.CheckForTable(connection, "historical_locations"))
             {
                 CreateTable(connection);
+            }
+
+            if (!SqliteUtil.CheckForTable(connection, "historical_locations_locations"))
+            {
+                CreateAssociationTable(connection);
             }
         }
 
@@ -68,6 +73,46 @@ namespace SensorThings.Server.Repositories
             await Connection.ExecuteAsync(sql, new { ID = id }, _transaction);
         }
 
+        public async Task<IEnumerable<Location>> GetLinkedLocations(long historicalLocationId)
+        {
+            var sql =
+                @"SELECT
+                    locations.ID as ID,
+                    locations.Name as Name,
+                    locations.Description as Description,
+                    locations.EncodingType as EncodingType,
+                    locations.Location as FeatureLocation
+                FROM historical_locations
+                INNER JOIN historical_locations_locations on (historical_locations.id = historical_locations_locations.historical_location_id)
+                INNER JOIN locations on (locations.id = historical_locations_locations.historical_location_id)
+                WHERE historical_locations.id = @historicalLocationId;";
+            return await Connection.QueryAsync<Location>(sql, new { historicalLocationId }, _transaction);
+        }
+
+        public async Task LinkLocationAsync(long historicalLocationId, long locationId)
+        {
+            var sql =
+                @"INSERT INTO historical_locations_locations(historical_location_id, location_id)
+                    VALUES(@historicalLocationId, @locationId);";
+            await Connection.ExecuteAsync(sql, new { historicalLocationId, locationId }, _transaction);
+        }
+
+        public async Task UnlinkLocationAsync(long historicalLocationId, long locationId)
+        {
+            var sql =
+                @"DELETE FROM historical_locations_locations
+                    WHERE historical_location_id = @historicalLocationId AND location_id = @locationId";
+            await Connection.ExecuteAsync(sql, new { historicalLocationId, locationId }, _transaction);
+        }
+
+        public async Task UnlinkLocationsAsync(long historicalLocationId)
+        {
+            var sql =
+                @"DELETE FROM historical_locations_locations
+                    WHERE historical_location_id = @historicalLocationId";
+            await Connection.ExecuteAsync(sql, new { historicalLocationId }, _transaction);
+        }
+
         public async Task UpdateAsync(HistoricalLocation item)
         {
             var sql =
@@ -83,6 +128,19 @@ namespace SensorThings.Server.Repositories
                 @"CREATE TABLE historical_locations (
                     id INTEGER PRIMARY KEY AUTOINCREMENT,
                     Time TEXT);";
+            connection.Execute(sql);
+        }
+
+        private static void CreateAssociationTable(IDbConnection connection)
+        {
+            var sql =
+                @"CREATE TABLE historical_locations_locations(
+                    historical_location_id int NOT NULL,
+                    location_id int NOT NULL,
+                    FOREIGN KEY(historical_location_id) REFERENCES historical_locations(id) ON DELETE RESTRICT ON UPDATE CASCADE,
+                    FOREIGN KEY(location_id) REFERENCES locations(id) ON DELETE RESTRICT ON UPDATE CASCADE,
+                    PRIMARY KEY(historical_location_id, location_id)
+                );";
             connection.Execute(sql);
         }
     }
