@@ -10,7 +10,7 @@ namespace SensorThings.Server.Repositories
     {
         public Task<IEnumerable<Location>> GetLinkedLocations(long id);
 
-        public Task LinkLocationAsync(long id);
+        public Task LinkLocationAsync(long historicalLocationId, long locationId);
 
         public Task UnlinkLocationAsync(long historicalLocationId, long locationId);
 
