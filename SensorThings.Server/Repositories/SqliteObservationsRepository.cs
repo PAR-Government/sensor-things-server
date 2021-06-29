@@ -8,7 +8,7 @@ using System.Threading.Tasks;
 
 namespace SensorThings.Server.Repositories
 {
-    public class SqliteObservationsRepository : IRepository<Observation>
+    public class SqliteObservationsRepository : IObservationsRepository
     {
         private readonly IDbTransaction _transaction;
         private IDbConnection Connection { get { return _transaction.Connection; } }
@@ -23,6 +23,11 @@ namespace SensorThings.Server.Repositories
             if (!SqliteUtil.CheckForTable(connection, "observations"))
             {
                 CreateTable(connection);
+            }
+
+            if (!SqliteUtil.CheckForTable(connection, "observations_featuresofinterest"))
+            {
+                CreateObservationsFeaturesTable(connection);
             }
         }
 
@@ -80,6 +85,57 @@ namespace SensorThings.Server.Repositories
             await Connection.ExecuteAsync(sql, item, _transaction);
         }
 
+        public async Task LinkFeatureOfInterestAsync(long observationId, long featureId)
+        {
+            var sql =
+                @"INSERT INTO observations_featuresofinterest(observation_id, feature_id)
+                    VALUES(@observationId, @featureId)";
+            await Connection.ExecuteAsync(sql, new { observationId, featureId }, _transaction);
+        }
+
+        public async Task<FeatureOfInterest> GetLinkedFeatureOfInterestAsync(long observationId)
+        {
+            var sql =
+                @"SELECT
+                    featuresOfInterest.id as ID,
+                    featuresOfInterest.Name as Name,
+                    featuresOfInterest.Description as Description,
+                    featuresOfInterest.EncodingType as EncodingType,
+                    featuresOfInterest.Feature as Feature
+                FROM observations
+                INNER JOIN observations_featuresofinterest on (observations.id = observations_featuresofinterest.observation_id)
+                INNER JOIN featuresOfInterest on (featuresOfInterest.id = observations_featuresofinterest.feature_id)
+                WHERE observations.id = @observationId";
+            var feature = await Connection.QueryFirstAsync<FeatureOfInterest>(sql, new { observationId }, _transaction);
+            return feature;
+        }
+
+        public async Task<IEnumerable<Observation>> GetLinkedObservationsForFeatureOfInterestAsync(long featureId)
+        {
+            var sql =
+                @"SELECT
+                    observations.id as ID,
+                    oservations.PhenomenonTime as PhenomenonTime, 
+                    observations.ResultTime as ResultTime,
+                    observations.Result as Result,
+                    observations.ValidTime as ValidTime,
+                    observations.Parameters as Parameters
+                FROM featuresOfInterest
+                INNER JOIN observations_featuresofinterest on (featuresOfInterest.id = observations_featuresofinterest.feature_id)
+                INNER JOIN observations on (observations.id = observations_featuresofinterest.observation_id)
+                WHERE featuresOfInterest.id = @featureId";
+            var observations = await Connection.QueryAsync<Observation>(sql, new { featureId }, _transaction);
+            return observations;
+        }
+
+        public async Task UnlinkFeatureOfInterest(long observationId, long featureId)
+        {
+            var sql =
+                @"DELETE FROM observations_featuresofinterest
+                    WHERE observation_id = @observationId AND feature_id = @featureId";
+            await Connection.ExecuteAsync(sql, new { observationId, featureId }, _transaction);
+        }
+
         private static void CreateTable(IDbConnection connection)
         {
             var sql =
@@ -90,6 +146,18 @@ namespace SensorThings.Server.Repositories
                     Result TEXT,
                     ValidTime TEXT,
                     Parameters TEXT);";
+            connection.Execute(sql);
+        }
+
+        private static void CreateObservationsFeaturesTable(IDbConnection connection)
+        {
+            var sql =
+                @"CREATE TABLE observations_featuresofinterest (
+                    observation_id int NOT NULL,
+                    feature_id int NOT NULL,
+                    FOREIGN KEY(observation_id) REFERENCES observations(id) ON DELETE RESTRICT ON UPDATE CASCADE,
+                    FOREIGN KEY(feature_id) REFERENCES featuresOfInterest(id) ON DELETE RESTRICT ON UPDATE CASCADE,
+                    PRIMARY KEY(observation_id, feature_id)";
             connection.Execute(sql);
         }
     }

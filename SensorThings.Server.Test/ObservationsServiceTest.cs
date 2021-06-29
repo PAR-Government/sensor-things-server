@@ -6,7 +6,6 @@ using SensorThings.Server.Services;
 using SensorThings.Server.Test.TestObjects;
 using System;
 using System.Collections.Generic;
-using System.Text;
 using System.Threading.Tasks;
 using Xunit;
 
@@ -18,7 +17,7 @@ namespace SensorThings.Server.Test
         public async Task Test_AddObservation()
         {
             Observation observation = new Observation { Result = JToken.FromObject(42) };
-            Mock<IRepository<Observation>> obsRepoMock = new Mock<IRepository<Observation>>();
+            Mock<IObservationsRepository> obsRepoMock = new Mock<IObservationsRepository>();
             var repoFactory = new TestRepoFactory { ObservationsRepository = obsRepoMock.Object };
             var service = new ObservationsService(repoFactory);
 
@@ -32,7 +31,7 @@ namespace SensorThings.Server.Test
         {
             int id = 1;
             Observation observation = new Observation { Result = JToken.FromObject(42) };
-            Mock<IRepository<Observation>> obsRepoMock = new Mock<IRepository<Observation>>();
+            Mock<IObservationsRepository> obsRepoMock = new Mock<IObservationsRepository>();
             obsRepoMock.Setup(m => m.GetByIdAsync(id)).ReturnsAsync(observation);
             var repoFactory = new TestRepoFactory { ObservationsRepository = obsRepoMock.Object };
             var service = new ObservationsService(repoFactory);
@@ -49,7 +48,7 @@ namespace SensorThings.Server.Test
             Observation observation1 = new Observation { ID = 1 };
             Observation observation2 = new Observation { ID = 2 };
             var observationCollection = new List<Observation> { observation1, observation2 };
-            Mock<IRepository<Observation>> obsRepoMock = new Mock<IRepository<Observation>>();
+            Mock<IObservationsRepository> obsRepoMock = new Mock<IObservationsRepository>();
             obsRepoMock.Setup(m => m.GetAllAsync()).ReturnsAsync(observationCollection);
             var repoFactory = new TestRepoFactory { ObservationsRepository = obsRepoMock.Object };
             var service = new ObservationsService(repoFactory);
@@ -66,7 +65,7 @@ namespace SensorThings.Server.Test
             int id = 42;
             var updates = JObject.Parse("{\"Result\": 24}");
             Observation observation1 = new Observation { ID = 1, Result = JToken.FromObject(42) };
-            Mock<IRepository<Observation>> obsRepoMock = new Mock<IRepository<Observation>>();
+            Mock<IObservationsRepository> obsRepoMock = new Mock<IObservationsRepository>();
             obsRepoMock.Setup(m => m.GetByIdAsync(id)).ReturnsAsync(observation1);
             var repoFactory = new TestRepoFactory { ObservationsRepository = obsRepoMock.Object };
             var service = new ObservationsService(repoFactory);
@@ -81,7 +80,7 @@ namespace SensorThings.Server.Test
         public async Task Test_RemoveObservation()
         {
             int id = 1;
-            Mock<IRepository<Observation>> obsRepoMock = new Mock<IRepository<Observation>>();
+            Mock<IObservationsRepository> obsRepoMock = new Mock<IObservationsRepository>();
             var repoFactory = new TestRepoFactory { ObservationsRepository = obsRepoMock.Object };
             var service = new ObservationsService(repoFactory);
 

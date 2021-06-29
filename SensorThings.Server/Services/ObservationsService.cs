@@ -72,5 +72,25 @@ namespace SensorThings.Server.Services
             var datastream = await uow.DatastreamsRepository.GetLinkedDatastreamForObservationAsync(observationId);
             return datastream;
         }
+
+        public async Task LinkFeatureOfInterestAsync(long observationId, long featureId)
+        {
+            using var uow = RepoFactory.CreateUnitOfWork();
+            await uow.ObservationsRepository.LinkFeatureOfInterestAsync(observationId, featureId);
+            uow.Commit();
+        }
+
+        public async Task<FeatureOfInterest> GetLinkedFeatureOfInterest(long observationId)
+        {
+            using var uow = RepoFactory.CreateUnitOfWork();
+            return await uow.ObservationsRepository.GetLinkedFeatureOfInterestAsync(observationId);
+        }
+
+        public async Task UnlinkFeatureOfInterestAsync(long observationId, long featureId)
+        {
+            using var uow = RepoFactory.CreateUnitOfWork();
+            await uow.ObservationsRepository.UnlinkFeatureOfInterest(observationId, featureId);
+            uow.Commit();
+        }
     }
 }

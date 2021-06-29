@@ -19,7 +19,7 @@ namespace SensorThings.Server.Test.TestObjects
 
         public IRepository<ObservedProperty> ObservedPropertiesRepository { get; set; }
 
-        public IRepository<Observation> ObservationsRepository { get; set; }
+        public IObservationsRepository ObservationsRepository { get; set; }
 
         public IRepository<FeatureOfInterest> FeaturesOfInterestRepository { get; set; }
 
@@ -52,7 +52,7 @@ namespace SensorThings.Server.Test.TestObjects
 
             public IRepository<ObservedProperty> ObservedPropertiesRepository { get; set; }
 
-            public IRepository<Observation> ObservationsRepository { get; set; }
+            public IObservationsRepository ObservationsRepository { get; set; }
 
             public IRepository<FeatureOfInterest> FeaturesOfInterestRepository { get; set; }
 

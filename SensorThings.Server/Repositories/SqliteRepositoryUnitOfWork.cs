@@ -17,7 +17,7 @@ namespace SensorThings.Server.Repositories
         private IDatastreamsRepository _datastreamsRepository;
         private IRepository<Sensor> _sensorsRepository;
         private IRepository<ObservedProperty> _observedPropertiesRepository;
-        private IRepository<Observation> _observationsRepository;
+        private IObservationsRepository _observationsRepository;
         private IRepository<FeatureOfInterest> _featuresOfInterestRepository;
 
         public IThingsRepository ThingsRepository
@@ -50,7 +50,7 @@ namespace SensorThings.Server.Repositories
             get => _observedPropertiesRepository ??= new SqliteObservedPropertiesRepository(_transaction);
         }
 
-        public IRepository<Observation> ObservationsRepository
+        public IObservationsRepository ObservationsRepository
         {
             get => _observationsRepository ??= new SqliteObservationsRepository(_transaction);
         }
