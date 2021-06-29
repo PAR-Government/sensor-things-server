@@ -134,7 +134,7 @@ namespace SensorThings.Server.Repositories
                     datastreams.ResultTime as ResultTime
                 FROM sensors
                 INNER JOIN datastream_sensors on (sensors.id = datastreams_sensors.sensor_id)
-                INNER JOIN datastreams_sensors on (datastreams.id = datastreams_sensors.datastream_id)
+                INNER JOIN datastreams on (datastreams.id = datastreams_sensors.datastream_id)
                 WHERE sensors.id = @sensorId;";
             var datastreams = await Connection.QueryAsync<Datastream>(sql, new { sensorId }, _transaction);
 
