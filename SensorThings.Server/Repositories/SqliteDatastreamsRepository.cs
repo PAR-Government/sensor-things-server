@@ -110,6 +110,27 @@ namespace SensorThings.Server.Repositories
             return sensor;
         }
 
+        public async Task<IEnumerable<Datastream>> GetLinkedDatastreamsForSensorAsync(long sensorId)
+        {
+            var sql =
+                @"SELECT
+                    datastreams.id as ID,
+                    datastreams.Name as Name,
+                    datastreams.Description as Description,
+                    datastreams.ObservationType as ObservationType,
+                    datastreams.UnitOfMeasurement as UnitOfMeasurement,
+                    datastreams.ObservedArea as ObservedArea,
+                    datastreams.PhenomenonTime as PhenomenonTime,
+                    datastreams.ResultTime as ResultTime
+                FROM sensors
+                INNER JOIN datastream_sensors on (sensors.id = datastreams_sensors.sensor_id)
+                INNER JOIN datastreams_sensors on (datastreams.id = datastreams_sensors.datastream_id)
+                WHERE sensors.id = @sensorId;";
+            var datastreams = await Connection.QueryAsync<Datastream>(sql, new { sensorId }, _transaction);
+
+            return datastreams;
+        }
+
         public async Task UnlinkSensorAsync(long datastreamId, long sensorId)
         {
             var sql =

@@ -65,5 +65,12 @@ namespace SensorThings.Server.Services
             await uow.SensorsRepository.Remove(id);
             uow.Commit();
         }
+
+        public async Task<IEnumerable<Datastream>> GetLinkedDatastreamsAsync(long sensorId)
+        {
+            using var uow = RepoFactory.CreateUnitOfWork();
+            var datastreams = await uow.DatastreamsRepository.GetLinkedDatastreamsForSensorAsync(sensorId);
+            return datastreams;
+        }
     }
 }

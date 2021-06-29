@@ -13,5 +13,7 @@ namespace SensorThings.Server.Repositories
         public Task<Sensor> GetLinkedSensorAsync(long datastreamId);
 
         public Task UnlinkSensorAsync(long datastreamId, long sensorId);
+
+        public Task<IEnumerable<Datastream>> GetLinkedDatastreamsForSensorAsync(long sensorId);
     }
 }
