@@ -34,6 +34,11 @@ namespace SensorThings.Server.Repositories
             {
                 CreateDatastreamsObservedPropertiesTable(connection);
             }
+
+            if (!SqliteUtil.CheckForTable(connection, "datastreams_observations"))
+            {
+                CreateDatastreamsObservationsTable(connection);
+            }
         }
 
         public async Task<long> AddAsync(Datastream item)
@@ -199,6 +204,26 @@ namespace SensorThings.Server.Repositories
             await Connection.ExecuteAsync(sql, new { datastreamId, propertyId }, _transaction);
         }
 
+        public async Task LinkObservationAsync(long datastreamId, long observationId)
+        {
+            throw new NotImplementedException();
+        }
+
+        public async Task<IEnumerable<Observation>> GetLinkedObservationsAsync(long datastreamId)
+        {
+            throw new NotImplementedException();
+        }
+
+        public async Task UnlinkObservationAsync(long datastreamId, long observationId)
+        {
+            throw new NotImplementedException();
+        }
+
+        public async Task<Datastream> GetLinkedDatastreamForObservationAsync(long observationId)
+        {
+            throw new NotImplementedException();
+        }
+
         private static void CreateTable(IDbConnection connection)
         {
             var sql =
@@ -237,6 +262,17 @@ namespace SensorThings.Server.Repositories
                     FOREIGN KEY(observed_property_id) REFERENCES observed_properties(id) ON DELETE RESTRICT ON UPDATE CASCADE,
                     PRIMARY KEY(datastream_id, observed_property_id)
                 );";
+
+        public static void CreateDatastreamsObservationsTable(IDbConnection connection)
+        {
+            var sql =
+                @"CREATE TABLE datastreams_observations(
+                    datastream_id int NOT NULL,
+                    observation_id int NOT NULL,
+                    FOREIGN KEY(datastream_id) REFERENCES datastreams(id) ON DELETE RESTRICT ON UPDATE CASCADE,
+                    FOREIGN KEY(observation_id) REFERENCES observations(id) ON DELETE RESTRICT ON UPDATE  CASCADE,
+                    PRIMARY KEY(datastream_id, observation_id)";
+            connection.Execute(sql);
         }
     }
 }
