@@ -206,22 +206,58 @@ namespace SensorThings.Server.Repositories
 
         public async Task LinkObservationAsync(long datastreamId, long observationId)
         {
-            throw new NotImplementedException();
+            var sql =
+                @"INSERT INTO datastreams_observations(datastream_id, observation_id)
+                    VALUES(@datastreamId, @observationId)";
+            await Connection.ExecuteAsync(sql, new { datastreamId, observationId }, _transaction);
         }
 
         public async Task<IEnumerable<Observation>> GetLinkedObservationsAsync(long datastreamId)
         {
-            throw new NotImplementedException();
+            var sql =
+                @"SELECT
+                    observations.id as ID,
+                    observations.PhenomenonTime as PhenomenonTime,
+                    observations.ResultTime as ResultTime,
+                    observations.Result as Result,
+                    observations.ValidTime as ValidTime,
+                    observations.Parameters as Parameters
+                FROM datastreams
+                INNER JOIN datastreams_observations on (datastreams.id = datastreams_observations.datastream_id)
+                INNER JOIN observations on (observations.id = datastreams_observations.observation_id)
+                WHERE datastreams.id = @datastreamId;";
+            var observations = await Connection.QueryAsync<Observation>(sql, new { datastreamId }, _transaction);
+
+            return observations;
         }
 
         public async Task UnlinkObservationAsync(long datastreamId, long observationId)
         {
-            throw new NotImplementedException();
+            var sql =
+                @"DELETE FROM datastreams_observations
+                    WHERE datastream_id = @datastreamId AND observation_id = @observationId";
+            await Connection.ExecuteAsync(sql, new { datastreamId, observationId }, _transaction);
         }
 
         public async Task<Datastream> GetLinkedDatastreamForObservationAsync(long observationId)
         {
-            throw new NotImplementedException();
+            var sql =
+            @"SELECT
+                    datastreams.id as ID,
+                    datastreams.Name as Name,
+                    datastreams.Description as Description,
+                    datastreams.ObservationType as ObservationType,
+                    datastreams.UnitOfMeasurement as UnitOfMeasurement,
+                    datastreams.ObservedArea as ObservedArea,
+                    datastreams.PhenomenonTime as PhenomenonTime,
+                    datastreams.ResultTime as ResultTime
+                FROM observations
+                INNER JOIN datastreams_observations on (observations.id = datastreams_observations.observation_id)
+                INNER JOIN datastreams on (datastreams.id = datastreams_observations.datastream_id)
+                WHERE observations.id = @observationId;";
+            var datastreams = await Connection.QueryFirstAsync<Datastream>(sql, new { observationId }, _transaction);
+
+            return datastreams;
         }
 
         private static void CreateTable(IDbConnection connection)
