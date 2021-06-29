@@ -111,5 +111,25 @@ namespace SensorThings.Server.Services
             await uow.DatastreamsRepository.UnlinkObservedPropertyAsync(datastreamId, propertyId);
             uow.Commit();
         }
+
+        public async Task LinkObservationAsync(long datastreamId, long observationId)
+        {
+            using var uow = RepoFactory.CreateUnitOfWork();
+            await uow.DatastreamsRepository.LinkObservationAsync(datastreamId, observationId);
+            uow.Commit();
+        }
+
+        public async Task<IEnumerable<Observation>> GetLinkedObservations(long datastreamId)
+        {
+            using var uow = RepoFactory.CreateUnitOfWork();
+            return await uow.DatastreamsRepository.GetLinkedObservationsAsync(datastreamId);
+        }
+
+        public async Task UnlinkObservation(long datastreamId, long observationId)
+        {
+            using var uow = RepoFactory.CreateUnitOfWork();
+            await uow.DatastreamsRepository.UnlinkObservationAsync(datastreamId, observationId);
+            uow.Commit();
+        }
     }
 }
