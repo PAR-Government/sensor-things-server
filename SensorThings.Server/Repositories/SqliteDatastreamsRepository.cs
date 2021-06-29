@@ -183,8 +183,8 @@ namespace SensorThings.Server.Repositories
                     datastreams.PhenomenonTime as PhenomenonTime,
                     datastreams.ResultTime as ResultTime
                 FROM observed_properties
-                INNER JOIN datastream_observedproperties on (observed_properties.id = datastreams_sensors.observed_property_id)
-                INNER JOIN datastream_observedproperties on (datastreams.id = datastreams_observedproperties.datastream_id)
+                INNER JOIN datastreams_observedproperties on (observed_properties.id = datastreams_observedproperties.observed_property_id)
+                INNER JOIN datastreams on (datastreams.id = datastreams_observedproperties.datastream_id)
                 WHERE observed_properties.id = @propertyId;";
             var datastreams = await Connection.QueryAsync<Datastream>(sql, new { propertyId }, _transaction);
 
