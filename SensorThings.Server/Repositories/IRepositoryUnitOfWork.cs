@@ -19,7 +19,7 @@ namespace SensorThings.Server.Repositories
 
         IRepository<ObservedProperty> ObservedPropertiesRepository { get; }
 
-        IRepository<Observation> ObservationsRepository { get; }
+        IObservationsRepository ObservationsRepository { get; }
 
         IRepository<FeatureOfInterest> FeaturesOfInterestRepository { get; }
 

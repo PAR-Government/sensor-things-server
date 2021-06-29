@@ -65,5 +65,11 @@ namespace SensorThings.Server.Services
             await uow.FeaturesOfInterestRepository.Remove(id);
             uow.Commit();
         }
+
+        public async Task<IEnumerable<Observation>> GetLinkedObservations(long featureId)
+        {
+            using var uow = RepoFactory.CreateUnitOfWork();
+            return await uow.ObservationsRepository.GetLinkedObservationsForFeatureOfInterestAsync(featureId);
+        }
     }
 }
