@@ -18,7 +18,7 @@ namespace SensorThings.Server.Test
         public async Task Test_AddDatastream()
         {
             Datastream datastream = new Datastream { Name = "Test Datastream" };
-            Mock<IRepository<Datastream>> datastreamRepoMock = new Mock<IRepository<Datastream>>();
+            Mock<IDatastreamsRepository> datastreamRepoMock = new Mock<IDatastreamsRepository>();
             var repoFactory = new TestRepoFactory { DatastreamsRepository = datastreamRepoMock.Object };
             var service = new DatastreamsService(repoFactory);
 
@@ -32,7 +32,7 @@ namespace SensorThings.Server.Test
         {
             int id = 42;
             Datastream datastream = new Datastream { ID = id, Name = "Test Datastream" };
-            Mock<IRepository<Datastream>> datastreamRepoMock = new Mock<IRepository<Datastream>>();
+            Mock<IDatastreamsRepository> datastreamRepoMock = new Mock<IDatastreamsRepository>();
             datastreamRepoMock.Setup(m => m.GetByIdAsync(id)).ReturnsAsync(datastream);
             var repoFactory = new TestRepoFactory { DatastreamsRepository = datastreamRepoMock.Object };
             var service = new DatastreamsService(repoFactory);
@@ -51,7 +51,7 @@ namespace SensorThings.Server.Test
                 new Datastream { ID = 1, Name = "Test Datastream" } , 
                 new Datastream { ID = 2, Name = "Test Datastream" } 
             };
-            Mock<IRepository<Datastream>> datastreamRepoMock = new Mock<IRepository<Datastream>>();
+            Mock<IDatastreamsRepository> datastreamRepoMock = new Mock<IDatastreamsRepository>();
             datastreamRepoMock.Setup(m => m.GetAllAsync()).ReturnsAsync(datastreamCollection);
             var repoFactory = new TestRepoFactory { DatastreamsRepository = datastreamRepoMock.Object };
             var service = new DatastreamsService(repoFactory);
@@ -66,7 +66,7 @@ namespace SensorThings.Server.Test
         public async Task Test_RemoveDatastream()
         {
             int id = 42;
-            Mock<IRepository<Datastream>> datastreamRepoMock = new Mock<IRepository<Datastream>>();
+            Mock<IDatastreamsRepository> datastreamRepoMock = new Mock<IDatastreamsRepository>();
             var repoFactory = new TestRepoFactory { DatastreamsRepository = datastreamRepoMock.Object };
             var service = new DatastreamsService(repoFactory);
 
@@ -81,7 +81,7 @@ namespace SensorThings.Server.Test
             var updates = JObject.Parse("{}");
             int id = 42;
             Datastream datastream = new Datastream { ID = id, Name = "Test Datastream" };
-            Mock<IRepository<Datastream>> datastreamRepoMock = new Mock<IRepository<Datastream>>();
+            Mock<IDatastreamsRepository> datastreamRepoMock = new Mock<IDatastreamsRepository>();
             datastreamRepoMock.Setup(m => m.GetByIdAsync(id)).ReturnsAsync(datastream);
             var repoFactory = new TestRepoFactory { DatastreamsRepository = datastreamRepoMock.Object };
             var service = new DatastreamsService(repoFactory);
@@ -97,7 +97,7 @@ namespace SensorThings.Server.Test
             var updates = JObject.Parse("{\"Name\": \"FOO BAR\"}");
             int id = 42;
             Datastream datastream = new Datastream { ID = id, Name = "Test Datastream" };
-            Mock<IRepository<Datastream>> datastreamRepoMock = new Mock<IRepository<Datastream>>();
+            Mock<IDatastreamsRepository> datastreamRepoMock = new Mock<IDatastreamsRepository>();
             datastreamRepoMock.Setup(m => m.GetByIdAsync(id)).ReturnsAsync(datastream);
             var repoFactory = new TestRepoFactory { DatastreamsRepository = datastreamRepoMock.Object };
             var service = new DatastreamsService(repoFactory);

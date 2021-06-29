@@ -13,7 +13,7 @@ namespace SensorThings.Server.Test.TestObjects
 
         public IHistoricalLocationsRepository HistoricalLocationsRepository { get; set; }
 
-        public IRepository<Datastream> DatastreamsRepository { get; set; }
+        public IDatastreamsRepository DatastreamsRepository { get; set; }
 
         public IRepository<Sensor> SensorsRepository { get; set; }
 
@@ -46,7 +46,7 @@ namespace SensorThings.Server.Test.TestObjects
 
             public IHistoricalLocationsRepository HistoricalLocationsRepository { get; set; }
 
-            public IRepository<Datastream> DatastreamsRepository { get; set; }
+            public IDatastreamsRepository DatastreamsRepository { get; set; }
 
             public IRepository<Sensor> SensorsRepository { get; set; }
 

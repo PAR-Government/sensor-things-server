@@ -13,7 +13,7 @@ namespace SensorThings.Server.Repositories
 
         IHistoricalLocationsRepository HistoricalLocationsRepository { get; }
 
-        IRepository<Datastream> DatastreamsRepository { get; }
+        IDatastreamsRepository DatastreamsRepository { get; }
 
         IRepository<Sensor> SensorsRepository { get; }
 

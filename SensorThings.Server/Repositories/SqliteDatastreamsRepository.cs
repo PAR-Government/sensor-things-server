@@ -8,7 +8,7 @@ using System.Threading.Tasks;
 
 namespace SensorThings.Server.Repositories
 {
-    public class SqliteDatastreamsRepository : IRepository<Datastream>
+    public class SqliteDatastreamsRepository : IDatastreamsRepository
     {
         private readonly IDbTransaction _transaction;
         private IDbConnection Connection { get { return _transaction.Connection; } }
@@ -23,6 +23,11 @@ namespace SensorThings.Server.Repositories
             if (!SqliteUtil.CheckForTable(connection, "datastreams"))
             {
                 CreateTable(connection);
+            }
+
+            if (!SqliteUtil.CheckForTable(connection, "datastreams_sensors"))
+            {
+                CreateDatastreamSensorsTable(connection);
             }
         }
 
@@ -78,6 +83,41 @@ namespace SensorThings.Server.Repositories
             await Connection.ExecuteAsync(sql, item, _transaction);
         }
 
+        public async Task LinkSensorAsync(long datastreamId, long sensorId)
+        {
+            var sql =
+                @"INSERT INTO datastreams_sensors(datastream_id, sensor_id)
+                    VALUES(@datastreamId, @sensorId);";
+            await Connection.ExecuteAsync(sql, new { datastreamId, sensorId }, _transaction);
+        }
+
+        public async Task<Sensor> GetLinkedSensorAsync(long datastreamId)
+        {
+            // Datastreams have a single sensor but a sensor may be associated with multiple datastreams
+            var sql =
+                @"SELECT
+                    sensors.id as ID,
+                    sensors.Name as Name,
+                    sensors.Description as Description,
+                    sensors.EncodingType as EncodingType,
+                    sensors.Metadata as Metadata
+                FROM datastreams
+                INNER JOIN datastreams_sensors on (datastreams.id = datastreams_sensors.datastream_id)
+                INNER JOIN sensors on (sensors.id = datastreams_sensors.sensor_id)
+                WHERE datastreams.id = @datastreamId;";
+            var sensor = await Connection.QueryFirstAsync<Sensor>(sql, new { datastreamId }, _transaction);
+
+            return sensor;
+        }
+
+        public async Task UnlinkSensorAsync(long datastreamId, long sensorId)
+        {
+            var sql =
+                @"DELETE FROM datastreams_sensors
+                    WHERE datastream_id = @datastreamId AND sensor_id = @sensorId";
+            await Connection.ExecuteAsync(sql, new { datastreamId, sensorId }, _transaction);
+        }
+
         private static void CreateTable(IDbConnection connection)
         {
             var sql =
@@ -90,6 +130,19 @@ namespace SensorThings.Server.Repositories
                     ObservedArea VARCHAR(1000),
                     PhenomenonTime TEXT,
                     ResultTime TEXT);";
+            connection.Execute(sql);
+        }
+
+        private static void CreateDatastreamSensorsTable(IDbConnection connection)
+        {
+            var sql =
+                @"CREATE TABLE datastreams_sensors(
+                    datastream_id int NOT NULL,
+                    sensor_id int NOT NULL,
+                    FOREIGN KEY(datastream_id) REFERENCES datastreams(id) ON DELETE RESTRICT ON UPDATE CASCADE,
+                    FOREIGN KEY(sensor_id) REFERENCES sensors(id) ON DELETE RESTRICT ON UPDATE CASCADE,
+                    PRIMARY KEY(datastream_id, sensor_id)
+                );";
             connection.Execute(sql);
         }
     }
