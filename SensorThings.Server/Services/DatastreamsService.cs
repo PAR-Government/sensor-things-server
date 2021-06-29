@@ -88,6 +88,25 @@ namespace SensorThings.Server.Services
         {
             var uow = RepoFactory.CreateUnitOfWork();
             await uow.DatastreamsRepository.UnlinkSensorAsync(datastreamId, sensorId);
+
+        public async Task LinkObservedPropertyAsync(long datastreamId, long propertyId)
+        {
+            using var uow = RepoFactory.CreateUnitOfWork();
+            await uow.DatastreamsRepository.LinkObservedPropertyAsync(datastreamId, propertyId);
+            uow.Commit();
+        }
+        public async Task<ObservedProperty> GetLinkedObservedPropertyAsync(long datastreamId)
+        {
+            using var uow = RepoFactory.CreateUnitOfWork();
+            var property = await uow.DatastreamsRepository.GetLinkedObservedPropertyAsync(datastreamId);
+            return property;
+        }
+
+        public async Task UnlinkObservedPropertyAsync(long datastreamId, long propertyId)
+        {
+            using var uow = RepoFactory.CreateUnitOfWork();
+            await uow.DatastreamsRepository.UnlinkObservedPropertyAsync(datastreamId, propertyId);
+            uow.Commit();
         }
     }
 }

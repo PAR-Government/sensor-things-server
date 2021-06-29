@@ -29,6 +29,11 @@ namespace SensorThings.Server.Repositories
             {
                 CreateDatastreamSensorsTable(connection);
             }
+
+            if (!SqliteUtil.CheckForTable(connection, "datastreams_observedproperties"))
+            {
+                CreateDatastreamsObservedPropertiesTable(connection);
+            }
         }
 
         public async Task<long> AddAsync(Datastream item)
@@ -139,6 +144,61 @@ namespace SensorThings.Server.Repositories
             await Connection.ExecuteAsync(sql, new { datastreamId, sensorId }, _transaction);
         }
 
+        public async Task LinkObservedPropertyAsync(long datastreamId, long propertyId)
+        {
+            var sql =
+                @"INSERT INTO datastreams_observedproperties(datastream_id, observed_property_id)
+                    VALUES(@datastreamId, @propertyId)";
+            await Connection.ExecuteAsync(sql, new { datastreamId, propertyId }, _transaction);
+        }
+
+        public async Task<ObservedProperty> GetLinkedObservedPropertyAsync(long datastreamId)
+        {
+            // Datastreams have a single ObservedProperty but an ObservedProperty may be associated with multiple datastreams
+            var sql =
+                @"SELECT
+                    observed_properties.id as ID,
+                    observed_properties.Name as Name,
+                    observed_properties.Definition as Definition,
+                    observed_properties.Description as Description
+                FROM datastreams
+                INNER JOIN datastreams_observedproperties on (datastreams.id = datastreams_observedproperties.datastream_id)
+                INNER JOIN observed_properties on (observed_properties.id = datastreams_observedproperties.observed_property_id)
+                WHERE datastreams.id = @datastreamId;";
+            var property = await Connection.QueryFirstAsync<ObservedProperty>(sql, new { datastreamId }, _transaction);
+
+            return property;
+        }
+
+        public async Task<IEnumerable<Datastream>> GetLinkedDatastreamsForObservedPropertyAsync(long propertyId)
+        {
+            var sql =
+                @"SELECT
+                    datastreams.id as ID,
+                    datastreams.Name as Name,
+                    datastreams.Description as Description,
+                    datastreams.ObservationType as ObservationType,
+                    datastreams.UnitOfMeasurement as UnitOfMeasurement,
+                    datastreams.ObservedArea as ObservedArea,
+                    datastreams.PhenomenonTime as PhenomenonTime,
+                    datastreams.ResultTime as ResultTime
+                FROM observed_properties
+                INNER JOIN datastream_observedproperties on (observed_properties.id = datastreams_sensors.observed_property_id)
+                INNER JOIN datastream_observedproperties on (datastreams.id = datastreams_observedproperties.datastream_id)
+                WHERE observed_properties.id = @propertyId;";
+            var datastreams = await Connection.QueryAsync<Datastream>(sql, new { propertyId }, _transaction);
+
+            return datastreams;
+        }
+
+        public async Task UnlinkObservedPropertyAsync(long datastreamId, long propertyId)
+        {
+            var sql =
+                @"DELETE FROM datastreams_observedproperties
+                    WHERE datastream_id = @datastreamId AND observed_property_id = @propertyId";
+            await Connection.ExecuteAsync(sql, new { datastreamId, propertyId }, _transaction);
+        }
+
         private static void CreateTable(IDbConnection connection)
         {
             var sql =
@@ -165,6 +225,18 @@ namespace SensorThings.Server.Repositories
                     PRIMARY KEY(datastream_id, sensor_id)
                 );";
             connection.Execute(sql);
+        }
+
+        private static void CreateDatastreamsObservedPropertiesTable(IDbConnection connection)
+        {
+            var sql =
+               @"CREATE TABLE datastreams_observedproperties(
+                    datastream_id int NOT NULL,
+                    observed_property_id int NOT NULL,
+                    FOREIGN KEY(datastream_id) REFERENCES datastreams(id) ON DELETE RESTRICT ON UPDATE CASCADE,
+                    FOREIGN KEY(observed_property_id) REFERENCES observed_properties(id) ON DELETE RESTRICT ON UPDATE CASCADE,
+                    PRIMARY KEY(datastream_id, observed_property_id)
+                );";
         }
     }
 }
