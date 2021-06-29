@@ -262,6 +262,8 @@ namespace SensorThings.Server.Repositories
                     FOREIGN KEY(observed_property_id) REFERENCES observed_properties(id) ON DELETE RESTRICT ON UPDATE CASCADE,
                     PRIMARY KEY(datastream_id, observed_property_id)
                 );";
+            connection.Execute(sql);
+        }
 
         public static void CreateDatastreamsObservationsTable(IDbConnection connection)
         {
