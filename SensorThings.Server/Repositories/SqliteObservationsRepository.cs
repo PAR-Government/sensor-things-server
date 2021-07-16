@@ -145,7 +145,8 @@ namespace SensorThings.Server.Repositories
                     ResultTime TEXT,
                     Result TEXT,
                     ValidTime TEXT,
-                    Parameters TEXT);";
+                    Parameters TEXT
+                );";
             connection.Execute(sql);
         }
 
@@ -157,7 +158,8 @@ namespace SensorThings.Server.Repositories
                     feature_id int NOT NULL,
                     FOREIGN KEY(observation_id) REFERENCES observations(id) ON DELETE RESTRICT ON UPDATE CASCADE,
                     FOREIGN KEY(feature_id) REFERENCES featuresOfInterest(id) ON DELETE RESTRICT ON UPDATE CASCADE,
-                    PRIMARY KEY(observation_id, feature_id)";
+                    PRIMARY KEY(observation_id, feature_id)
+                );";
             connection.Execute(sql);
         }
     }

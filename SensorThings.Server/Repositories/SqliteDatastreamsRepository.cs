@@ -309,7 +309,8 @@ namespace SensorThings.Server.Repositories
                     observation_id int NOT NULL,
                     FOREIGN KEY(datastream_id) REFERENCES datastreams(id) ON DELETE RESTRICT ON UPDATE CASCADE,
                     FOREIGN KEY(observation_id) REFERENCES observations(id) ON DELETE RESTRICT ON UPDATE  CASCADE,
-                    PRIMARY KEY(datastream_id, observation_id)";
+                    PRIMARY KEY(datastream_id, observation_id)
+                );";
             connection.Execute(sql);
         }
     }
