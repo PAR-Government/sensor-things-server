@@ -1,9 +1,12 @@
 ﻿using System;
 using System.Linq;
 using System.Net;
+using System.Threading;
 using System.Threading.Tasks;
 using EmbedIO;
 using EmbedIO.Routing;
+using MQTTnet;
+using MQTTnet.Client;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
 using SensorThings.Entities;
@@ -14,21 +17,46 @@ namespace SensorThings.Server.Controllers
 {
     public class ObservationsV1Controller : BaseController
     {
-        public ObservationsV1Controller(IRepositoryFactory repoFactory) : base(repoFactory) { }
+        private readonly IMqttClient _mqttClient;
+
+        public ObservationsV1Controller(IRepositoryFactory repoFactory, IMqttClient mqttClient) : base(repoFactory) 
+        {
+            _mqttClient = mqttClient;
+        }
 
         [Route(HttpVerbs.Post, "/Observations")]
         public async Task<string> CreateObservationAsync()
         {
             var data = await HttpContext.GetRequestBodyAsStringAsync();
+            var document = JObject.Parse(data);
             var observation = JsonConvert.DeserializeObject<Observation>(data);
+            long dsId;
+            // Extract the datastream reference
+            try 
+            {
+                var dsDoc = document.GetValue("Datastream");
+                dsId = dsDoc.Value<int>("@iot.id");
+            }
+            catch (Exception)
+            {
+                Response.StatusCode = (int)HttpStatusCode.BadRequest;
+
+                return "{\"error\": \"Missing Datastream link\"}";
+            }
 
             var service = new ObservationsService(RepoFactory);
-            observation = await service.AddObservation(observation);
+            observation = await service.AddObservation(observation, dsId);
 
             observation.BaseUrl = GetBaseUrl();
 
             Response.StatusCode = (int)HttpStatusCode.Created;
 
+            var json = JsonConvert.SerializeObject(observation);
+
+            if (_mqttClient != null)
+            {
+                await PublishObservation(dsId, json);
+            }
             return JsonConvert.SerializeObject(observation);
         }
 
@@ -74,6 +102,15 @@ namespace SensorThings.Server.Controllers
         {
             var service = new ObservationsService(RepoFactory);
             await service.RemoveObservation(id);
+        }
+
+        private async Task PublishObservation(long datastreamId, string observation)
+        {
+            var message = new MqttApplicationMessageBuilder()
+                .WithTopic($"Datastreams({datastreamId})/Observations")
+                .WithPayload(observation)
+                .Build();
+            await _mqttClient.PublishAsync(message, CancellationToken.None);
         }
     }
 }
