@@ -86,7 +86,8 @@ namespace SensorThings.Server.Repositories
                     Name TEXT NOT NULL,
                     Description TEXT,
                     EncodingType TEXT,
-                    Metadata TEXT);";
+                    Metadata TEXT
+                );";
 
             connection.Execute(sql);
         }

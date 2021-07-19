@@ -194,7 +194,8 @@ namespace SensorThings.Server.Repositories
                 @"Create Table things (
                     id INTEGER PRIMARY KEY AUTOINCREMENT,
                     Name TEXT NOT NULL,
-                    Description TEXT NULL);";
+                    Description TEXT NULL
+                );";
             connection.Execute(sql);
         }
 

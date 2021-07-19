@@ -84,7 +84,8 @@ namespace SensorThings.Server.Repositories
                     id INTEGER PRIMARY KEY AUTOINCREMENT,
                     Name TEXT NOT NULL,
                     Definition TEXT,
-                    Description TEXT);";
+                    Description TEXT
+                );";
             connection.Execute(sql);
         }
     }

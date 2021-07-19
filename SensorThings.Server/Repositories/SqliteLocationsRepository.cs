@@ -76,7 +76,8 @@ namespace SensorThings.Server.Repositories
                     Name VARCHAR(100) NOT NULL,
                     Description VARCHAR(1000) NULL,
                     EncodingType VARCHAR(100) NULL,
-                    Location VARCHAR(1000) NULL);";
+                    Location VARCHAR(1000) NULL
+                );";
             connection.Execute(sql);
         }
     }
