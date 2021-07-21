@@ -16,11 +16,15 @@ namespace SensorThings.Server.Test
         [Fact]
         public async Task Test_AddObservation()
         {
+            var resultObject = new JObject
+            {
+                { "value", 42 }
+            };
             var obsId = 42;
             Observation observation = new Observation 
             { 
                 ID = obsId, 
-                Result = JToken.FromObject(42) 
+                Result = resultObject
             };
 
             Mock<IDatastreamsRepository> dsMockRepo = new Mock<IDatastreamsRepository>();
@@ -40,8 +44,12 @@ namespace SensorThings.Server.Test
         [Fact]
         public async Task Test_GetObservationById()
         {
+            var resultObject = new JObject
+            {
+                { "value", 42 }
+            };
             int id = 1;
-            Observation observation = new Observation { Result = JToken.FromObject(42) };
+            Observation observation = new Observation { Result = resultObject };
             Mock<IObservationsRepository> obsRepoMock = new Mock<IObservationsRepository>();
             obsRepoMock.Setup(m => m.GetByIdAsync(id)).ReturnsAsync(observation);
             var repoFactory = new TestRepoFactory { ObservationsRepository = obsRepoMock.Object };
@@ -73,9 +81,13 @@ namespace SensorThings.Server.Test
         [Fact]
         public async Task Test_Update_NonEmptyFields()
         {
+            var resultObject = new JObject
+            {
+                { "value", 42 }
+            };
             int id = 42;
-            var updates = JObject.Parse("{\"Result\": 24}");
-            Observation observation1 = new Observation { ID = 1, Result = JToken.FromObject(42) };
+            var updates = JObject.Parse("{\"Result\": {\"value\": 24}}");
+            Observation observation1 = new Observation { ID = 1, Result = resultObject };
             Mock<IObservationsRepository> obsRepoMock = new Mock<IObservationsRepository>();
             obsRepoMock.Setup(m => m.GetByIdAsync(id)).ReturnsAsync(observation1);
             var repoFactory = new TestRepoFactory { ObservationsRepository = obsRepoMock.Object };
@@ -84,7 +96,7 @@ namespace SensorThings.Server.Test
             var updatedObservation = await service.UpdateObservation(updates, id);
 
             obsRepoMock.Verify(m => m.UpdateAsync(updatedObservation));
-            Assert.Equal(24, updatedObservation.Result.ToObject<int>());
+            Assert.Equal(24, updatedObservation.Result.GetValue("value").ToObject<int>());
         }
 
         [Fact]
