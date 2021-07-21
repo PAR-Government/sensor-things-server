@@ -17,7 +17,7 @@ namespace SensorThings.Server.Controllers
         public ObservedPropertiesV1Controller(IRepositoryFactory repoFactory) : base(repoFactory) { }
 
         [Route(HttpVerbs.Post, "/ObservedProperties")]
-        public async Task<string> CreateObservedPropertyAsync()
+        public async Task<ObservedProperty> CreateObservedPropertyAsync()
         {
             var data = await HttpContext.GetRequestBodyAsStringAsync();
             var property = JsonConvert.DeserializeObject<ObservedProperty>(data);
@@ -29,21 +29,21 @@ namespace SensorThings.Server.Controllers
 
             Response.StatusCode = (int)HttpStatusCode.Created;
 
-            return JsonConvert.SerializeObject(property);
+            return property;
         }
 
         [Route(HttpVerbs.Get, "/ObservedProperties({id})")]
-        public async Task<string> GetObservedPropertyAsync(int id)
+        public async Task<ObservedProperty> GetObservedPropertyAsync(int id)
         {
             var service = new ObservedPropertiesService(RepoFactory);
             var property = await service.GetObservedPropertyById(id);
             property.BaseUrl = GetBaseUrl();
 
-            return JsonConvert.SerializeObject(property);
+            return property;
         }
 
         [Route(HttpVerbs.Get, "/ObservedProperties")]
-        public async Task<string> GetObservedPropertiesAsync()
+        public async Task<Listing<ObservedProperty>> GetObservedPropertiesAsync()
         {
             var baseUrl = GetBaseUrl();
             var service = new ObservedPropertiesService(RepoFactory);
@@ -56,7 +56,7 @@ namespace SensorThings.Server.Controllers
 
             var listing = new Listing<ObservedProperty>() { Items = properties.ToList() };
 
-            return JsonConvert.SerializeObject(listing);
+            return listing;
         }
 
         [Route(HttpVerbs.Patch, "/ObservedProperties({id})")]

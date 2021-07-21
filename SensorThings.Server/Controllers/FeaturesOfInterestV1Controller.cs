@@ -17,7 +17,7 @@ namespace SensorThings.Server.Controllers
         public FeaturesOfInterestV1Controller(IRepositoryFactory repoFactory) : base(repoFactory) { }
 
         [Route(HttpVerbs.Post, "/FeaturesOfInterest")]
-        public async Task<string> CreateFeatureOfInterestAsync()
+        public async Task<FeatureOfInterest> CreateFeatureOfInterestAsync()
         {
             var data = await HttpContext.GetRequestBodyAsStringAsync();
             var featureOfInterest = JsonConvert.DeserializeObject<FeatureOfInterest>(data);
@@ -29,17 +29,17 @@ namespace SensorThings.Server.Controllers
 
             Response.StatusCode = (int)HttpStatusCode.Created;
 
-            return JsonConvert.SerializeObject(featureOfInterest);
+            return featureOfInterest;
         }
 
         [Route(HttpVerbs.Get, "/FeaturesOfInterest({id})")]
-        public async Task<string> GetFeatureOfInterestAsync(int id)
+        public async Task<FeatureOfInterest> GetFeatureOfInterestAsync(int id)
         {
             var service = new FeaturesOfInterestService(RepoFactory);
             var feature = await service.GetFeatureById(id);
             feature.BaseUrl = GetBaseUrl();
 
-            return JsonConvert.SerializeObject(feature);
+            return feature;
         }
 
         [Route(HttpVerbs.Patch, "/FeaturesOfInterest({id})")]
@@ -53,7 +53,7 @@ namespace SensorThings.Server.Controllers
         }
 
         [Route(HttpVerbs.Get, "/FeaturesOfInterest")]
-        public async Task<string> GetFeaturesOfInterestAsync()
+        public async Task<Listing<FeatureOfInterest>> GetFeaturesOfInterestAsync()
         {
             var baseUrl = GetBaseUrl();
             var service = new FeaturesOfInterestService(RepoFactory);
@@ -66,7 +66,7 @@ namespace SensorThings.Server.Controllers
 
             var listing = new Listing<FeatureOfInterest>() { Items = features.ToList() };
 
-            return JsonConvert.SerializeObject(listing);
+            return listing;
         }
 
         [Route(HttpVerbs.Delete, "/FeaturesOfInterest({id})")]

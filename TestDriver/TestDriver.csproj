@@ -6,6 +6,7 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <PackageReference Include="MQTTnet" Version="3.0.16" />
     <PackageReference Include="Newtonsoft.Json" Version="13.0.1" />
     <PackageReference Include="EmbedIO" Version="3.4.3" />
     <PackageReference Include="SensorThings.Entities" Version="1.0.0-alpha2" />

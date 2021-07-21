@@ -17,10 +17,12 @@ namespace SensorThings.Server.Services
             RepoFactory = repoFactory;
         }
 
-        public async Task<Observation> AddObservation(Observation observation)
+        public async Task<Observation> AddObservation(Observation observation, long datastreamId)
         {
             using var uow = RepoFactory.CreateUnitOfWork();
             var id = await uow.ObservationsRepository.AddAsync(observation);
+            await uow.DatastreamsRepository.LinkObservationAsync(datastreamId, id);
+
             uow.Commit();
 
             observation.ID = id;

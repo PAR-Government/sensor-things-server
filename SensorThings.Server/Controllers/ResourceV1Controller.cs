@@ -28,13 +28,12 @@ namespace SensorThings.Server.Controllers
         }
 
         [Route(HttpVerbs.Get, "/")]
-        public string GetResourceIndex()
+        public ResourceEntries GetResourceIndex()
         {
-            var json = JsonConvert.SerializeObject(BuildEntries(Request.Url.AbsoluteUri));
-            return json;
+            return BuildEntries(Request.Url.AbsoluteUri);
         }
 
-        private class ResourceEntry
+        public class ResourceEntry
         {
             [JsonProperty("name")]
             public string Name { get; set; }
@@ -43,7 +42,7 @@ namespace SensorThings.Server.Controllers
             public string Url { get; set; }
         }
 
-        private class ResourceEntries
+        public class ResourceEntries
         {
             [JsonProperty("value")]
             public IEnumerable<ResourceEntry> Entries { get; set; }
