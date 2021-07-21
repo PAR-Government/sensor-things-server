@@ -16,12 +16,23 @@ namespace SensorThings.Server.Test
         [Fact]
         public async Task Test_AddObservation()
         {
-            Observation observation = new Observation { Result = JToken.FromObject(42) };
+            var obsId = 42;
+            Observation observation = new Observation 
+            { 
+                ID = obsId, 
+                Result = JToken.FromObject(42) 
+            };
+
+            Mock<IDatastreamsRepository> dsMockRepo = new Mock<IDatastreamsRepository>();
             Mock<IObservationsRepository> obsRepoMock = new Mock<IObservationsRepository>();
-            var repoFactory = new TestRepoFactory { ObservationsRepository = obsRepoMock.Object };
+            var repoFactory = new TestRepoFactory 
+            {
+                ObservationsRepository = obsRepoMock.Object,
+                DatastreamsRepository = dsMockRepo.Object
+            };
             var service = new ObservationsService(repoFactory);
 
-            var createdObs = await service.AddObservation(observation);
+            var createdObs = await service.AddObservation(observation, 1);
 
             obsRepoMock.Verify(m => m.AddAsync(createdObs));
         }
