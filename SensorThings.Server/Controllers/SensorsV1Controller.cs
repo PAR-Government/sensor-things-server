@@ -17,7 +17,7 @@ namespace SensorThings.Server.Controllers
         public SensorsV1Controller(IRepositoryFactory repoFactory) : base(repoFactory) { }
 
         [Route(HttpVerbs.Post, "/Sensors")]
-        public async Task<string> CreateSensorAsync()
+        public async Task<Sensor> CreateSensorAsync()
         {
             var data = await HttpContext.GetRequestBodyAsStringAsync();
             var sensor = JsonConvert.DeserializeObject<Sensor>(data);
@@ -29,17 +29,17 @@ namespace SensorThings.Server.Controllers
 
             Response.StatusCode = (int)HttpStatusCode.Created;
 
-            return JsonConvert.SerializeObject(sensor);
+            return sensor;
         }
 
         [Route(HttpVerbs.Get, "/Sensors({id})")]
-        public async Task<string> GetSensorAsync(int id)
+        public async Task<Sensor> GetSensorAsync(int id)
         {
             var service = new SensorsService(RepoFactory);
             var sensor = await service.GetSensorById(id);
             sensor.BaseUrl = GetBaseUrl();
 
-            return JsonConvert.SerializeObject(sensor);
+            return sensor;
         }
 
         [Route(HttpVerbs.Patch, "/Sensors({id})")]
@@ -53,7 +53,7 @@ namespace SensorThings.Server.Controllers
         }
 
         [Route(HttpVerbs.Get, "/Sensors")]
-        public async Task<string> GetSensorsAsync()
+        public async Task<Listing<Sensor>> GetSensorsAsync()
         {
             var baseUrl = GetBaseUrl();
             var service = new SensorsService(RepoFactory);
@@ -66,7 +66,7 @@ namespace SensorThings.Server.Controllers
 
             var listing = new Listing<Sensor>() { Items = sensors.ToList() };
 
-            return JsonConvert.SerializeObject(listing);
+            return listing;
         }
 
         [Route(HttpVerbs.Delete, "/Sensors({id})")]

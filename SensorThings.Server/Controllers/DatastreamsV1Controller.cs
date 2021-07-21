@@ -17,7 +17,7 @@ namespace SensorThings.Server.Controllers
         public DatastreamsV1Controller(IRepositoryFactory repoFactory) : base(repoFactory) { }
 
         [Route(HttpVerbs.Post, "/Datastreams")]
-        public async Task<string> CreateDatastreamAsync()
+        public async Task<Datastream> CreateDatastreamAsync()
         {
             var data = await HttpContext.GetRequestBodyAsStringAsync();
             var datastream = JsonConvert.DeserializeObject<Datastream>(data);
@@ -28,11 +28,11 @@ namespace SensorThings.Server.Controllers
 
             Response.StatusCode = (int)HttpStatusCode.Created;
 
-            return JsonConvert.SerializeObject(datastream);
+            return datastream;
         }
 
         [Route(HttpVerbs.Get, "/Datastreams")]
-        public async Task<string> GetDatastreamsAsync()
+        public async Task<Listing<Datastream>> GetDatastreamsAsync()
         {
             var service = new DatastreamsService(RepoFactory);
             var datastreams = await service.GetDatastreams();
@@ -44,18 +44,18 @@ namespace SensorThings.Server.Controllers
             }
 
             var listing = new Listing<Datastream> { Items = datastreams.ToList() };
-            return JsonConvert.SerializeObject(listing);
+            return listing;
         }
 
         [Route(HttpVerbs.Get, "/Datastreams({id})")]
-        public async Task<String> GetDatastreamAsync(int id)
+        public async Task<Datastream> GetDatastreamAsync(int id)
         {
             var service = new DatastreamsService(RepoFactory);
             var datastream = await service.GetDatastreamById(id);
 
             datastream.BaseUrl = GetBaseUrl();
 
-            return JsonConvert.SerializeObject(datastream);
+            return datastream;
         }
 
         [Route(HttpVerbs.Patch, "/Datastreams({id})")]

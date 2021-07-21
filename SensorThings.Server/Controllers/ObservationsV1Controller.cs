@@ -25,7 +25,7 @@ namespace SensorThings.Server.Controllers
         }
 
         [Route(HttpVerbs.Post, "/Observations")]
-        public async Task<string> CreateObservationAsync()
+        public async Task<Observation> CreateObservationAsync()
         {
             var data = await HttpContext.GetRequestBodyAsStringAsync();
             var document = JObject.Parse(data);
@@ -39,9 +39,14 @@ namespace SensorThings.Server.Controllers
             }
             catch (Exception)
             {
-                Response.StatusCode = (int)HttpStatusCode.BadRequest;
+                var errorDoc = new JObject
+                {
+                    { "error", "Missing datastream link" }
+                };
 
-                return "{\"error\": \"Missing Datastream link\"}";
+                Response.ContentType = MimeType.Json;
+
+                throw HttpException.BadRequest("Missing Datastream link", errorDoc);
             }
 
             var service = new ObservationsService(RepoFactory);
@@ -57,21 +62,21 @@ namespace SensorThings.Server.Controllers
             {
                 await PublishObservation(dsId, json);
             }
-            return JsonConvert.SerializeObject(observation);
+            return observation;
         }
 
         [Route(HttpVerbs.Get, "/Observations({id})")]
-        public async Task<string> GetObservationAsync(int id)
+        public async Task<Observation> GetObservationAsync(int id)
         {
             var service = new ObservationsService(RepoFactory);
             var observation = await service.GetObservationById(id);
             observation.BaseUrl = GetBaseUrl();
 
-            return JsonConvert.SerializeObject(observation);
+            return observation;
         }
 
         [Route(HttpVerbs.Get, "/Observations")]
-        public async Task<string> GetObservationsAsync()
+        public async Task<Listing<Observation>> GetObservationsAsync()
         {
             var baseUrl = GetBaseUrl();
             var service = new ObservationsService(RepoFactory);
@@ -84,7 +89,7 @@ namespace SensorThings.Server.Controllers
 
             var listing = new Listing<Observation>() { Items = observations.ToList() };
 
-            return JsonConvert.SerializeObject(listing);
+            return listing;
         }
 
         [Route(HttpVerbs.Patch, "/Observations({id})")]

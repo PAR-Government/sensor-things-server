@@ -16,17 +16,17 @@ namespace SensorThings.Server.Controllers
         public HistoricalLocationsV1Controller(IRepositoryFactory repoFactory) : base(repoFactory) { }
 
         [Route(HttpVerbs.Get, "/HistoricalLocations({id})")]
-        public async Task<string> GetHistoricalLocationAsync(int id)
+        public async Task<HistoricalLocation> GetHistoricalLocationAsync(int id)
         {
             var service = new HistoricalLocationsService(RepoFactory);
             var location = await service.GetHistoricalLocationById(id);
             location.BaseUrl = GetBaseUrl();
 
-            return JsonConvert.SerializeObject(location);
+            return location;
         }
 
         [Route(HttpVerbs.Get, "/HistoricalLocations")]
-        public async Task<string> GetHistoricalLocationsAsync()
+        public async Task<Listing<HistoricalLocation>> GetHistoricalLocationsAsync()
         {
             var baseUrl = GetBaseUrl();
             var service = new HistoricalLocationsService(RepoFactory);
@@ -39,7 +39,7 @@ namespace SensorThings.Server.Controllers
 
             var listing = new Listing<HistoricalLocation>() { Items = locations.ToList() };
 
-            return JsonConvert.SerializeObject(listing);
+            return listing;
         }
 
         [Route(HttpVerbs.Patch, "/HistoricalLocations({id})")]

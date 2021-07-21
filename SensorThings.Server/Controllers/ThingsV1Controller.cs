@@ -18,7 +18,7 @@ namespace SensorThings.Server.Controllers
         public ThingsV1Controller(IRepositoryFactory repoFactory) : base(repoFactory) {}
 
         [Route(HttpVerbs.Post, "/Things")]
-        public async Task<string> CreateThingAsync()
+        public async Task<Thing> CreateThingAsync()
         {
             var data = await HttpContext.GetRequestBodyAsStringAsync();
             var thing = JsonConvert.DeserializeObject<Thing>(data);
@@ -29,11 +29,12 @@ namespace SensorThings.Server.Controllers
             thing.BaseUrl = GetBaseUrl();
 
             Response.StatusCode = (int) HttpStatusCode.Created;
-            return JsonConvert.SerializeObject(thing);
+            //return JsonConvert.SerializeObject(thing);
+            return thing;
         }
 
         [Route(HttpVerbs.Get, "/Things")]
-        public async Task<string> GetThingsAsync()
+        public async Task<Listing<Thing>> GetThingsAsync()
         {
             var baseUrl = GetBaseUrl();
             var service = new ThingsService(RepoFactory);
@@ -46,11 +47,11 @@ namespace SensorThings.Server.Controllers
 
             var listing = new Listing<Thing>() { Items = things.ToList() };
 
-            return JsonConvert.SerializeObject(listing);
+            return listing;
         }
 
         [Route(HttpVerbs.Get, "/Things({id})")]
-        public async Task<string> GetThingAsync(int id)
+        public async Task<Thing> GetThingAsync(int id)
         {
             var service = new ThingsService(RepoFactory);
             var thing = await service.GetThingById(id);
@@ -63,11 +64,11 @@ namespace SensorThings.Server.Controllers
 
             thing.BaseUrl = GetBaseUrl();
 
-            return ThingsSerializer.Serialize(thing, null);
+            return thing;
         }
 
         [Route(HttpVerbs.Get, "/Things({id})/Locations")]
-        public async Task<string> GetLocationsForThingAsync(int id)
+        public async Task<Listing<Location>> GetLocationsForThingAsync(int id)
         {
             var baseUrl = GetBaseUrl();
             var service = new ThingsService(RepoFactory);
@@ -80,7 +81,7 @@ namespace SensorThings.Server.Controllers
 
             var listing = new Listing<Location> { Items = locations.ToList() };
 
-            return JsonConvert.SerializeObject(listing);
+            return listing;
         }
 
         [Route(HttpVerbs.Patch, "/Things({id})")]
@@ -101,37 +102,37 @@ namespace SensorThings.Server.Controllers
         }
 
         [Route(HttpVerbs.Get, "/Things({id})/Datastreams")]
-        public async Task<string> GetDatastreamsAsync(int id)
+        public async Task<Listing<Datastream>> GetDatastreamsAsync(int id)
         {
             var service = new ThingsService(RepoFactory);
             var datastreams = await service.GetAssociatedDatastreamsAsync(id);
             var listing = new Listing<Datastream> { Items = datastreams.ToList() };
 
-            return JsonConvert.SerializeObject(listing);
+            return listing;
         }
 
         [Route(HttpVerbs.Get, "/Things({id})/Locations")]
-        public async Task<string> GetLocationsAsync(int id)
+        public async Task<Listing<Location>> GetLocationsAsync(int id)
         {
             var service = new ThingsService(RepoFactory);
             var locations = await service.GetAssociatedLocations(id);
             var listing = new Listing<Location> { Items = locations.ToList() };
 
-            return JsonConvert.SerializeObject(listing);
+            return listing;
         }
 
         [Route(HttpVerbs.Get, "/Things({id})/HistoricalLocations")]
-        public async Task<string> GetHistoricalLocationsAsync(int id)
+        public async Task<Listing<HistoricalLocation>> GetHistoricalLocationsAsync(int id)
         {
             var service = new ThingsService(RepoFactory);
             var locations = await service.GetAssociatedHistoricalLocations(id);
             var listing = new Listing<HistoricalLocation> { Items = locations.ToList() };
 
-            return JsonConvert.SerializeObject(listing);
+            return listing;
         }
 
         [Route(HttpVerbs.Get, "/Things({id})/{propertyName}")]
-        public async Task<string> GetThingPropertyAsync(int id, string propertyName)
+        public async Task<JObject> GetThingPropertyAsync(int id, string propertyName)
         {
             var service = new ThingsService(RepoFactory);
             var thing = await service.GetThingById(id);
@@ -149,11 +150,11 @@ namespace SensorThings.Server.Controllers
             var resultObject = new JObject();
             resultObject.Add(propertyName, propertyValue);
 
-            return JsonConvert.SerializeObject(resultObject);
+            return resultObject;
         }
 
         [Route(HttpVerbs.Get, "/Things({id})/{propertyName}/$value")]
-        public async Task<string> GetThingPropertyValueAsync(int id, string propertyName)
+        public async Task<object> GetThingPropertyValueAsync(int id, string propertyName)
         {
             var service = new ThingsService(RepoFactory);
             var thing = await service.GetThingById(id);
@@ -168,7 +169,7 @@ namespace SensorThings.Server.Controllers
                 return null;
             }
 
-            return propertyValue.ToString();
+            return propertyValue;
         }
     }
 }
