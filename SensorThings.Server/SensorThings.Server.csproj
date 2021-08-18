@@ -3,9 +3,9 @@
   <PropertyGroup>
     <TargetFramework>netstandard2.1</TargetFramework>
     <Company>PAR Government Systems Corporation</Company>
-    <Version>1.0.0-alpha10</Version>
+    <Version>1.0.0.1-alpha</Version>
     <GeneratePackageOnBuild>true</GeneratePackageOnBuild>
-    <RepositoryUrl>C:\Users\hasselerg\Projects\northstar\local_nuget_repo</RepositoryUrl>
+    <RepositoryUrl></RepositoryUrl>
     <RepositoryType>Local</RepositoryType>
   </PropertyGroup>
 
