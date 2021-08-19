@@ -5,8 +5,16 @@
     <Company>PAR Government Systems Corporation</Company>
     <Version>1.0.0.1-alpha</Version>
     <GeneratePackageOnBuild>true</GeneratePackageOnBuild>
-    <RepositoryUrl></RepositoryUrl>
-    <RepositoryType>Local</RepositoryType>
+    <RepositoryUrl>https://github.com/PAR-Government/sensor-things-server</RepositoryUrl>
+    <RepositoryType></RepositoryType>
+    <Nullable>annotations</Nullable>
+    <PackageId>PAR.SensorThings.Server</PackageId>
+    <Authors>hasselg</Authors>
+    <PackageProjectUrl>https://github.com/PAR-Government/sensor-things-server</PackageProjectUrl>
+    <Description>This project is an in progress .NET implementation of the OGC SensorThings 1.0 spec server.
+
+One of the main goals of this implementation has been to enable the embedding of a SensorThings server into a Xamarin.Android application.</Description>
+    <PackageLicenseExpression>LGPL-2.1-only</PackageLicenseExpression>
   </PropertyGroup>
 
   <ItemGroup>
