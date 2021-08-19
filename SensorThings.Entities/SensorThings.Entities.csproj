@@ -4,8 +4,14 @@
     <TargetFramework>netstandard2.1</TargetFramework>
     <Version>1.0.0.1-alpha</Version>
     <Company>PAR Government Systems Corporation</Company>
-    <Authors>PAR Government Systems Corporation</Authors>
+    <Authors>hasselg</Authors>
     <GeneratePackageOnBuild>true</GeneratePackageOnBuild>
+    <PackageId>PAR.SensorThings.Entities</PackageId>
+    <Product>PAR.SensorThings.Entities</Product>
+    <Description>Entities component for the PAR.SensorThings.Server package.</Description>
+    <PackageLicenseExpression>LGPL-2.1-only</PackageLicenseExpression>
+    <PackageProjectUrl>https://github.com/PAR-Government/sensor-things-server</PackageProjectUrl>
+    <RepositoryUrl>https://github.com/PAR-Government/sensor-things-server</RepositoryUrl>
   </PropertyGroup>
 
   <ItemGroup>
