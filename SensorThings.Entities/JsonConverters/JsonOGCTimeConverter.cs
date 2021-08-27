@@ -8,7 +8,7 @@ namespace SensorThings.Entities.JsonConverters
 {
     public class JsonOGCTimeConverter : JsonConverter<OGCTime>
     {
-        private readonly string dateFormat = "yyyy-MM-ddTHH:mm:ssZ";
+        private readonly string dateFormat = "yyyy-MM-ddTHH:mm:ss.fffZ";
 
         public override OGCTime ReadJson(JsonReader reader, Type objectType, OGCTime existingValue, bool hasExistingValue, JsonSerializer serializer)
         {
