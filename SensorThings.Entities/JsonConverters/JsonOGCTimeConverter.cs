@@ -1,6 +1,7 @@
 ﻿using Newtonsoft.Json;
 using System;
 using System.Collections.Generic;
+using System.Globalization;
 using System.Text;
 
 namespace SensorThings.Entities.JsonConverters
@@ -11,6 +12,12 @@ namespace SensorThings.Entities.JsonConverters
 
         public override OGCTime ReadJson(JsonReader reader, Type objectType, OGCTime existingValue, bool hasExistingValue, JsonSerializer serializer)
         {
+            var value = reader.Value;
+            if (value is DateTime time) 
+            {
+                return new OGCTime(time, DateTime.MinValue);
+            }
+
             string s = (string)reader.Value;
 
             if (s == null || string.IsNullOrWhiteSpace(s))
@@ -21,10 +28,8 @@ namespace SensorThings.Entities.JsonConverters
             // Split into date halves
             var dates = s.Split('/');
 
-            var start = DateTime.ParseExact(dates[0], dateFormat,
-                System.Globalization.CultureInfo.InvariantCulture);
-            var stop = DateTime.ParseExact(dates[1], dateFormat,
-                System.Globalization.CultureInfo.InvariantCulture);
+            var start = DateTime.Parse(dates[0], CultureInfo.InvariantCulture, DateTimeStyles.RoundtripKind);
+            var stop = DateTime.Parse(dates[1], CultureInfo.InvariantCulture, DateTimeStyles.RoundtripKind);
 
             return new OGCTime(start, stop);
         }
