@@ -1,6 +1,4 @@
-﻿using System;
-using GeoJSON.Net.Geometry;
-using Newtonsoft.Json;
+﻿using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
 
 namespace SensorThings.Entities
