@@ -2,9 +2,9 @@
 
   <PropertyGroup>
     <TargetFramework>netstandard2.1</TargetFramework>
-    <Version>1.0.0.1-alpha</Version>
+    <Version>1.0.0.2-alpha</Version>
     <Company>PAR Government Systems Corporation</Company>
-    <Authors>hasselg</Authors>
+    <Authors>Gregory Hasseler</Authors>
     <GeneratePackageOnBuild>true</GeneratePackageOnBuild>
     <PackageId>PAR.SensorThings.Entities</PackageId>
     <Product>PAR.SensorThings.Entities</Product>
@@ -12,6 +12,9 @@
     <PackageLicenseExpression>LGPL-2.1-only</PackageLicenseExpression>
     <PackageProjectUrl>https://github.com/PAR-Government/sensor-things-server</PackageProjectUrl>
     <RepositoryUrl>https://github.com/PAR-Government/sensor-things-server</RepositoryUrl>
+    <PackageReleaseNotes>Updates to time parsing
+Allow Observation entity to directly reference a Datastream entity
+Fixed improper Datastream link attribute on Thing entity</PackageReleaseNotes>
   </PropertyGroup>
 
   <ItemGroup>
