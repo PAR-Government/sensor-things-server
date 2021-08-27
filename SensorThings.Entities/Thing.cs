@@ -25,7 +25,7 @@ namespace SensorThings.Entities
 
         public override string SelfLink { get => $"{BaseUrl}/Things({ID})"; }
 
-        [JsonProperty("Datastreams@iot.id")]
+        [JsonProperty("Datastreams@iot.navigationLink")]
         public string DatastreamsLink { get => $"{SelfLink}/Datastreams"; }
 
         [JsonProperty("HistoricalLocations@iot.navigationLink")]
