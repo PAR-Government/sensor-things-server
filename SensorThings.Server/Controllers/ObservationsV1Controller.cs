@@ -28,16 +28,10 @@ namespace SensorThings.Server.Controllers
         public async Task<Observation> CreateObservationAsync()
         {
             var data = await HttpContext.GetRequestBodyAsStringAsync();
-            var document = JObject.Parse(data);
             var observation = JsonConvert.DeserializeObject<Observation>(data);
-            long dsId;
-            // Extract the datastream reference
-            try 
-            {
-                var dsDoc = document.GetValue("Datastream");
-                dsId = dsDoc.Value<int>("@iot.id");
-            }
-            catch (Exception)
+            var ds = observation.Datastream;
+
+            if (ds == null)
             {
                 var errorDoc = new JObject
                 {
@@ -50,7 +44,7 @@ namespace SensorThings.Server.Controllers
             }
 
             var service = new ObservationsService(RepoFactory);
-            observation = await service.AddObservation(observation, dsId);
+            observation = await service.AddObservation(observation, ds.ID);
 
             observation.BaseUrl = GetBaseUrl();
 
@@ -60,7 +54,7 @@ namespace SensorThings.Server.Controllers
 
             if (_mqttClient != null)
             {
-                await PublishObservation(dsId, json);
+                await PublishObservation(ds.ID, json);
             }
             return observation;
         }

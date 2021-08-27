@@ -31,5 +31,8 @@ namespace SensorThings.Entities
 
         [JsonProperty("FeatureOfInterest@iot.navigationLink")]
         public string FeatureOfInterestLink { get => $"{SelfLink}/FeatureOfInterest"; }
+
+        [JsonProperty("Datastream")]
+        public Datastream Datastream { get; set; }
     }
 }
