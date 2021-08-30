@@ -13,7 +13,7 @@ namespace SensorThings.Entities
         public string Description { get; set; }
 
         [JsonProperty("observationType")]
-        public ObservationTypes ObservationType { get; set; }
+        public string ObservationType { get; set; }
 
         [JsonProperty("unitOfMeasurement")]
         public string UnitOfMeasurement { get; set; }
