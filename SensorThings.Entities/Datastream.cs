@@ -1,5 +1,4 @@
 ﻿using System;
-using GeoJSON.Net.Feature;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
 
