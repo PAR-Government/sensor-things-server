@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
 
@@ -22,5 +23,8 @@ namespace SensorThings.Entities
 
         [JsonProperty("Observations@iot.navigationLink")]
         public string ObservationsLink { get => $"{SelfLink}/Observations"; }
+
+        [JsonProperty("Observations")]
+        public IList<Observation> Observations { get; set; }
     }
 }
