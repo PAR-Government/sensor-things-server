@@ -1,6 +1,4 @@
-﻿using System;
-using EmbedIO;
-using EmbedIO.WebApi;
+﻿using EmbedIO.WebApi;
 using SensorThings.Server.Repositories;
 
 namespace SensorThings.Server.Controllers
