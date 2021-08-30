@@ -1,5 +1,4 @@
-﻿using System;
-using System.Linq;
+﻿using System.Linq;
 using System.Net;
 using System.Threading.Tasks;
 using EmbedIO;
@@ -19,13 +18,15 @@ namespace SensorThings.Server.Controllers
         [Route(HttpVerbs.Post, "/Sensors")]
         public async Task<Sensor> CreateSensorAsync()
         {
+            using var uow = RepoFactory.CreateUnitOfWork();
             var data = await HttpContext.GetRequestBodyAsStringAsync();
             var sensor = JsonConvert.DeserializeObject<Sensor>(data);
 
-            var service = new SensorsService(RepoFactory);
+            var service = new SensorsService(uow);
             sensor = await service.AddSensor(sensor);
-
             sensor.BaseUrl = GetBaseUrl();
+
+            uow.Commit();
 
             Response.StatusCode = (int)HttpStatusCode.Created;
 
@@ -35,7 +36,8 @@ namespace SensorThings.Server.Controllers
         [Route(HttpVerbs.Get, "/Sensors({id})")]
         public async Task<Sensor> GetSensorAsync(int id)
         {
-            var service = new SensorsService(RepoFactory);
+            using var uow = RepoFactory.CreateUnitOfWork();
+            var service = new SensorsService(uow);
             var sensor = await service.GetSensorById(id);
             sensor.BaseUrl = GetBaseUrl();
 
@@ -45,18 +47,21 @@ namespace SensorThings.Server.Controllers
         [Route(HttpVerbs.Patch, "/Sensors({id})")]
         public async Task UpdateSensorAsync(int id)
         {
+            using var uow = RepoFactory.CreateUnitOfWork();
             var data = await HttpContext.GetRequestBodyAsStringAsync();
             var updates = JObject.Parse(data);
 
-            var service = new SensorsService(RepoFactory);
+            var service = new SensorsService(uow);
             await service.UpdateSensor(updates, id);
+            uow.Commit();
         }
 
         [Route(HttpVerbs.Get, "/Sensors")]
         public async Task<Listing<Sensor>> GetSensorsAsync()
         {
+            using var uow = RepoFactory.CreateUnitOfWork();
             var baseUrl = GetBaseUrl();
-            var service = new SensorsService(RepoFactory);
+            var service = new SensorsService(uow);
             var sensors = await service.GetSensors();
 
             foreach (var sensor in sensors)
@@ -72,8 +77,10 @@ namespace SensorThings.Server.Controllers
         [Route(HttpVerbs.Delete, "/Sensors({id})")]
         public async Task RemoveSensorAsync(int id)
         {
-            var service = new SensorsService(RepoFactory);
+            using var uow = RepoFactory.CreateUnitOfWork();
+            var service = new SensorsService(uow);
             await service.RemoveSensor(id);
+            uow.Commit();
         }
     }
 }

@@ -1,27 +1,23 @@
 ﻿using Newtonsoft.Json.Linq;
 using SensorThings.Entities;
 using SensorThings.Server.Repositories;
-using System;
 using System.Collections.Generic;
-using System.Text;
 using System.Threading.Tasks;
 
 namespace SensorThings.Server.Services
 {
     public class LocationsService
     {
-        protected IRepositoryFactory RepoFactory { get; private set; }
+        protected IRepositoryUnitOfWork UOW { get; private set; }
 
-        public LocationsService(IRepositoryFactory repoFactory)
+        public LocationsService(IRepositoryUnitOfWork uow)
         {
-            RepoFactory = repoFactory;
+            UOW = uow;
         }
 
         public async Task<Location> AddLocation(Location location)
         {
-            using var uow = RepoFactory.CreateUnitOfWork();
-            var id = await uow.LocationsRepository.AddAsync(location);
-            uow.Commit();
+            var id = await UOW.LocationsRepository.AddAsync(location);
 
             location.ID = id;
 
@@ -30,14 +26,12 @@ namespace SensorThings.Server.Services
 
         public async Task<Location> GetLocationById(int id)
         {
-            using var uow = RepoFactory.CreateUnitOfWork();
-            return await uow.LocationsRepository.GetByIdAsync(id);
+            return await UOW.LocationsRepository.GetByIdAsync(id);
         }
 
         public async Task<IEnumerable<Location>> GetLocations()
         {
-            using var uow = RepoFactory.CreateUnitOfWork();
-            return await uow.LocationsRepository.GetAllAsync();
+            return await UOW.LocationsRepository.GetAllAsync();
         }
 
         public async Task<Location> UpdateLocation(JObject updates, int id)
@@ -52,18 +46,14 @@ namespace SensorThings.Server.Services
 
             location = locationJson.ToObject<Location>();
 
-            using var uow = RepoFactory.CreateUnitOfWork();
-            await uow.LocationsRepository.UpdateAsync(location);
-            uow.Commit();
+            await UOW.LocationsRepository.UpdateAsync(location);
 
             return location;
         }
 
         public async Task RemoveLocation(int id)
         {
-            using var uow = RepoFactory.CreateUnitOfWork();
-            await uow.LocationsRepository.Remove(id);
-            uow.Commit();
+            await UOW.LocationsRepository.Remove(id);
         }
     }
 }

@@ -19,12 +19,14 @@ namespace SensorThings.Server.Controllers
         [Route(HttpVerbs.Post, "/Datastreams")]
         public async Task<Datastream> CreateDatastreamAsync()
         {
+            using var uow = RepoFactory.CreateUnitOfWork();
             var data = await HttpContext.GetRequestBodyAsStringAsync();
             var datastream = JsonConvert.DeserializeObject<Datastream>(data);
 
-            var service = new DatastreamsService(RepoFactory);
+            var service = new DatastreamsService(uow);
             datastream = await service.AddDatastream(datastream);
             datastream.BaseUrl = GetBaseUrl();
+            uow.Commit();
 
             Response.StatusCode = (int)HttpStatusCode.Created;
 
@@ -34,7 +36,8 @@ namespace SensorThings.Server.Controllers
         [Route(HttpVerbs.Get, "/Datastreams")]
         public async Task<Listing<Datastream>> GetDatastreamsAsync()
         {
-            var service = new DatastreamsService(RepoFactory);
+            using var uow = RepoFactory.CreateUnitOfWork();
+            var service = new DatastreamsService(uow);
             var datastreams = await service.GetDatastreams();
             var baseUrl = GetBaseUrl();
 
@@ -50,7 +53,8 @@ namespace SensorThings.Server.Controllers
         [Route(HttpVerbs.Get, "/Datastreams({id})")]
         public async Task<Datastream> GetDatastreamAsync(int id)
         {
-            var service = new DatastreamsService(RepoFactory);
+            using var uow = RepoFactory.CreateUnitOfWork();
+            var service = new DatastreamsService(uow);
             var datastream = await service.GetDatastreamById(id);
 
             datastream.BaseUrl = GetBaseUrl();
@@ -61,18 +65,22 @@ namespace SensorThings.Server.Controllers
         [Route(HttpVerbs.Patch, "/Datastreams({id})")]
         public async Task UpdateDatastreamAsync(int id)
         {
+            using var uow = RepoFactory.CreateUnitOfWork();
             var data = await HttpContext.GetRequestBodyAsStringAsync();
             var updates = JObject.Parse(data);
 
-            var service = new DatastreamsService(RepoFactory);
+            var service = new DatastreamsService(uow);
             await service.UpdateDatastream(updates, id);
+            uow.Commit();
         }
 
         [Route(HttpVerbs.Delete, "/Datastreams({id})")]
         public async Task RemoveDatastreamAsync(int id)
         {
-            var service = new DatastreamsService(RepoFactory);
+            using var uow = RepoFactory.CreateUnitOfWork();
+            var service = new DatastreamsService(uow);
             await service.RemoveDatastream(id);
+            uow.Commit();
         }
     }
 }

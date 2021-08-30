@@ -1,28 +1,23 @@
 ﻿using Newtonsoft.Json.Linq;
 using SensorThings.Entities;
 using SensorThings.Server.Repositories;
-using System;
 using System.Collections.Generic;
-using System.Text;
 using System.Threading.Tasks;
 
 namespace SensorThings.Server.Services
 {
     public class SensorsService
     {
-        protected IRepositoryFactory RepoFactory { get; private set; }
+        protected IRepositoryUnitOfWork UOW { get; private set; }
 
-        public SensorsService(IRepositoryFactory repoFactory)
+        public SensorsService(IRepositoryUnitOfWork uow)
         {
-            RepoFactory = repoFactory;
+            UOW = uow;
         }
 
         public async Task<Sensor> AddSensor(Sensor sensor)
         {
-            using var uow = RepoFactory.CreateUnitOfWork();
-            var id = await uow.SensorsRepository.AddAsync(sensor);
-            uow.Commit();
-
+            var id = await UOW.SensorsRepository.AddAsync(sensor);
             sensor.ID = id;
 
             return sensor;
@@ -30,14 +25,12 @@ namespace SensorThings.Server.Services
 
         public async Task<Sensor> GetSensorById(int id)
         {
-            using var uow = RepoFactory.CreateUnitOfWork();
-            return await uow.SensorsRepository.GetByIdAsync(id);
+            return await UOW.SensorsRepository.GetByIdAsync(id);
         }
 
         public async Task<IEnumerable<Sensor>> GetSensors()
         {
-            using var uow = RepoFactory.CreateUnitOfWork();
-            return await uow.SensorsRepository.GetAllAsync();
+            return await UOW.SensorsRepository.GetAllAsync();
         }
 
         public async Task<Sensor> UpdateSensor(JObject updates, int id)
@@ -52,24 +45,19 @@ namespace SensorThings.Server.Services
 
             sensor = sensorJson.ToObject<Sensor>();
 
-            using var uow = RepoFactory.CreateUnitOfWork();
-            await uow.SensorsRepository.UpdateAsync(sensor);
-            uow.Commit();
+            await UOW.SensorsRepository.UpdateAsync(sensor);
 
             return sensor;
         }
 
         public async Task RemoveSensor(int id)
         {
-            using var uow = RepoFactory.CreateUnitOfWork();
-            await uow.SensorsRepository.Remove(id);
-            uow.Commit();
+            await UOW.SensorsRepository.Remove(id);
         }
 
         public async Task<IEnumerable<Datastream>> GetLinkedDatastreamsAsync(long sensorId)
         {
-            using var uow = RepoFactory.CreateUnitOfWork();
-            var datastreams = await uow.DatastreamsRepository.GetLinkedDatastreamsForSensorAsync(sensorId);
+            var datastreams = await UOW.DatastreamsRepository.GetLinkedDatastreamsForSensorAsync(sensorId);
             return datastreams;
         }
     }

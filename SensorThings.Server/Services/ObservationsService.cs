@@ -1,29 +1,24 @@
 ﻿using Newtonsoft.Json.Linq;
 using SensorThings.Entities;
 using SensorThings.Server.Repositories;
-using System;
 using System.Collections.Generic;
-using System.Text;
 using System.Threading.Tasks;
 
 namespace SensorThings.Server.Services
 {
     public class ObservationsService
     {
-        protected IRepositoryFactory RepoFactory { get; private set; }
+        protected IRepositoryUnitOfWork UOW { get; private set; }
 
-        public ObservationsService(IRepositoryFactory repoFactory)
+        public ObservationsService(IRepositoryUnitOfWork uow)
         {
-            RepoFactory = repoFactory;
+            UOW = uow;
         }
 
         public async Task<Observation> AddObservation(Observation observation, long datastreamId)
         {
-            using var uow = RepoFactory.CreateUnitOfWork();
-            var id = await uow.ObservationsRepository.AddAsync(observation);
-            await uow.DatastreamsRepository.LinkObservationAsync(datastreamId, id);
-
-            uow.Commit();
+            var id = await UOW.ObservationsRepository.AddAsync(observation);
+            await UOW.DatastreamsRepository.LinkObservationAsync(datastreamId, id);
 
             observation.ID = id;
 
@@ -32,14 +27,12 @@ namespace SensorThings.Server.Services
 
         public async Task<Observation> GetObservationById(int id)
         {
-            using var uow = RepoFactory.CreateUnitOfWork();
-            return await uow.ObservationsRepository.GetByIdAsync(id);
+            return await UOW.ObservationsRepository.GetByIdAsync(id);
         }
 
         public async Task<IEnumerable<Observation>> GetObservations()
         {
-            using var uow = RepoFactory.CreateUnitOfWork();
-            return await uow.ObservationsRepository.GetAllAsync();
+            return await UOW.ObservationsRepository.GetAllAsync();
         }
 
         public async Task<Observation> UpdateObservation(JObject updates, int id)
@@ -54,45 +47,35 @@ namespace SensorThings.Server.Services
 
             observation = observationJson.ToObject<Observation>();
 
-            using var uow = RepoFactory.CreateUnitOfWork();
-            await uow.ObservationsRepository.UpdateAsync(observation);
-            uow.Commit();
+            await UOW.ObservationsRepository.UpdateAsync(observation);
 
             return observation;
         }
 
         public async Task RemoveObservation(int id)
         {
-            using var uow = RepoFactory.CreateUnitOfWork();
-            await uow.ObservationsRepository.Remove(id);
-            uow.Commit();
+            await UOW.ObservationsRepository.Remove(id);
         }
 
         public async Task<Datastream> GetLinkedDatastream(long observationId)
         {
-            using var uow = RepoFactory.CreateUnitOfWork();
-            var datastream = await uow.DatastreamsRepository.GetLinkedDatastreamForObservationAsync(observationId);
+            var datastream = await UOW.DatastreamsRepository.GetLinkedDatastreamForObservationAsync(observationId);
             return datastream;
         }
 
         public async Task LinkFeatureOfInterestAsync(long observationId, long featureId)
         {
-            using var uow = RepoFactory.CreateUnitOfWork();
-            await uow.ObservationsRepository.LinkFeatureOfInterestAsync(observationId, featureId);
-            uow.Commit();
+            await UOW.ObservationsRepository.LinkFeatureOfInterestAsync(observationId, featureId);
         }
 
         public async Task<FeatureOfInterest> GetLinkedFeatureOfInterest(long observationId)
         {
-            using var uow = RepoFactory.CreateUnitOfWork();
-            return await uow.ObservationsRepository.GetLinkedFeatureOfInterestAsync(observationId);
+            return await UOW.ObservationsRepository.GetLinkedFeatureOfInterestAsync(observationId);
         }
 
         public async Task UnlinkFeatureOfInterestAsync(long observationId, long featureId)
         {
-            using var uow = RepoFactory.CreateUnitOfWork();
-            await uow.ObservationsRepository.UnlinkFeatureOfInterest(observationId, featureId);
-            uow.Commit();
+            await UOW.ObservationsRepository.UnlinkFeatureOfInterest(observationId, featureId);
         }
     }
 }

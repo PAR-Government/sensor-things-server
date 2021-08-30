@@ -1,7 +1,6 @@
 ﻿using Newtonsoft.Json.Linq;
 using SensorThings.Entities;
 using SensorThings.Server.Repositories;
-using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
 
@@ -9,18 +8,16 @@ namespace SensorThings.Server.Services
 {
     public class HistoricalLocationsService
     {
-        protected IRepositoryFactory RepoFactory { get; private set; }
+        protected IRepositoryUnitOfWork UOW { get; private set; }
 
-        public HistoricalLocationsService(IRepositoryFactory repoFactory)
+        public HistoricalLocationsService(IRepositoryUnitOfWork uow)
         {
-            RepoFactory = repoFactory;
+            UOW = uow;
         }
 
         public async Task<HistoricalLocation> AddHistoricalLocation(HistoricalLocation location)
         {
-            using var uow = RepoFactory.CreateUnitOfWork();
-            var id = await uow.HistoricalLocationsRepository.AddAsync(location);
-            uow.Commit();
+            var id = await UOW.HistoricalLocationsRepository.AddAsync(location);
 
             location.ID = id;
 
@@ -29,14 +26,12 @@ namespace SensorThings.Server.Services
 
         public async Task<HistoricalLocation> GetHistoricalLocationById(int id)
         {
-            using var uow = RepoFactory.CreateUnitOfWork();
-            return await uow.HistoricalLocationsRepository.GetByIdAsync(id);
+            return await UOW.HistoricalLocationsRepository.GetByIdAsync(id);
         }
 
         public async Task<IEnumerable<HistoricalLocation>> GetHistoricalLocations()
         {
-            using var uow = RepoFactory.CreateUnitOfWork();
-            return await uow.HistoricalLocationsRepository.GetAllAsync();
+            return await UOW.HistoricalLocationsRepository.GetAllAsync();
         }
 
         public async Task<HistoricalLocation> UpdateHistoricalLocation(JObject updates, int id)
@@ -51,45 +46,34 @@ namespace SensorThings.Server.Services
 
             location = locationJson.ToObject<HistoricalLocation>();
 
-            using var uow = RepoFactory.CreateUnitOfWork();
-            await uow.HistoricalLocationsRepository.UpdateAsync(location);
-            uow.Commit();
+            await UOW.HistoricalLocationsRepository.UpdateAsync(location);
 
             return location;
         }
 
         public async Task RemoveHistoricalLocation(int id)
         {
-            using var uow = RepoFactory.CreateUnitOfWork();
-            await uow.HistoricalLocationsRepository.Remove(id);
-            uow.Commit();
+            await UOW.HistoricalLocationsRepository.Remove(id);
         }
 
         public async Task LinkLocation(long historicalLocationId, long locationId)
         {
-            using var uow = RepoFactory.CreateUnitOfWork();
-            await uow.HistoricalLocationsRepository.LinkLocationAsync(historicalLocationId, locationId);
-            uow.Commit();
+            await UOW.HistoricalLocationsRepository.LinkLocationAsync(historicalLocationId, locationId);
         }
 
         public async Task<IEnumerable<Location>> GetLinkedLocations(long id)
         {
-            using var uow = RepoFactory.CreateUnitOfWork();
-            return await uow.HistoricalLocationsRepository.GetLinkedLocations(id);
+            return await UOW.HistoricalLocationsRepository.GetLinkedLocations(id);
         }
 
         public async Task UnlinkLocation(long historicalLocationId, long locationId)
         {
-            using var uow = RepoFactory.CreateUnitOfWork();
-            await uow.HistoricalLocationsRepository.UnlinkLocationAsync(historicalLocationId, locationId);
-            uow.Commit();
+            await UOW.HistoricalLocationsRepository.UnlinkLocationAsync(historicalLocationId, locationId);
         }
 
         public async Task UnlinkLocations(long historicalLocationId)
         {
-            using var uow = RepoFactory.CreateUnitOfWork();
-            await uow.HistoricalLocationsRepository.UnlinkLocationsAsync(historicalLocationId);
-            uow.Commit();
+            await UOW.HistoricalLocationsRepository.UnlinkLocationsAsync(historicalLocationId);
         }
     }
 }

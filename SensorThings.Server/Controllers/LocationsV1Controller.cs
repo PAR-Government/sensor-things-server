@@ -19,13 +19,16 @@ namespace SensorThings.Server.Controllers
         [Route(HttpVerbs.Post, "/Locations")]
         public async Task<Location> CreateLocationAsync()
         {
+            using var uow = RepoFactory.CreateUnitOfWork();
             var data = await HttpContext.GetRequestBodyAsStringAsync();
             var location = JsonConvert.DeserializeObject<Location>(data);
 
-            var service = new LocationsService(RepoFactory);
+            var service = new LocationsService(uow);
             location = await service.AddLocation(location);
 
             location.BaseUrl = GetBaseUrl();
+
+            uow.Commit();
 
             Response.StatusCode = (int)HttpStatusCode.Created;
 
@@ -35,7 +38,8 @@ namespace SensorThings.Server.Controllers
         [Route(HttpVerbs.Get, "/Locations({id})")]
         public async Task<Location> GetLocationAsync(int id)
         {
-            var service = new LocationsService(RepoFactory);
+            using var uow = RepoFactory.CreateUnitOfWork();
+            var service = new LocationsService(uow);
             var location = await service.GetLocationById(id);
             location.BaseUrl = GetBaseUrl();
 
@@ -45,18 +49,21 @@ namespace SensorThings.Server.Controllers
         [Route(HttpVerbs.Patch, "/Locations({id})")]
         public async Task UpdateLocationAsync(int id)
         {
+            using var uow = RepoFactory.CreateUnitOfWork();
             var data = await HttpContext.GetRequestBodyAsStringAsync();
             var updates = JObject.Parse(data);
 
-            var service = new LocationsService(RepoFactory);
+            var service = new LocationsService(uow);
             await service.UpdateLocation(updates, id);
+            uow.Commit();
         }
 
         [Route(HttpVerbs.Get, "/Locations")]
         public async Task<Listing<Location>> GetLocationsAsync()
         {
+            using var uow = RepoFactory.CreateUnitOfWork();
             var baseUrl = GetBaseUrl();
-            var service = new LocationsService(RepoFactory);
+            var service = new LocationsService(uow);
             var locations = await service.GetLocations();
 
             foreach (var location in locations)
@@ -72,8 +79,10 @@ namespace SensorThings.Server.Controllers
         [Route(HttpVerbs.Delete, "/Locations({id})")]
         public async Task RemoveLocationAsync(int id)
         {
-            var service = new LocationsService(RepoFactory);
+            using var uow = RepoFactory.CreateUnitOfWork();
+            var service = new LocationsService(uow);
             await service.RemoveLocation(id);
+            uow.Commit();
         }
     }
 }

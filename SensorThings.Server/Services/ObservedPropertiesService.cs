@@ -1,28 +1,23 @@
 ﻿using Newtonsoft.Json.Linq;
 using SensorThings.Entities;
 using SensorThings.Server.Repositories;
-using System;
 using System.Collections.Generic;
-using System.Text;
 using System.Threading.Tasks;
 
 namespace SensorThings.Server.Services
 {
     public class ObservedPropertiesService
     {
-        protected IRepositoryFactory RepoFactory { get; private set; }
+        protected IRepositoryUnitOfWork UOW { get; private set; }
 
-        public ObservedPropertiesService(IRepositoryFactory repoFactory)
+        public ObservedPropertiesService(IRepositoryUnitOfWork uow)
         {
-            RepoFactory = repoFactory;
+            UOW = uow;
         }
 
         public async Task<ObservedProperty> AddObservedProperty(ObservedProperty property)
         {
-            using var uow = RepoFactory.CreateUnitOfWork();
-            var id = await uow.ObservedPropertiesRepository.AddAsync(property);
-            uow.Commit();
-
+            var id = await UOW.ObservedPropertiesRepository.AddAsync(property);
             property.ID = id;
 
             return property;
@@ -30,14 +25,12 @@ namespace SensorThings.Server.Services
 
         public async Task<ObservedProperty> GetObservedPropertyById(int id)
         {
-            using var uow = RepoFactory.CreateUnitOfWork();
-            return await uow.ObservedPropertiesRepository.GetByIdAsync(id);
+            return await UOW.ObservedPropertiesRepository.GetByIdAsync(id);
         }
 
         public async Task<IEnumerable<ObservedProperty>> GetObservedProperties()
         {
-            using var uow = RepoFactory.CreateUnitOfWork();
-            return await uow.ObservedPropertiesRepository.GetAllAsync();
+            return await UOW.ObservedPropertiesRepository.GetAllAsync();
         }
 
         public async Task<ObservedProperty> UpdateObservedProperty(JObject updates, int id)
@@ -52,23 +45,19 @@ namespace SensorThings.Server.Services
 
             observedProperty = observedPropertyJson.ToObject<ObservedProperty>();
 
-            using var uow = RepoFactory.CreateUnitOfWork();
-            await uow.ObservedPropertiesRepository.UpdateAsync(observedProperty);
-            uow.Commit();
+            await UOW.ObservedPropertiesRepository.UpdateAsync(observedProperty);
 
             return observedProperty;
         }
 
         public async Task RemoveObservedProperty(int id)
         {
-            using var uow = RepoFactory.CreateUnitOfWork();
-            await uow.ObservedPropertiesRepository.Remove(id);
+            await UOW.ObservedPropertiesRepository.Remove(id);
         }
 
         public async Task<IEnumerable<Datastream>> GetLinkedDatastreams(long id)
         {
-            using var uow = RepoFactory.CreateUnitOfWork();
-            var datastreams = await uow.DatastreamsRepository.GetLinkedDatastreamsForObservedPropertyAsync(id);
+            var datastreams = await UOW.DatastreamsRepository.GetLinkedDatastreamsForObservedPropertyAsync(id);
             return datastreams;
         }
     }

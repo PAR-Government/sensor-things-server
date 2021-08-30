@@ -1,5 +1,4 @@
-﻿using System;
-using System.Linq;
+﻿using System.Linq;
 using System.Net;
 using System.Threading.Tasks;
 using EmbedIO;
@@ -19,13 +18,15 @@ namespace SensorThings.Server.Controllers
         [Route(HttpVerbs.Post, "/ObservedProperties")]
         public async Task<ObservedProperty> CreateObservedPropertyAsync()
         {
+            using var uow = RepoFactory.CreateUnitOfWork();
             var data = await HttpContext.GetRequestBodyAsStringAsync();
             var property = JsonConvert.DeserializeObject<ObservedProperty>(data);
 
-            var service = new ObservedPropertiesService(RepoFactory);
+            var service = new ObservedPropertiesService(uow);
             property = await service.AddObservedProperty(property);
-
             property.BaseUrl = GetBaseUrl();
+
+            uow.Commit();
 
             Response.StatusCode = (int)HttpStatusCode.Created;
 
@@ -35,7 +36,8 @@ namespace SensorThings.Server.Controllers
         [Route(HttpVerbs.Get, "/ObservedProperties({id})")]
         public async Task<ObservedProperty> GetObservedPropertyAsync(int id)
         {
-            var service = new ObservedPropertiesService(RepoFactory);
+            using var uow = RepoFactory.CreateUnitOfWork();
+            var service = new ObservedPropertiesService(uow);
             var property = await service.GetObservedPropertyById(id);
             property.BaseUrl = GetBaseUrl();
 
@@ -45,8 +47,9 @@ namespace SensorThings.Server.Controllers
         [Route(HttpVerbs.Get, "/ObservedProperties")]
         public async Task<Listing<ObservedProperty>> GetObservedPropertiesAsync()
         {
+            using var uow = RepoFactory.CreateUnitOfWork();
             var baseUrl = GetBaseUrl();
-            var service = new ObservedPropertiesService(RepoFactory);
+            var service = new ObservedPropertiesService(uow);
             var properties = await service.GetObservedProperties();
 
             foreach (var property in properties)
@@ -62,18 +65,22 @@ namespace SensorThings.Server.Controllers
         [Route(HttpVerbs.Patch, "/ObservedProperties({id})")]
         public async Task UpdateObservedPropertyAsync(int id)
         {
+            using var uow = RepoFactory.CreateUnitOfWork();
             var data = await HttpContext.GetRequestBodyAsStringAsync();
             var updates = JObject.Parse(data);
 
-            var service = new ObservedPropertiesService(RepoFactory);
+            var service = new ObservedPropertiesService(uow);
             await service.UpdateObservedProperty(updates, id);
+            uow.Commit();
         }
 
         [Route(HttpVerbs.Delete, "/ObservedProperties({id})")]
         public async Task RemoveObservedPropertyAsync(int id)
         {
-            var service = new ObservedPropertiesService(RepoFactory);
+            using var uow = RepoFactory.CreateUnitOfWork();
+            var service = new ObservedPropertiesService(uow);
             await service.RemoveObservedProperty(id);
+            uow.Commit();
         }
     }
 }

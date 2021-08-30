@@ -1,27 +1,23 @@
 ﻿using Newtonsoft.Json.Linq;
 using SensorThings.Entities;
 using SensorThings.Server.Repositories;
-using System;
 using System.Collections.Generic;
-using System.Text;
 using System.Threading.Tasks;
 
 namespace SensorThings.Server.Services
 {
     public class DatastreamsService
     {
-        protected IRepositoryFactory RepoFactory { get; private set; }
+        protected IRepositoryUnitOfWork UOW { get; private set; }
 
-        public DatastreamsService(IRepositoryFactory repoFactory)
+        public DatastreamsService(IRepositoryUnitOfWork uow)
         {
-            RepoFactory = repoFactory;
+            UOW = uow;
         }
 
         public async Task<Datastream> AddDatastream(Datastream datastream)
         {
-            using var uow = RepoFactory.CreateUnitOfWork();
-            var id = await uow.DatastreamsRepository.AddAsync(datastream);
-            uow.Commit();
+            var id = await UOW.DatastreamsRepository.AddAsync(datastream);
 
             datastream.ID = id;
 
@@ -30,23 +26,19 @@ namespace SensorThings.Server.Services
 
         public async Task<Datastream> GetDatastreamById(int id)
         {
-            using var uow = RepoFactory.CreateUnitOfWork();
-            var datastream = await uow.DatastreamsRepository.GetByIdAsync(id);
+            var datastream = await UOW.DatastreamsRepository.GetByIdAsync(id);
 
             return datastream;
         }
 
         public async Task<IEnumerable<Datastream>> GetDatastreams()
         {
-            using var uow = RepoFactory.CreateUnitOfWork();
-            return await uow.DatastreamsRepository.GetAllAsync();
+            return await UOW.DatastreamsRepository.GetAllAsync();
         }
 
         public async Task RemoveDatastream(int id)
         {
-            using var uow = RepoFactory.CreateUnitOfWork();
-            await uow.DatastreamsRepository.Remove(id);
-            uow.Commit();
+            await UOW.DatastreamsRepository.Remove(id);
         }
 
         public async Task<Datastream> UpdateDatastream(JObject updates, int id)
@@ -63,73 +55,56 @@ namespace SensorThings.Server.Services
             // Convert back
             datastream = datastreamJson.ToObject<Datastream>();
 
-            using var uow = RepoFactory.CreateUnitOfWork();
-            await uow.DatastreamsRepository.UpdateAsync(datastream);
-            uow.Commit();
+            await UOW.DatastreamsRepository.UpdateAsync(datastream);
 
             return datastream;
         }
 
         public async Task LinkSensorAsync(long datastreamId, long sensorId)
         {
-            using var uow = RepoFactory.CreateUnitOfWork();
-            await uow.DatastreamsRepository.LinkSensorAsync(datastreamId, sensorId);
-            uow.Commit();
+            await UOW.DatastreamsRepository.LinkSensorAsync(datastreamId, sensorId);
         }
 
         public async Task<Sensor> GetLinkedSensorAsync(long datastreamId)
         {
-            using var uow = RepoFactory.CreateUnitOfWork();
-            var sensor = await uow.DatastreamsRepository.GetLinkedSensorAsync(datastreamId);
+            var sensor = await UOW.DatastreamsRepository.GetLinkedSensorAsync(datastreamId);
             return sensor;
         }
 
         public async Task UnlinkSensorAsync(long datastreamId, long sensorId)
         {
-            using var uow = RepoFactory.CreateUnitOfWork();
-            await uow.DatastreamsRepository.UnlinkSensorAsync(datastreamId, sensorId);
-            uow.Commit();
+            await UOW.DatastreamsRepository.UnlinkSensorAsync(datastreamId, sensorId);
         }
 
         public async Task LinkObservedPropertyAsync(long datastreamId, long propertyId)
         {
-            using var uow = RepoFactory.CreateUnitOfWork();
-            await uow.DatastreamsRepository.LinkObservedPropertyAsync(datastreamId, propertyId);
-            uow.Commit();
+            await UOW.DatastreamsRepository.LinkObservedPropertyAsync(datastreamId, propertyId);
         }
 
         public async Task<ObservedProperty> GetLinkedObservedPropertyAsync(long datastreamId)
         {
-            using var uow = RepoFactory.CreateUnitOfWork();
-            var property = await uow.DatastreamsRepository.GetLinkedObservedPropertyAsync(datastreamId);
+            var property = await UOW.DatastreamsRepository.GetLinkedObservedPropertyAsync(datastreamId);
             return property;
         }
 
         public async Task UnlinkObservedPropertyAsync(long datastreamId, long propertyId)
         {
-            using var uow = RepoFactory.CreateUnitOfWork();
-            await uow.DatastreamsRepository.UnlinkObservedPropertyAsync(datastreamId, propertyId);
-            uow.Commit();
+            await UOW.DatastreamsRepository.UnlinkObservedPropertyAsync(datastreamId, propertyId);
         }
 
         public async Task LinkObservationAsync(long datastreamId, long observationId)
         {
-            using var uow = RepoFactory.CreateUnitOfWork();
-            await uow.DatastreamsRepository.LinkObservationAsync(datastreamId, observationId);
-            uow.Commit();
+            await UOW.DatastreamsRepository.LinkObservationAsync(datastreamId, observationId);
         }
 
         public async Task<IEnumerable<Observation>> GetLinkedObservations(long datastreamId)
         {
-            using var uow = RepoFactory.CreateUnitOfWork();
-            return await uow.DatastreamsRepository.GetLinkedObservationsAsync(datastreamId);
+            return await UOW.DatastreamsRepository.GetLinkedObservationsAsync(datastreamId);
         }
 
         public async Task UnlinkObservation(long datastreamId, long observationId)
         {
-            using var uow = RepoFactory.CreateUnitOfWork();
-            await uow.DatastreamsRepository.UnlinkObservationAsync(datastreamId, observationId);
-            uow.Commit();
+            await UOW.DatastreamsRepository.UnlinkObservationAsync(datastreamId, observationId);
         }
     }
 }

@@ -1,5 +1,4 @@
-﻿using System;
-using System.Linq;
+﻿using System.Linq;
 using System.Net;
 using System.Threading.Tasks;
 using EmbedIO;
@@ -19,13 +18,16 @@ namespace SensorThings.Server.Controllers
         [Route(HttpVerbs.Post, "/FeaturesOfInterest")]
         public async Task<FeatureOfInterest> CreateFeatureOfInterestAsync()
         {
+            using var uow = RepoFactory.CreateUnitOfWork();
             var data = await HttpContext.GetRequestBodyAsStringAsync();
             var featureOfInterest = JsonConvert.DeserializeObject<FeatureOfInterest>(data);
 
-            var service = new FeaturesOfInterestService(RepoFactory);
+            var service = new FeaturesOfInterestService(uow);
             featureOfInterest = await service.AddFeature(featureOfInterest);
 
             featureOfInterest.BaseUrl = GetBaseUrl();
+
+            uow.Commit();
 
             Response.StatusCode = (int)HttpStatusCode.Created;
 
@@ -35,7 +37,8 @@ namespace SensorThings.Server.Controllers
         [Route(HttpVerbs.Get, "/FeaturesOfInterest({id})")]
         public async Task<FeatureOfInterest> GetFeatureOfInterestAsync(int id)
         {
-            var service = new FeaturesOfInterestService(RepoFactory);
+            using var uow = RepoFactory.CreateUnitOfWork();
+            var service = new FeaturesOfInterestService(uow);
             var feature = await service.GetFeatureById(id);
             feature.BaseUrl = GetBaseUrl();
 
@@ -45,18 +48,21 @@ namespace SensorThings.Server.Controllers
         [Route(HttpVerbs.Patch, "/FeaturesOfInterest({id})")]
         public async Task UpdateFeatureOfInterestAsync(int id)
         {
+            using var uow = RepoFactory.CreateUnitOfWork();
             var data = await HttpContext.GetRequestBodyAsStringAsync();
             var updates = JObject.Parse(data);
 
-            var service = new FeaturesOfInterestService(RepoFactory);
+            var service = new FeaturesOfInterestService(uow);
             await service.UpdateFeature(updates, id);
+            uow.Commit();
         }
 
         [Route(HttpVerbs.Get, "/FeaturesOfInterest")]
         public async Task<Listing<FeatureOfInterest>> GetFeaturesOfInterestAsync()
         {
+            using var uow = RepoFactory.CreateUnitOfWork();
             var baseUrl = GetBaseUrl();
-            var service = new FeaturesOfInterestService(RepoFactory);
+            var service = new FeaturesOfInterestService(uow);
             var features = await service.GetFeatures();
 
             foreach (var feature in features)
@@ -72,8 +78,10 @@ namespace SensorThings.Server.Controllers
         [Route(HttpVerbs.Delete, "/FeaturesOfInterest({id})")]
         public async Task RemoveFeatureOfInterest(int id)
         {
-            var service = new FeaturesOfInterestService(RepoFactory);
+            using var uow = RepoFactory.CreateUnitOfWork();
+            var service = new FeaturesOfInterestService(uow);
             await service.RemoveFeature(id);
+            uow.Commit();
         }
     }
 }

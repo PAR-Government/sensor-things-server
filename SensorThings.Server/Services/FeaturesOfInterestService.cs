@@ -1,27 +1,23 @@
 ﻿using Newtonsoft.Json.Linq;
 using SensorThings.Entities;
 using SensorThings.Server.Repositories;
-using System;
 using System.Collections.Generic;
-using System.Text;
 using System.Threading.Tasks;
 
 namespace SensorThings.Server.Services
 {
     public class FeaturesOfInterestService
     {
-        protected IRepositoryFactory RepoFactory { get; private set; }
+        protected IRepositoryUnitOfWork UOW { get; private set; }
 
-        public FeaturesOfInterestService(IRepositoryFactory repoFactory)
+        public FeaturesOfInterestService(IRepositoryUnitOfWork uow)
         {
-            RepoFactory = repoFactory;
+            UOW = uow;
         }
 
         public async Task<FeatureOfInterest> AddFeature(FeatureOfInterest feature)
         {
-            using var uow = RepoFactory.CreateUnitOfWork();
-            var id = await uow.FeaturesOfInterestRepository.AddAsync(feature);
-            uow.Commit();
+            var id = await UOW.FeaturesOfInterestRepository.AddAsync(feature);
 
             feature.ID = id;
 
@@ -30,14 +26,12 @@ namespace SensorThings.Server.Services
 
         public async Task<FeatureOfInterest> GetFeatureById(int id)
         {
-            using var uow = RepoFactory.CreateUnitOfWork();
-            return await uow.FeaturesOfInterestRepository.GetByIdAsync(id);
+            return await UOW.FeaturesOfInterestRepository.GetByIdAsync(id);
         }
 
         public async Task<IEnumerable<FeatureOfInterest>> GetFeatures()
         {
-            using var uow = RepoFactory.CreateUnitOfWork();
-            return await uow.FeaturesOfInterestRepository.GetAllAsync();
+            return await UOW.FeaturesOfInterestRepository.GetAllAsync();
         }
 
         public async Task<FeatureOfInterest> UpdateFeature(JObject updates, int id)
@@ -52,24 +46,19 @@ namespace SensorThings.Server.Services
 
             feature = featureJson.ToObject<FeatureOfInterest>();
 
-            using var uow = RepoFactory.CreateUnitOfWork();
-            await uow.FeaturesOfInterestRepository.UpdateAsync(feature);
-            uow.Commit();
+            await UOW.FeaturesOfInterestRepository.UpdateAsync(feature);
 
             return feature;
         }
 
         public async Task RemoveFeature(int id)
         {
-            using var uow = RepoFactory.CreateUnitOfWork();
-            await uow.FeaturesOfInterestRepository.Remove(id);
-            uow.Commit();
+            await UOW.FeaturesOfInterestRepository.Remove(id);
         }
 
         public async Task<IEnumerable<Observation>> GetLinkedObservations(long featureId)
         {
-            using var uow = RepoFactory.CreateUnitOfWork();
-            return await uow.ObservationsRepository.GetLinkedObservationsForFeatureOfInterestAsync(featureId);
+            return await UOW.ObservationsRepository.GetLinkedObservationsForFeatureOfInterestAsync(featureId);
         }
     }
 }

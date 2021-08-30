@@ -1,11 +1,9 @@
 ﻿using EmbedIO;
 using EmbedIO.Routing;
-using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
 using SensorThings.Entities;
 using SensorThings.Server.Repositories;
 using SensorThings.Server.Services;
-using System;
 using System.Linq;
 using System.Threading.Tasks;
 
@@ -18,7 +16,8 @@ namespace SensorThings.Server.Controllers
         [Route(HttpVerbs.Get, "/HistoricalLocations({id})")]
         public async Task<HistoricalLocation> GetHistoricalLocationAsync(int id)
         {
-            var service = new HistoricalLocationsService(RepoFactory);
+            using var uow = RepoFactory.CreateUnitOfWork();
+            var service = new HistoricalLocationsService(uow);
             var location = await service.GetHistoricalLocationById(id);
             location.BaseUrl = GetBaseUrl();
 
@@ -28,8 +27,9 @@ namespace SensorThings.Server.Controllers
         [Route(HttpVerbs.Get, "/HistoricalLocations")]
         public async Task<Listing<HistoricalLocation>> GetHistoricalLocationsAsync()
         {
+            using var uow = RepoFactory.CreateUnitOfWork();
             var baseUrl = GetBaseUrl();
-            var service = new HistoricalLocationsService(RepoFactory);
+            var service = new HistoricalLocationsService(uow);
             var locations = await service.GetHistoricalLocations();
 
             foreach (var location in locations)
@@ -45,18 +45,22 @@ namespace SensorThings.Server.Controllers
         [Route(HttpVerbs.Patch, "/HistoricalLocations({id})")]
         public async Task UpdateHistoricalLocationAsync(int id)
         {
+            using var uow = RepoFactory.CreateUnitOfWork();
             var data = await HttpContext.GetRequestBodyAsStringAsync();
             var updates = JObject.Parse(data);
 
-            var service = new HistoricalLocationsService(RepoFactory);
+            var service = new HistoricalLocationsService(uow);
             await service.UpdateHistoricalLocation(updates, id);
+            uow.Commit();
         }
 
         [Route(HttpVerbs.Delete, "/HistoricalLocations({id})")]
         public async Task RemoveHistoricalLocationAsync(int id)
         {
-            var service = new HistoricalLocationsService(RepoFactory);
+            using var uow = RepoFactory.CreateUnitOfWork();
+            var service = new HistoricalLocationsService(uow);
             await service.RemoveHistoricalLocation(id);
+            uow.Commit();
         }
     }
 }
