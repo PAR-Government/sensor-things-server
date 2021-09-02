@@ -20,7 +20,7 @@ namespace SensorThings.Server.Test
             var property = new ObservedProperty { Name = "Test ObservedProperty" };
             Mock<IRepository<ObservedProperty>> propertyRepoMock = new Mock<IRepository<ObservedProperty>>();
             var repoFactory = new TestRepoFactory { ObservedPropertiesRepository = propertyRepoMock.Object };
-            var service = new ObservedPropertiesService(repoFactory);
+            var service = new ObservedPropertiesService(repoFactory.CreateUnitOfWork());
 
             var createdProperty = await service.AddObservedProperty(property);
 
@@ -34,7 +34,7 @@ namespace SensorThings.Server.Test
             Mock<IRepository<ObservedProperty>> propertyRepoMock = new Mock<IRepository<ObservedProperty>>();
             propertyRepoMock.Setup(m => m.GetByIdAsync(id)).ReturnsAsync((ObservedProperty)null);
             var repoFactory = new TestRepoFactory { ObservedPropertiesRepository = propertyRepoMock.Object };
-            var service = new ObservedPropertiesService(repoFactory);
+            var service = new ObservedPropertiesService(repoFactory.CreateUnitOfWork());
 
             var property = await service.GetObservedPropertyById(id);
 
@@ -49,7 +49,7 @@ namespace SensorThings.Server.Test
             Mock<IRepository<ObservedProperty>> propertyRepoMock = new Mock<IRepository<ObservedProperty>>();
             propertyRepoMock.Setup(m => m.GetByIdAsync(id)).ReturnsAsync(property);
             var repoFactory = new TestRepoFactory { ObservedPropertiesRepository = propertyRepoMock.Object };
-            var service = new ObservedPropertiesService(repoFactory);
+            var service = new ObservedPropertiesService(repoFactory.CreateUnitOfWork());
 
             var recoveredProperty = await service.GetObservedPropertyById(id);
 
@@ -68,7 +68,7 @@ namespace SensorThings.Server.Test
             Mock<IRepository<ObservedProperty>> propertyRepoMock = new Mock<IRepository<ObservedProperty>>();
             propertyRepoMock.Setup(m => m.GetAllAsync()).ReturnsAsync(propertiesCollection);
             var repoFactory = new TestRepoFactory { ObservedPropertiesRepository = propertyRepoMock.Object };
-            var service = new ObservedPropertiesService(repoFactory);
+            var service = new ObservedPropertiesService(repoFactory.CreateUnitOfWork());
 
             var properties = await service.GetObservedProperties();
 
@@ -85,7 +85,7 @@ namespace SensorThings.Server.Test
             Mock<IRepository<ObservedProperty>> propertyRepoMock = new Mock<IRepository<ObservedProperty>>();
             propertyRepoMock.Setup(m => m.GetByIdAsync(id)).ReturnsAsync(property);
             var repoFactory = new TestRepoFactory { ObservedPropertiesRepository = propertyRepoMock.Object };
-            var service = new ObservedPropertiesService(repoFactory);
+            var service = new ObservedPropertiesService(repoFactory.CreateUnitOfWork());
 
             var recoveredProperty = await service.UpdateObservedProperty(updates, id);
 
@@ -102,7 +102,7 @@ namespace SensorThings.Server.Test
             Mock<IRepository<ObservedProperty>> propertyRepoMock = new Mock<IRepository<ObservedProperty>>();
             propertyRepoMock.Setup(m => m.GetByIdAsync(id)).ReturnsAsync(property);
             var repoFactory = new TestRepoFactory { ObservedPropertiesRepository = propertyRepoMock.Object };
-            var service = new ObservedPropertiesService(repoFactory);
+            var service = new ObservedPropertiesService(repoFactory.CreateUnitOfWork());
 
             var recoveredProperty = await service.UpdateObservedProperty(updates, id);
 
@@ -116,7 +116,7 @@ namespace SensorThings.Server.Test
             int id = 42;
             Mock<IRepository<ObservedProperty>> propertyRepoMock = new Mock<IRepository<ObservedProperty>>();
             var repoFactory = new TestRepoFactory { ObservedPropertiesRepository = propertyRepoMock.Object };
-            var service = new ObservedPropertiesService(repoFactory);
+            var service = new ObservedPropertiesService(repoFactory.CreateUnitOfWork());
 
             await service.RemoveObservedProperty(id);
 

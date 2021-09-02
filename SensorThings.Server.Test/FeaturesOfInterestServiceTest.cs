@@ -20,7 +20,7 @@ namespace SensorThings.Server.Test
             FeatureOfInterest feature = new FeatureOfInterest { Name = "Test Feature" };
             Mock<IRepository<FeatureOfInterest>> featureRepoMock = new Mock<IRepository<FeatureOfInterest>>();
             var repoFactory = new TestRepoFactory { FeaturesOfInterestRepository = featureRepoMock.Object };
-            var service = new FeaturesOfInterestService(repoFactory);
+            var service = new FeaturesOfInterestService(repoFactory.CreateUnitOfWork());
 
             var createdFeature = await service.AddFeature(feature);
 
@@ -35,7 +35,7 @@ namespace SensorThings.Server.Test
             Mock<IRepository<FeatureOfInterest>> featureRepoMock = new Mock<IRepository<FeatureOfInterest>>();
             featureRepoMock.Setup(m => m.GetByIdAsync(id)).ReturnsAsync(feature);
             var repoFactory = new TestRepoFactory { FeaturesOfInterestRepository = featureRepoMock.Object };
-            var service = new FeaturesOfInterestService(repoFactory);
+            var service = new FeaturesOfInterestService(repoFactory.CreateUnitOfWork());
 
             var recoveredFeature = await service.GetFeatureById(id);
 
@@ -54,7 +54,7 @@ namespace SensorThings.Server.Test
             featureRepoMock.Setup(m => m.GetAllAsync()).ReturnsAsync(featureCollection);
             var repoFactory = new TestRepoFactory { FeaturesOfInterestRepository = featureRepoMock.Object };
           
-            var service = new FeaturesOfInterestService(repoFactory);
+            var service = new FeaturesOfInterestService(repoFactory.CreateUnitOfWork());
 
             var features = await service.GetFeatures();
 
@@ -71,7 +71,7 @@ namespace SensorThings.Server.Test
             Mock<IRepository<FeatureOfInterest>> featureRepoMock = new Mock<IRepository<FeatureOfInterest>>();
             featureRepoMock.Setup(m => m.GetByIdAsync(id)).ReturnsAsync(feature);
             var repoFactory = new TestRepoFactory { FeaturesOfInterestRepository = featureRepoMock.Object };
-            var service = new FeaturesOfInterestService(repoFactory);
+            var service = new FeaturesOfInterestService(repoFactory.CreateUnitOfWork());
 
             var updatedFeature = await service.UpdateFeature(updates, id);
 
@@ -85,7 +85,7 @@ namespace SensorThings.Server.Test
             int id = 1;
             Mock<IRepository<FeatureOfInterest>> featureRepoMock = new Mock<IRepository<FeatureOfInterest>>();
             var repoFactory = new TestRepoFactory { FeaturesOfInterestRepository = featureRepoMock.Object };
-            var service = new FeaturesOfInterestService(repoFactory);
+            var service = new FeaturesOfInterestService(repoFactory.CreateUnitOfWork());
 
             await service.RemoveFeature(id);
 

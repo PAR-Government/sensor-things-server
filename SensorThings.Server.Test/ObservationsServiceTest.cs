@@ -34,7 +34,7 @@ namespace SensorThings.Server.Test
                 ObservationsRepository = obsRepoMock.Object,
                 DatastreamsRepository = dsMockRepo.Object
             };
-            var service = new ObservationsService(repoFactory);
+            var service = new ObservationsService(repoFactory.CreateUnitOfWork());
 
             var createdObs = await service.AddObservation(observation, 1);
 
@@ -53,7 +53,7 @@ namespace SensorThings.Server.Test
             Mock<IObservationsRepository> obsRepoMock = new Mock<IObservationsRepository>();
             obsRepoMock.Setup(m => m.GetByIdAsync(id)).ReturnsAsync(observation);
             var repoFactory = new TestRepoFactory { ObservationsRepository = obsRepoMock.Object };
-            var service = new ObservationsService(repoFactory);
+            var service = new ObservationsService(repoFactory.CreateUnitOfWork());
 
             var recoveredObs = await service.GetObservationById(id);
 
@@ -70,7 +70,7 @@ namespace SensorThings.Server.Test
             Mock<IObservationsRepository> obsRepoMock = new Mock<IObservationsRepository>();
             obsRepoMock.Setup(m => m.GetAllAsync()).ReturnsAsync(observationCollection);
             var repoFactory = new TestRepoFactory { ObservationsRepository = obsRepoMock.Object };
-            var service = new ObservationsService(repoFactory);
+            var service = new ObservationsService(repoFactory.CreateUnitOfWork());
 
             var observations = await service.GetObservations();
 
@@ -91,7 +91,7 @@ namespace SensorThings.Server.Test
             Mock<IObservationsRepository> obsRepoMock = new Mock<IObservationsRepository>();
             obsRepoMock.Setup(m => m.GetByIdAsync(id)).ReturnsAsync(observation1);
             var repoFactory = new TestRepoFactory { ObservationsRepository = obsRepoMock.Object };
-            var service = new ObservationsService(repoFactory);
+            var service = new ObservationsService(repoFactory.CreateUnitOfWork());
 
             var updatedObservation = await service.UpdateObservation(updates, id);
 
@@ -105,7 +105,7 @@ namespace SensorThings.Server.Test
             int id = 1;
             Mock<IObservationsRepository> obsRepoMock = new Mock<IObservationsRepository>();
             var repoFactory = new TestRepoFactory { ObservationsRepository = obsRepoMock.Object };
-            var service = new ObservationsService(repoFactory);
+            var service = new ObservationsService(repoFactory.CreateUnitOfWork());
 
             await service.RemoveObservation(id);
 

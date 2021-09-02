@@ -19,7 +19,7 @@ namespace SensorThings.Server.Test
             HistoricalLocation location = new HistoricalLocation();
             Mock<IHistoricalLocationsRepository> locationRepoMock = new Mock<IHistoricalLocationsRepository>();
             var repoFactory = new TestRepoFactory { HistoricalLocationsRepository = locationRepoMock.Object };
-            var service = new HistoricalLocationsService(repoFactory);
+            var service = new HistoricalLocationsService(repoFactory.CreateUnitOfWork());
 
             var createdLocation = await service.AddHistoricalLocation(location);
 
@@ -34,7 +34,7 @@ namespace SensorThings.Server.Test
             Mock<IHistoricalLocationsRepository> locationRepoMock = new Mock<IHistoricalLocationsRepository>();
             locationRepoMock.Setup(m => m.GetByIdAsync(id)).ReturnsAsync(location);
             var repoFactory = new TestRepoFactory { HistoricalLocationsRepository = locationRepoMock.Object };
-            var service = new HistoricalLocationsService(repoFactory);
+            var service = new HistoricalLocationsService(repoFactory.CreateUnitOfWork());
 
             var recoveredLocation = await service.GetHistoricalLocationById(id);
 
@@ -52,7 +52,7 @@ namespace SensorThings.Server.Test
             Mock<IHistoricalLocationsRepository> locationRepoMock = new Mock<IHistoricalLocationsRepository>();
             locationRepoMock.Setup(m => m.GetAllAsync()).ReturnsAsync(locationCollection);
             var repoFactory = new TestRepoFactory { HistoricalLocationsRepository = locationRepoMock.Object };
-            var service = new HistoricalLocationsService(repoFactory);
+            var service = new HistoricalLocationsService(repoFactory.CreateUnitOfWork());
 
             var locations = await service.GetHistoricalLocations();
 
@@ -73,7 +73,7 @@ namespace SensorThings.Server.Test
             Mock<IHistoricalLocationsRepository> locationRepoMock = new Mock<IHistoricalLocationsRepository>();
             locationRepoMock.Setup(m => m.GetByIdAsync(id)).ReturnsAsync(location);
             var repoFactory = new TestRepoFactory { HistoricalLocationsRepository = locationRepoMock.Object };
-            var service = new HistoricalLocationsService(repoFactory);
+            var service = new HistoricalLocationsService(repoFactory.CreateUnitOfWork());
 
             var updatedLocation = await service.UpdateHistoricalLocation(updates, id);
 
@@ -87,7 +87,7 @@ namespace SensorThings.Server.Test
             int id = 1;
             Mock<IHistoricalLocationsRepository> locationRepoMock = new Mock<IHistoricalLocationsRepository>();
             var repoFactory = new TestRepoFactory { HistoricalLocationsRepository = locationRepoMock.Object };
-            var service = new HistoricalLocationsService(repoFactory);
+            var service = new HistoricalLocationsService(repoFactory.CreateUnitOfWork());
 
             await service.RemoveHistoricalLocation(id);
 

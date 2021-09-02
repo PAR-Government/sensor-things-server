@@ -20,7 +20,7 @@ namespace SensorThings.Server.Test
             Location location = new Location { Name = "Test Location" };
             Mock<IRepository<Location>> locationRepoMock = new Mock<IRepository<Location>>();
             var repoFactory = new TestRepoFactory { LocationsRepository = locationRepoMock.Object };
-            var service = new LocationsService(repoFactory);
+            var service = new LocationsService(repoFactory.CreateUnitOfWork());
 
             var createdLocation = await service.AddLocation(location);
 
@@ -34,7 +34,7 @@ namespace SensorThings.Server.Test
             Mock<IRepository<Location>> locationRepoMock = new Mock<IRepository<Location>>();
             locationRepoMock.Setup(m => m.GetByIdAsync(id)).ReturnsAsync((Location)null);
             var repoFactory = new TestRepoFactory { LocationsRepository = locationRepoMock.Object };
-            var service = new LocationsService(repoFactory);
+            var service = new LocationsService(repoFactory.CreateUnitOfWork());
 
             var location = await service.GetLocationById(id);
 
@@ -50,7 +50,7 @@ namespace SensorThings.Server.Test
             Mock<IRepository<Location>> locationRepoMock = new Mock<IRepository<Location>>();
             locationRepoMock.Setup(m => m.GetByIdAsync(id)).ReturnsAsync(location);
             var repoFactory = new TestRepoFactory { LocationsRepository = locationRepoMock.Object };
-            var service = new LocationsService(repoFactory);
+            var service = new LocationsService(repoFactory.CreateUnitOfWork());
 
             var recoveredLocation = await service.GetLocationById(id);
 
@@ -65,7 +65,7 @@ namespace SensorThings.Server.Test
             Mock<IRepository<Location>> locationRepoMock = new Mock<IRepository<Location>>();
             locationRepoMock.Setup(m => m.GetAllAsync()).ReturnsAsync(locationCollection);
             var repoFactory = new TestRepoFactory { LocationsRepository = locationRepoMock.Object };
-            var service = new LocationsService(repoFactory);
+            var service = new LocationsService(repoFactory.CreateUnitOfWork());
 
             var locations = await service.GetLocations();
 
@@ -82,7 +82,7 @@ namespace SensorThings.Server.Test
             Mock<IRepository<Location>> locationRepoMock = new Mock<IRepository<Location>>();
             locationRepoMock.Setup(m => m.GetByIdAsync(id)).ReturnsAsync(location);
             var repoFactory = new TestRepoFactory { LocationsRepository = locationRepoMock.Object };
-            var service = new LocationsService(repoFactory);
+            var service = new LocationsService(repoFactory.CreateUnitOfWork());
 
             var updatedLocation = await service.UpdateLocation(updates, id);
 
@@ -99,7 +99,7 @@ namespace SensorThings.Server.Test
             Mock<IRepository<Location>> locationRepoMock = new Mock<IRepository<Location>>();
             locationRepoMock.Setup(m => m.GetByIdAsync(id)).ReturnsAsync(location);
             var repoFactory = new TestRepoFactory { LocationsRepository = locationRepoMock.Object };
-            var service = new LocationsService(repoFactory);
+            var service = new LocationsService(repoFactory.CreateUnitOfWork());
 
             var updatedLocation = await service.UpdateLocation(updates, id);
 
@@ -113,7 +113,7 @@ namespace SensorThings.Server.Test
             int id = 42;
             Mock<IRepository<Location>> locationRepoMock = new Mock<IRepository<Location>>();
             var repoFactory = new TestRepoFactory { LocationsRepository = locationRepoMock.Object };
-            var service = new LocationsService(repoFactory);
+            var service = new LocationsService(repoFactory.CreateUnitOfWork());
 
             await service.RemoveLocation(id);
 

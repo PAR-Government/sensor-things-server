@@ -19,7 +19,7 @@ namespace SensorThings.Server.Test
             Mock<IThingsRepository> thingRepoMock = new Mock<IThingsRepository>();
             thingRepoMock.Setup(m => m.GetByIdAsync(id)).ReturnsAsync((Thing) null);
             var repoFactory = new TestRepoFactory { ThingsRepository = thingRepoMock.Object };
-            var service = new ThingsService(repoFactory);
+            var service = new ThingsService(repoFactory.CreateUnitOfWork());
 
             var thing = await service.GetThingById(id);
 
@@ -34,7 +34,7 @@ namespace SensorThings.Server.Test
             Mock<IThingsRepository> thingRepoMock = new Mock<IThingsRepository>();
             thingRepoMock.Setup(m => m.GetByIdAsync(id)).ReturnsAsync(testThing);
             var repoFactory = new TestRepoFactory { ThingsRepository = thingRepoMock.Object };
-            var service = new ThingsService(repoFactory);
+            var service = new ThingsService(repoFactory.CreateUnitOfWork());
 
             var recoveredThing = await service.GetThingById(id);
 
@@ -48,7 +48,7 @@ namespace SensorThings.Server.Test
             Thing testThing = new Thing { Name = "Test Thing" };
             Mock<IThingsRepository> thingRepoMock = new Mock<IThingsRepository>();
             var repoFactory = new TestRepoFactory { ThingsRepository = thingRepoMock.Object };
-            var service = new ThingsService(repoFactory);
+            var service = new ThingsService(repoFactory.CreateUnitOfWork());
 
             var recoveredThing = await service.AddThing(testThing);
 
@@ -62,7 +62,7 @@ namespace SensorThings.Server.Test
             Mock<IThingsRepository> thingRepoMock = new Mock<IThingsRepository>();
             thingRepoMock.Setup(m => m.GetAllAsync()).ReturnsAsync(thingsCollection);
             var repoFactory = new TestRepoFactory { ThingsRepository = thingRepoMock.Object };
-            var service = new ThingsService(repoFactory);
+            var service = new ThingsService(repoFactory.CreateUnitOfWork());
 
             var things = await service.GetThings();
 
@@ -76,7 +76,7 @@ namespace SensorThings.Server.Test
             int id = 42;
             Mock<IThingsRepository> thingRepoMock = new Mock<IThingsRepository>();
             var repoFactory = new TestRepoFactory { ThingsRepository = thingRepoMock.Object };
-            var service = new ThingsService(repoFactory);
+            var service = new ThingsService(repoFactory.CreateUnitOfWork());
 
             await service.RemoveThing(id);
 
@@ -92,7 +92,7 @@ namespace SensorThings.Server.Test
             Mock<IThingsRepository> thingRepoMock = new Mock<IThingsRepository>();
             thingRepoMock.Setup(m => m.GetByIdAsync(id)).ReturnsAsync(thing);
             var repoFactory = new TestRepoFactory { ThingsRepository = thingRepoMock.Object };
-            var service = new ThingsService(repoFactory);
+            var service = new ThingsService(repoFactory.CreateUnitOfWork());
 
             var updatedThing = await service.UpdateThing(updates, id);
 
@@ -108,7 +108,7 @@ namespace SensorThings.Server.Test
             Mock<IThingsRepository> thingRepoMock = new Mock<IThingsRepository>();
             thingRepoMock.Setup(m => m.GetByIdAsync(id)).ReturnsAsync(thing);
             var repoFactory = new TestRepoFactory { ThingsRepository = thingRepoMock.Object };
-            var service = new ThingsService(repoFactory);
+            var service = new ThingsService(repoFactory.CreateUnitOfWork());
 
             var updatedThing = await service.UpdateThing(updates, id);
 
@@ -122,7 +122,7 @@ namespace SensorThings.Server.Test
             Mock<IThingsRepository> thingRepoMock = new Mock<IThingsRepository>();
             thingRepoMock.Setup(m => m.GetLinkedLocations(id)).ReturnsAsync(new List<Location>());
             var repoFactory = new TestRepoFactory { ThingsRepository = thingRepoMock.Object };
-            var service = new ThingsService(repoFactory);
+            var service = new ThingsService(repoFactory.CreateUnitOfWork());
 
             var locations = await service.GetLocationsAsync(id);
 
@@ -138,7 +138,7 @@ namespace SensorThings.Server.Test
             Mock<IThingsRepository> thingRepoMock = new Mock<IThingsRepository>();
             thingRepoMock.Setup(m => m.GetLinkedLocations(id)).ReturnsAsync(locations);
             var repoFactory = new TestRepoFactory { ThingsRepository = thingRepoMock.Object };
-            var service = new ThingsService(repoFactory);
+            var service = new ThingsService(repoFactory.CreateUnitOfWork());
 
             var retrievedLocations = await service.GetLocationsAsync(id);
 

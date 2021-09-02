@@ -20,7 +20,7 @@ namespace SensorThings.Server.Test
             Sensor sensor = new Sensor { Name = "Test Sensor" };
             Mock<IRepository<Sensor>> sensorRepoMock = new Mock<IRepository<Sensor>>();
             var repoFactory = new TestRepoFactory { SensorsRepository = sensorRepoMock.Object };
-            var service = new SensorsService(repoFactory);
+            var service = new SensorsService(repoFactory.CreateUnitOfWork());
 
             var createdSensor = await service.AddSensor(sensor);
 
@@ -34,7 +34,7 @@ namespace SensorThings.Server.Test
             Mock<IRepository<Sensor>> sensorRepoMock = new Mock<IRepository<Sensor>>();
             sensorRepoMock.Setup(m => m.GetByIdAsync(id)).ReturnsAsync((Sensor)null);
             var repoFactory = new TestRepoFactory { SensorsRepository = sensorRepoMock.Object };
-            var service = new SensorsService(repoFactory);
+            var service = new SensorsService(repoFactory.CreateUnitOfWork());
 
             var sensor = await service.GetSensorById(id);
 
@@ -50,7 +50,7 @@ namespace SensorThings.Server.Test
             Mock<IRepository<Sensor>> sensorRepoMock = new Mock<IRepository<Sensor>>();
             sensorRepoMock.Setup(m => m.GetByIdAsync(id)).ReturnsAsync(sensor);
             var repoFactory = new TestRepoFactory { SensorsRepository = sensorRepoMock.Object };
-            var service = new SensorsService(repoFactory);
+            var service = new SensorsService(repoFactory.CreateUnitOfWork());
 
             var recoveredSensor = await service.GetSensorById(id);
 
@@ -69,7 +69,7 @@ namespace SensorThings.Server.Test
             Mock<IRepository<Sensor>> sensorRepoMock = new Mock<IRepository<Sensor>>();
             sensorRepoMock.Setup(m => m.GetAllAsync()).ReturnsAsync(collection);
             var repoFactory = new TestRepoFactory { SensorsRepository = sensorRepoMock.Object };
-            var service = new SensorsService(repoFactory);
+            var service = new SensorsService(repoFactory.CreateUnitOfWork());
 
             var sensors = await service.GetSensors();
 
@@ -86,7 +86,7 @@ namespace SensorThings.Server.Test
             Mock<IRepository<Sensor>> sensorRepoMock = new Mock<IRepository<Sensor>>();
             sensorRepoMock.Setup(m => m.GetByIdAsync(id)).ReturnsAsync(sensor);
             var repoFactory = new TestRepoFactory { SensorsRepository = sensorRepoMock.Object };
-            var service = new SensorsService(repoFactory);
+            var service = new SensorsService(repoFactory.CreateUnitOfWork());
 
             var updatedSensor = await service.UpdateSensor(updates, id);
 
@@ -103,7 +103,7 @@ namespace SensorThings.Server.Test
             Mock<IRepository<Sensor>> sensorRepoMock = new Mock<IRepository<Sensor>>();
             sensorRepoMock.Setup(m => m.GetByIdAsync(id)).ReturnsAsync(sensor);
             var repoFactory = new TestRepoFactory { SensorsRepository = sensorRepoMock.Object };
-            var service = new SensorsService(repoFactory);
+            var service = new SensorsService(repoFactory.CreateUnitOfWork());
 
             var updatedSensor = await service.UpdateSensor(updates, id);
 
@@ -117,7 +117,7 @@ namespace SensorThings.Server.Test
             int id = 42;
             Mock<IRepository<Sensor>> sensorRepoMock = new Mock<IRepository<Sensor>>();
             var repoFactory = new TestRepoFactory { SensorsRepository = sensorRepoMock.Object };
-            var service = new SensorsService(repoFactory);
+            var service = new SensorsService(repoFactory.CreateUnitOfWork());
 
             await service.RemoveSensor(id);
 
