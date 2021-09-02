@@ -2,7 +2,7 @@
 
   <PropertyGroup>
     <TargetFramework>netstandard2.1</TargetFramework>
-    <Version>1.0.0.2-alpha</Version>
+    <Version>1.0.0.3-alpha</Version>
     <Company>PAR Government Systems Corporation</Company>
     <Authors>Gregory Hasseler</Authors>
     <GeneratePackageOnBuild>true</GeneratePackageOnBuild>
@@ -12,9 +12,12 @@
     <PackageLicenseExpression>LGPL-2.1-only</PackageLicenseExpression>
     <PackageProjectUrl>https://github.com/PAR-Government/sensor-things-server</PackageProjectUrl>
     <RepositoryUrl>https://github.com/PAR-Government/sensor-things-server</RepositoryUrl>
-    <PackageReleaseNotes>Updates to time parsing
-Allow Observation entity to directly reference a Datastream entity
-Fixed improper Datastream link attribute on Thing entity</PackageReleaseNotes>
+    <PackageReleaseNotes>Added missing Datastreams link to ObservedProperty entity
+Added missing Observations field to FeatureOfInterest entity
+Removed the ObservationTypes enum in favor of a plain string to allow maximum flexibility
+Reworked Unit of Work creation and ownership across the end point controllers and repository services
+Allow the resultTime field of an Observation to be optional
+Fixed serialization bug impacting OGCTime where time instants were serialized as time intervals</PackageReleaseNotes>
   </PropertyGroup>
 
   <ItemGroup>
