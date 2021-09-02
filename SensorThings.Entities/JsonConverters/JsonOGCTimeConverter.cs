@@ -37,7 +37,14 @@ namespace SensorThings.Entities.JsonConverters
             var start = value.Start.ToString(dateFormat);
             var stop = value.Stop.ToString(dateFormat);
 
-            writer.WriteValue($"{start}/{stop}");
+            if (value.Stop != DateTime.MinValue)
+            {
+                writer.WriteValue($"{start}/{stop}");
+            }
+            else
+            {
+                writer.WriteValue($"{start}");
+            }
         }
     }
 }
