@@ -113,7 +113,7 @@ namespace SensorThings.Server.Controllers
         private async Task PublishObservation(long datastreamId, string observation)
         {
             var message = new MqttApplicationMessageBuilder()
-                .WithTopic($"Datastreams({datastreamId})/Observations")
+                .WithTopic($"v1.0/Datastreams({datastreamId})/Observations")
                 .WithPayload(observation)
                 .Build();
             await _mqttClient.PublishAsync(message, CancellationToken.None);
