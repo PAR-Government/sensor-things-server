@@ -46,6 +46,7 @@ namespace SensorThings.Server.Controllers
             var service = new ObservationsService(uow);
             observation = await service.AddObservation(observation, ds.ID);
             observation.BaseUrl = GetBaseUrl();
+            ds.BaseUrl = GetBaseUrl();
 
             uow.Commit();
 
