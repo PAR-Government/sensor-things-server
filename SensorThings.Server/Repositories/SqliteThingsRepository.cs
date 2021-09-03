@@ -162,7 +162,7 @@ namespace SensorThings.Server.Repositories
                         datastreams.PhenomenonTime as PhenomenonTime,
                         datastreams.ResultTime as ResultTime
                     FROM things
-                    INNER JOIN things_datstreams on (things.id = things_datastreams.thing_id)
+                    INNER JOIN things_datastreams on (things.id = things_datastreams.thing_id)
                     INNER JOIN datastreams on (datastreams.id = things_datastreams.datastream_id)
                     WHERE things.id = @thingId;";
             return await Connection.QueryAsync<Datastream>(sql, new { thingId }, _transaction);
