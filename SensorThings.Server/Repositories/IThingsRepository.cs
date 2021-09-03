@@ -31,5 +31,7 @@ namespace SensorThings.Server.Repositories
         public Task RemoveDatastreamLinkAsync(long thingId, long datastreamId);
 
         public Task RemoveDatastreamLinksAsync(long thingId);
+
+        public Task<Thing> GetLinkedThingForDatastream(long datastreamId);
     }
 }

@@ -106,5 +106,10 @@ namespace SensorThings.Server.Services
         {
             await UOW.DatastreamsRepository.UnlinkObservationAsync(datastreamId, observationId);
         }
+
+        public async Task<Thing> GetLinkedThing(long datastreamId)
+        {
+            return await UOW.ThingsRepository.GetLinkedThingForDatastream(datastreamId);
+        }
     }
 }

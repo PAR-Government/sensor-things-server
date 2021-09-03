@@ -188,6 +188,20 @@ namespace SensorThings.Server.Repositories
             await Connection.ExecuteAsync(sql, new { thingId }, _transaction);
         }
 
+        public async Task<Thing> GetLinkedThingForDatastream(long datastreamId)
+        {
+            var sql =
+                @"SELECT
+                    things.ID as ID,
+                    things.Name as Name,
+                    things.Description as Description
+                FROM datastreams
+                INNER JOIN things_datastreams on (datastreams.id = things_datastreams.datastream_id)
+                INNER JOIN things on (things.id = things_datastreams.thing_id)
+                WHERE datastreams.id = @datastreamId;";
+            return await Connection.QuerySingleAsync<Thing>(sql, new { datastreamId }, _transaction);
+        }
+
         private static void CreateTable(IDbConnection connection)
         {
             var sql =
