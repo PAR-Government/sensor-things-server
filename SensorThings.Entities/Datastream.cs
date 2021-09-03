@@ -39,5 +39,8 @@ namespace SensorThings.Entities
 
         [JsonProperty("Thing@iot.navigationLink")]
         public string ThingLink { get => $"{SelfLink}/Thing"; }
+
+        [JsonProperty("Thing", NullValueHandling = NullValueHandling.Ignore)]
+        public Thing Thing { get; set; }
     }
 }

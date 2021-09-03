@@ -22,9 +22,22 @@ namespace SensorThings.Server.Controllers
             using var uow = RepoFactory.CreateUnitOfWork();
             var data = await HttpContext.GetRequestBodyAsStringAsync();
             var datastream = JsonConvert.DeserializeObject<Datastream>(data);
+            var thing = datastream.Thing;
 
             var service = new DatastreamsService(uow);
+            var thingService = new ThingsService(uow);
+
             datastream = await service.AddDatastream(datastream);
+
+            if (thing == null)
+            {
+                // TODO: Inform user that invariant wasn't met, DS must have a Thing
+            }
+            else
+            {
+                await thingService.AssociateDatastreamAsync(thing.ID, datastream.ID);
+            }
+
             datastream.BaseUrl = GetBaseUrl();
             uow.Commit();
 
@@ -33,6 +46,7 @@ namespace SensorThings.Server.Controllers
             return datastream;
         }
 
+        // TODO: Add support for expand attribute
         [Route(HttpVerbs.Get, "/Datastreams")]
         public async Task<Listing<Datastream>> GetDatastreamsAsync()
         {
@@ -44,20 +58,37 @@ namespace SensorThings.Server.Controllers
             foreach(var datastream in datastreams)
             {
                 datastream.BaseUrl = baseUrl;
+
+                try
+                {
+                    var thing = await service.GetLinkedThing(datastream.ID);
+                    thing.BaseUrl = baseUrl;
+                    datastream.Thing = thing;
+                }
+                catch (Exception) { }
             }
 
             var listing = new Listing<Datastream> { Items = datastreams.ToList() };
             return listing;
         }
 
+        // TODO: Add support for expand attribute
         [Route(HttpVerbs.Get, "/Datastreams({id})")]
         public async Task<Datastream> GetDatastreamAsync(int id)
         {
             using var uow = RepoFactory.CreateUnitOfWork();
             var service = new DatastreamsService(uow);
-            var datastream = await service.GetDatastreamById(id);
 
+            var datastream = await service.GetDatastreamById(id);
             datastream.BaseUrl = GetBaseUrl();
+
+            try
+            {
+                var thing = await service.GetLinkedThing(id);
+                thing.BaseUrl = GetBaseUrl();
+                datastream.Thing = thing;
+            }
+            catch (Exception) { }
 
             return datastream;
         }
