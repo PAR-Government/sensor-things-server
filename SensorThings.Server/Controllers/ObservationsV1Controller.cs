@@ -113,11 +113,18 @@ namespace SensorThings.Server.Controllers
 
         private async Task PublishObservation(long datastreamId, string observation)
         {
-            var message = new MqttApplicationMessageBuilder()
+            var v1_0message = new MqttApplicationMessageBuilder()
+                .WithTopic($"Datastreams({datastreamId})/Observations")
+                .WithPayload(observation)
+                .Build();
+
+            var v1_1message = new MqttApplicationMessageBuilder()
                 .WithTopic($"v1.0/Datastreams({datastreamId})/Observations")
                 .WithPayload(observation)
                 .Build();
-            await _mqttClient.PublishAsync(message, CancellationToken.None);
+
+            await _mqttClient.PublishAsync(v1_0message, CancellationToken.None);
+            await _mqttClient.PublishAsync(v1_1message, CancellationToken.None);
         }
     }
 }
