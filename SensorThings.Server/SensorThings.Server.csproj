@@ -3,7 +3,7 @@
   <PropertyGroup>
     <TargetFramework>netstandard2.1</TargetFramework>
     <Company>PAR Government Systems Corporation</Company>
-    <Version>1.0.0.3-alpha</Version>
+    <Version>1.0.0.4-alpha</Version>
     <GeneratePackageOnBuild>true</GeneratePackageOnBuild>
     <RepositoryUrl>https://github.com/PAR-Government/sensor-things-server</RepositoryUrl>
     <RepositoryType></RepositoryType>
@@ -16,12 +16,11 @@
 One of the main goals of this implementation has been to enable the embedding of a SensorThings server into a Xamarin.Android application.</Description>
     <PackageLicenseExpression>LGPL-2.1-only</PackageLicenseExpression>
     <Product>PAR.SensorThings.Server</Product>
-    <PackageReleaseNotes>Added missing Datastreams link to ObservedProperty entity
-Added missing Observations field to FeatureOfInterest entity
-Removed the ObservationTypes enum in favor of a plain string to allow maximum flexibility
-Reworked Unit of Work creation and ownership across the end point controllers and repository services
-Allow the resultTime field of an Observation to be optional
-Fixed serialization bug impacting OGCTime where time instants were serialized as time intervals</PackageReleaseNotes>
+    <PackageReleaseNotes>Fixed bug where Observations were being published to the incorrect MQTT topic
+Fixed bug in SqliteThingsRepository query
+Added ability to associate a Thing with a Datastream
+Added ability to retrieve a Thing associated with a particular Datastream
+</PackageReleaseNotes>
   </PropertyGroup>
 
   <ItemGroup>
