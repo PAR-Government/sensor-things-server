@@ -12,7 +12,8 @@
     <PackageLicenseExpression>LGPL-2.1-only</PackageLicenseExpression>
     <PackageProjectUrl>https://github.com/PAR-Government/sensor-things-server</PackageProjectUrl>
     <RepositoryUrl>https://github.com/PAR-Government/sensor-things-server</RepositoryUrl>
-    <PackageReleaseNotes>Fixed bug where Observations were being published to the incorrect MQTT topic
+    <PackageReleaseNotes>Publish Observations in a SensorThings 1.1 forward compatible way
+Fixed bug where Datastreams associated with Observations did not always have their base url set properly
 Fixed bug in SqliteThingsRepository query
 Added ability to associate a Thing with a Datastream
 Added ability to retrieve a Thing associated with a particular Datastream
