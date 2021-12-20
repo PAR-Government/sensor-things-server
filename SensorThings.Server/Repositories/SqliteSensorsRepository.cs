@@ -74,8 +74,6 @@ namespace SensorThings.Server.Repositories
                         Metadata = @Metadata
                     WHERE id = @ID";
             await Connection.ExecuteAsync(sql, item, _transaction);
-
-            throw new NotImplementedException();
         }
 
         private static void CreateTable(IDbConnection connection)
