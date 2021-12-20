@@ -8,8 +8,8 @@ namespace SensorThings.Server.Repositories
 {
     public class SqliteRepositoryUnitOfWork : IRepositoryUnitOfWork
     {
-        private IDbConnection _connection;
-        private IDbTransaction _transaction;
+        internal IDbConnection _connection;
+        internal IDbTransaction _transaction;
 
         private IThingsRepository _thingsRepository;
         private IRepository<Location> _locationsRepository;

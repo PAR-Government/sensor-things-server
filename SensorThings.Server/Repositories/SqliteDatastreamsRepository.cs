@@ -18,27 +18,41 @@ namespace SensorThings.Server.Repositories
             _transaction = transaction;
         }
 
-        public static void CheckForTables(IDbConnection connection)
+        public static void CheckForTables(IDbConnection connection, IDbTransaction transaction)
         {
             if (!SqliteUtil.CheckForTable(connection, "datastreams"))
             {
-                CreateTable(connection);
+                CreateTable(connection, transaction);
             }
 
             if (!SqliteUtil.CheckForTable(connection, "datastreams_sensors"))
             {
-                CreateDatastreamSensorsTable(connection);
+                CreateDatastreamSensorsTable(connection, transaction);
             }
 
             if (!SqliteUtil.CheckForTable(connection, "datastreams_observedproperties"))
             {
-                CreateDatastreamsObservedPropertiesTable(connection);
+                CreateDatastreamsObservedPropertiesTable(connection, transaction);
             }
 
             if (!SqliteUtil.CheckForTable(connection, "datastreams_observations"))
             {
-                CreateDatastreamsObservationsTable(connection);
+                CreateDatastreamsObservationsTable(connection, transaction);
             }
+        }
+
+        public static async Task DropAssociationTables(IDbConnection connection, IDbTransaction transaction)
+        {
+            var sql = @"DROP TABLE IF EXISTS datastreams_observations;
+                        DROP TABLE IF EXISTS datastreams_observedproperties;
+                        DROP TABLE IF EXISTS datastreams_sensors;";
+            await connection.ExecuteScalarAsync(sql, transaction);
+        }
+
+        public static async Task DropTables(IDbConnection connection, IDbTransaction transaction)
+        {
+            var sql = @"DROP TABLE IF EXISTS datastreams;";
+            await connection.ExecuteScalarAsync(sql, transaction);
         }
 
         public async Task<long> AddAsync(Datastream item)
@@ -260,7 +274,7 @@ namespace SensorThings.Server.Repositories
             return datastreams;
         }
 
-        private static void CreateTable(IDbConnection connection)
+        private static void CreateTable(IDbConnection connection, IDbTransaction transaction)
         {
             var sql =
                 @"Create Table datastreams (
@@ -272,10 +286,10 @@ namespace SensorThings.Server.Repositories
                     ObservedArea VARCHAR(1000),
                     PhenomenonTime TEXT,
                     ResultTime TEXT);";
-            connection.Execute(sql);
+            connection.ExecuteScalar(sql, transaction);
         }
 
-        private static void CreateDatastreamSensorsTable(IDbConnection connection)
+        private static void CreateDatastreamSensorsTable(IDbConnection connection, IDbTransaction transaction)
         {
             var sql =
                 @"CREATE TABLE datastreams_sensors(
@@ -285,10 +299,10 @@ namespace SensorThings.Server.Repositories
                     FOREIGN KEY(sensor_id) REFERENCES sensors(id) ON DELETE RESTRICT ON UPDATE CASCADE,
                     PRIMARY KEY(datastream_id, sensor_id)
                 );";
-            connection.Execute(sql);
+            connection.ExecuteScalar(sql, transaction);
         }
 
-        private static void CreateDatastreamsObservedPropertiesTable(IDbConnection connection)
+        private static void CreateDatastreamsObservedPropertiesTable(IDbConnection connection, IDbTransaction transaction)
         {
             var sql =
                @"CREATE TABLE datastreams_observedproperties(
@@ -298,10 +312,10 @@ namespace SensorThings.Server.Repositories
                     FOREIGN KEY(observed_property_id) REFERENCES observed_properties(id) ON DELETE RESTRICT ON UPDATE CASCADE,
                     PRIMARY KEY(datastream_id, observed_property_id)
                 );";
-            connection.Execute(sql);
+            connection.ExecuteScalar(sql, transaction);
         }
 
-        public static void CreateDatastreamsObservationsTable(IDbConnection connection)
+        public static void CreateDatastreamsObservationsTable(IDbConnection connection, IDbTransaction transaction)
         {
             var sql =
                 @"CREATE TABLE datastreams_observations(
@@ -311,7 +325,7 @@ namespace SensorThings.Server.Repositories
                     FOREIGN KEY(observation_id) REFERENCES observations(id) ON DELETE RESTRICT ON UPDATE  CASCADE,
                     PRIMARY KEY(datastream_id, observation_id)
                 );";
-            connection.Execute(sql);
+            connection.ExecuteScalar(sql, transaction);
         }
     }
 }

@@ -18,27 +18,41 @@ namespace SensorThings.Server.Repositories
             _transaction = transaction;
         }
 
-        public static void CheckForTables(IDbConnection connection)
+        public static void CheckForTables(IDbConnection connection, IDbTransaction transaction)
         {
             if (!SqliteUtil.CheckForTable(connection, "things"))
             {
-                CreateTable(connection);
+                CreateTable(connection, transaction);
             }
 
             if (!SqliteUtil.CheckForTable(connection, "things_locations"))
             {
-                CreateThingLocationTable(connection);
+                CreateThingLocationTable(connection, transaction);
             }
 
             if (!SqliteUtil.CheckForTable(connection, "things_historical_locations"))
             {
-                CreateThingHistoricalLocationTable(connection);
+                CreateThingHistoricalLocationTable(connection, transaction);
             }
 
             if (!SqliteUtil.CheckForTable(connection, "things_datastreams"))
             {
-                CreateThingDatastreamsTable(connection);
+                CreateThingDatastreamsTable(connection, transaction);
             }
+        }
+
+        public static async Task DropAssociationTables(IDbConnection connection, IDbTransaction transaction)
+        {
+            var sql = @"DROP TABLE IF EXISTS things_datastreams;
+                        DROP TABLE IF EXISTS things_historical_locations;
+                        DROP TABLE IF EXISTS things_locations;";
+            await connection.ExecuteScalarAsync(sql, transaction);
+        }
+
+        public static async Task DropTables(IDbConnection connection, IDbTransaction transaction)
+        {
+            var sql = @"DROP TABLE IF EXISTS things;";
+            await connection.ExecuteScalarAsync(sql, transaction);
         }
 
         public async Task<long> AddAsync(Thing item)
@@ -202,7 +216,7 @@ namespace SensorThings.Server.Repositories
             return await Connection.QuerySingleAsync<Thing>(sql, new { datastreamId }, _transaction);
         }
 
-        private static void CreateTable(IDbConnection connection)
+        private static void CreateTable(IDbConnection connection, IDbTransaction transaction)
         {
             var sql =
                 @"Create Table things (
@@ -210,10 +224,10 @@ namespace SensorThings.Server.Repositories
                     Name TEXT NOT NULL,
                     Description TEXT NULL
                 );";
-            connection.Execute(sql);
+            connection.ExecuteScalar(sql, transaction);
         }
 
-        private static void CreateThingLocationTable(IDbConnection connection)
+        private static void CreateThingLocationTable(IDbConnection connection, IDbTransaction transaction)
         {
             var sql =
                 @"CREATE Table things_locations(
@@ -224,10 +238,10 @@ namespace SensorThings.Server.Repositories
                     PRIMARY KEY(thing_id, location_id)
                 );";
 
-            connection.Execute(sql);
+            connection.ExecuteScalar(sql, transaction);
         }
 
-        private static void CreateThingHistoricalLocationTable(IDbConnection connection)
+        private static void CreateThingHistoricalLocationTable(IDbConnection connection, IDbTransaction transaction)
         {
             var sql =
                 @"CREATE Table things_historical_locations (
@@ -237,10 +251,10 @@ namespace SensorThings.Server.Repositories
                     FOREIGN KEY(historical_location_id) REFERENCES historical_locations(id) ON DELETE RESTRICT ON UPDATE CASCADE,
                     PRIMARY KEY(thing_id, historical_location_id)
                 );";
-            connection.Execute(sql);
+            connection.ExecuteScalar(sql, transaction);
         }
 
-        private static void CreateThingDatastreamsTable(IDbConnection connection)
+        private static void CreateThingDatastreamsTable(IDbConnection connection, IDbTransaction transaction)
         {
             var sql =
                 @"CREATE TABLE things_datastreams (
@@ -250,7 +264,7 @@ namespace SensorThings.Server.Repositories
                     FOREIGN KEY(datastream_id) REFERENCES datastreams(id) ON DELETE RESTRICT ON UPDATE CASCADE,
                     PRIMARY KEY(thing_id, datastream_id)
                 );";
-            connection.Execute(sql);
+            connection.ExecuteScalar(sql, transaction);
         }
     }
 }

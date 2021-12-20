@@ -18,17 +18,29 @@ namespace SensorThings.Server.Repositories
             _transaction = transaction;
         }
 
-        public static void CheckForTables(IDbConnection connection)
+        public static void CheckForTables(IDbConnection connection, IDbTransaction transaction)
         {
             if (!SqliteUtil.CheckForTable(connection, "observations"))
             {
-                CreateTable(connection);
+                CreateTable(connection, transaction);
             }
 
             if (!SqliteUtil.CheckForTable(connection, "observations_featuresofinterest"))
             {
-                CreateObservationsFeaturesTable(connection);
+                CreateObservationsFeaturesTable(connection, transaction);
             }
+        }
+
+        public static async Task DropAssociationTables(IDbConnection connection, IDbTransaction transaction)
+        {
+            var sql = @"DROP TABLE IF EXISTS observations_featuresofinterest;";
+            await connection.ExecuteScalarAsync(sql, transaction);
+        }
+
+        public static async Task DropTables(IDbConnection connection, IDbTransaction transaction)
+        {
+            var sql = @"DROP TABLE IF EXISTS observations;";
+            await connection.ExecuteScalarAsync(sql, transaction);
         }
 
         public async Task<long> AddAsync(Observation item)
@@ -136,7 +148,7 @@ namespace SensorThings.Server.Repositories
             await Connection.ExecuteAsync(sql, new { observationId, featureId }, _transaction);
         }
 
-        private static void CreateTable(IDbConnection connection)
+        private static void CreateTable(IDbConnection connection, IDbTransaction transaction)
         {
             var sql =
                 @"CREATE TABLE observations (
@@ -147,10 +159,10 @@ namespace SensorThings.Server.Repositories
                     ValidTime TEXT,
                     Parameters TEXT
                 );";
-            connection.Execute(sql);
+            connection.ExecuteScalar(sql, transaction);
         }
 
-        private static void CreateObservationsFeaturesTable(IDbConnection connection)
+        private static void CreateObservationsFeaturesTable(IDbConnection connection, IDbTransaction transaction)
         {
             var sql =
                 @"CREATE TABLE observations_featuresofinterest (
@@ -160,7 +172,7 @@ namespace SensorThings.Server.Repositories
                     FOREIGN KEY(feature_id) REFERENCES featuresOfInterest(id) ON DELETE RESTRICT ON UPDATE CASCADE,
                     PRIMARY KEY(observation_id, feature_id)
                 );";
-            connection.Execute(sql);
+            connection.ExecuteScalar(sql, transaction);
         }
     }
 }

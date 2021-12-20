@@ -18,12 +18,23 @@ namespace SensorThings.Server.Repositories
             _transaction = transaction;
         }
 
-        public static void CheckForTables(IDbConnection connection)
+        public static void CheckForTables(IDbConnection connection, IDbTransaction transaction)
         {
             if (!SqliteUtil.CheckForTable(connection, "sensors"))
             {
-                CreateTable(connection);
+                CreateTable(connection, transaction);
             }
+        }
+
+        public static async Task DropAssociationTables(IDbConnection connection, IDbTransaction transaction)
+        {
+            // no-op
+        }
+
+        public static async Task DropTables(IDbConnection connection, IDbTransaction transaction)
+        {
+            var sql = @"DROP TABLE IF EXISTS sensors;";
+            await connection.ExecuteScalarAsync(sql, transaction);
         }
 
         public async Task<long> AddAsync(Sensor item)
@@ -76,7 +87,7 @@ namespace SensorThings.Server.Repositories
             await Connection.ExecuteAsync(sql, item, _transaction);
         }
 
-        private static void CreateTable(IDbConnection connection)
+        private static void CreateTable(IDbConnection connection, IDbTransaction transaction)
         {
             var sql =
                 @"CREATE TABLE sensors (
@@ -87,7 +98,7 @@ namespace SensorThings.Server.Repositories
                     Metadata TEXT
                 );";
 
-            connection.Execute(sql);
+            connection.ExecuteScalar(sql, transaction);
         }
     }
 }

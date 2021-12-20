@@ -18,17 +18,29 @@ namespace SensorThings.Server.Repositories
             _transaction = transaction;
         }
 
-        public static void CheckForTables(IDbConnection connection)
+        public static void CheckForTables(IDbConnection connection, IDbTransaction transaction)
         {
             if (!SqliteUtil.CheckForTable(connection, "historical_locations"))
             {
-                CreateTable(connection);
+                CreateTable(connection, transaction);
             }
 
             if (!SqliteUtil.CheckForTable(connection, "historical_locations_locations"))
             {
-                CreateAssociationTable(connection);
+                CreateAssociationTable(connection, transaction);
             }
+        }
+
+        public static async Task DropAssociationTables(IDbConnection connection, IDbTransaction transaction)
+        {
+            var sql = @"DROP TABLE IF EXISTS historical_locations_locations";
+            await connection.ExecuteScalarAsync(sql, transaction);
+        }
+
+        public static async Task DropTables(IDbConnection connection, IDbTransaction transaction)
+        {
+            var sql = @"DROP TABLE IF EXISTS historical_locations;";
+            await connection.ExecuteScalarAsync(sql, transaction);
         }
 
         public async Task<long> AddAsync(HistoricalLocation item)
@@ -122,16 +134,16 @@ namespace SensorThings.Server.Repositories
             await Connection.ExecuteAsync(sql, item, _transaction);
         }
 
-        private static void CreateTable(IDbConnection connection)
+        private static void CreateTable(IDbConnection connection, IDbTransaction transaction)
         {
             var sql =
                 @"CREATE TABLE historical_locations (
                     id INTEGER PRIMARY KEY AUTOINCREMENT,
                     Time TEXT);";
-            connection.Execute(sql);
+            connection.ExecuteScalar(sql, transaction);
         }
 
-        private static void CreateAssociationTable(IDbConnection connection)
+        private static void CreateAssociationTable(IDbConnection connection, IDbTransaction transaction)
         {
             var sql =
                 @"CREATE TABLE historical_locations_locations(
@@ -141,7 +153,7 @@ namespace SensorThings.Server.Repositories
                     FOREIGN KEY(location_id) REFERENCES locations(id) ON DELETE RESTRICT ON UPDATE CASCADE,
                     PRIMARY KEY(historical_location_id, location_id)
                 );";
-            connection.Execute(sql);
+            connection.ExecuteScalar(sql, transaction);
         }
     }
 }
