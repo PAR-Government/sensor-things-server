@@ -1,8 +1,7 @@
 ﻿using Dapper;
-using System;
-using System.Collections.Generic;
 using System.Data;
 using System.Text;
+using System.Threading.Tasks;
 
 namespace SensorThings.Server.Repositories
 {
@@ -14,6 +13,12 @@ namespace SensorThings.Server.Repositories
             var tableName = conn.QueryFirstOrDefault<string>(sql, new { TableName = name });
 
             return !string.IsNullOrEmpty(tableName) && tableName == name;
+        }
+
+        public static async Task ExportIntoFile(IDbConnection connection, string file)
+        {
+            var sql = @"VACUUM INTO @file;";
+            await connection.ExecuteScalarAsync(sql, new { file = file });
         }
     }
 }

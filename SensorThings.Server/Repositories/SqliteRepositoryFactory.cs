@@ -71,6 +71,12 @@ namespace SensorThings.Server.Repositories
             uow.Commit();
         }
 
+        public async Task ExportToFile(string filepath)
+        {
+            var connection = CreateConnection();
+            await SqliteUtil.ExportIntoFile(connection, filepath);
+        }
+
         private void CheckForTables(IDbConnection connection, IDbTransaction transaction)
         {
             SqliteDatastreamsRepository.CheckForTables(connection, transaction);
