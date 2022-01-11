@@ -19,6 +19,7 @@ namespace SensorThings.Server
         private WebServer _server;
         private readonly IMqttClient _mqttClient;
         private readonly IMqttClientOptions _mqttClientOptions;
+        private readonly CancellationTokenSource _cancellationTokenSource = new CancellationTokenSource();
 
         public Server(string url, IRepositoryFactory repoFactory, IMqttClient mqttClient, IMqttClientOptions mqttClientOptions)
         {
@@ -63,7 +64,7 @@ namespace SensorThings.Server
         {
             if (_mqttClient != null)
             {
-                return Task.WhenAll(_mqttClient.ConnectAsync(_mqttClientOptions, CancellationToken.None), _server.RunAsync());
+                return Task.WhenAll(_mqttClient.ConnectAsync(_mqttClientOptions, CancellationToken.None), _server.RunAsync(_cancellationTokenSource.Token));
             }
             else
             {
@@ -71,9 +72,10 @@ namespace SensorThings.Server
             }
         }
 
-        public void Dispose()
+        public async Task StopAsync()
         {
-            _server.Dispose();
+            _cancellationTokenSource.Cancel();
+            await _mqttClient?.DisconnectAsync();
         }
     }
 }
