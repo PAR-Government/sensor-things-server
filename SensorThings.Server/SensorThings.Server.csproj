@@ -3,7 +3,7 @@
   <PropertyGroup>
     <TargetFramework>netstandard2.1</TargetFramework>
     <Company>PAR Government Systems Corporation</Company>
-    <Version>1.0.0.5-alpha</Version>
+    <Version>1.0.0.6-alpha</Version>
     <GeneratePackageOnBuild>true</GeneratePackageOnBuild>
     <RepositoryUrl>https://github.com/PAR-Government/sensor-things-server</RepositoryUrl>
     <RepositoryType></RepositoryType>
@@ -16,11 +16,7 @@
 One of the main goals of this implementation has been to enable the embedding of a SensorThings server into a Xamarin.Android application.</Description>
     <PackageLicenseExpression>LGPL-2.1-only</PackageLicenseExpression>
     <Product>PAR.SensorThings.Server</Product>
-    <PackageReleaseNotes>Added ability to export and reset SQLite database
-Fixed Server shutdown code
-Fixed exception when updating a Sensor entity
-Updated nuget version numbers
-</PackageReleaseNotes>
+    <PackageReleaseNotes>Explicitly mark server responses as encoded with UTF8</PackageReleaseNotes>
   </PropertyGroup>
 
   <ItemGroup>
