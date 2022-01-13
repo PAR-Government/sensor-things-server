@@ -70,7 +70,7 @@ namespace TestDriver
             Console.ReadLine();
 
             // Shutdown
-            server.Dispose();
+            await server.StopAsync();
             await mqttServer.StopAsync();
         }
     }
