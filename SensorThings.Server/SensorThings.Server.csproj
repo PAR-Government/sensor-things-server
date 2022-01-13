@@ -16,11 +16,10 @@
 One of the main goals of this implementation has been to enable the embedding of a SensorThings server into a Xamarin.Android application.</Description>
     <PackageLicenseExpression>LGPL-2.1-only</PackageLicenseExpression>
     <Product>PAR.SensorThings.Server</Product>
-    <PackageReleaseNotes>Publish Observations in a SensorThings 1.1 forward compatible way
-Fixed bug where Datastreams associated with Observations did not always have their base url set properly
-Fixed bug in SqliteThingsRepository query
-Added ability to associate a Thing with a Datastream
-Added ability to retrieve a Thing associated with a particular Datastream
+    <PackageReleaseNotes>Added ability to export and reset SQLite database
+Fixed Server shutdown code
+Fixed exception when updating a Sensor entity
+Updated nuget version numbers
 </PackageReleaseNotes>
   </PropertyGroup>
 
