@@ -56,7 +56,7 @@ namespace SensorThings.Server
         public async Task SerializeWithNewtonsoft(IHttpContext context, object data)
         {
             Validate.NotNull(nameof(context), context).Response.ContentType = MimeType.Json;
-            using var text = context.OpenResponseText(new UTF8Encoding(false));
+            using var text = context.OpenResponseText(new UTF8Encoding(true));
             await text.WriteAsync(JsonConvert.SerializeObject(data)).ConfigureAwait(false);
         }
 
