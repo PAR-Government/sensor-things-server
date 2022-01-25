@@ -4,6 +4,7 @@ using System.Threading.Tasks;
 using EmbedIO;
 using EmbedIO.Utilities;
 using EmbedIO.WebApi;
+using MQTTnet;
 using MQTTnet.Client;
 using MQTTnet.Client.Options;
 using Newtonsoft.Json;
@@ -17,11 +18,13 @@ namespace SensorThings.Server
         private IRepositoryFactory RepoFactory { get; set; }
 
         private WebServer _server;
-        private readonly IMqttClient _mqttClient;
+        private readonly IMqttClient _mqttPublishClient;
+        private readonly IMqttClient _mqttSubscribeClient;
+        private readonly IMqttClientOptionsFactory _mqttClientOptionsFactory;
         private readonly IMqttClientOptions _mqttClientOptions;
         private readonly CancellationTokenSource _cancellationTokenSource = new CancellationTokenSource();
 
-        public Server(string url, IRepositoryFactory repoFactory, IMqttClient mqttClient, IMqttClientOptions mqttClientOptions)
+        public Server(string url, IRepositoryFactory repoFactory, IMqttClientOptionsFactory mqttClientOptionsFactory)
         {
             RepoFactory = repoFactory;
             _server = new WebServer(o => o
@@ -29,8 +32,11 @@ namespace SensorThings.Server
                 .WithMode(HttpListenerMode.EmbedIO))
                 .WithLocalSessionManager();
 
-            _mqttClient = mqttClient;
-            _mqttClientOptions = mqttClientOptions;
+            _mqttClientOptionsFactory = mqttClientOptionsFactory;
+
+            var factory = new MqttFactory();
+            _mqttPublishClient = factory.CreateMqttClient();
+            _mqttSubscribeClient = factory.CreateMqttClient();
         }
 
         public void Configure()
@@ -46,7 +52,7 @@ namespace SensorThings.Server
                 .WithController(() => new SensorsV1Controller(RepoFactory))
                 .WithController(() => new ObservedPropertiesV1Controller(RepoFactory))
                 .WithController(() => new FeaturesOfInterestV1Controller(RepoFactory))
-                .WithController(() => new ObservationsV1Controller(RepoFactory, _mqttClient))
+                .WithController(() => new ObservationsV1Controller(RepoFactory, _mqttPublishClient))
                 .WithController(() => new DatastreamsV1Controller(RepoFactory))
                 .HandleHttpException(HttpExceptionHandler.DataResponse(SerializeWithNewtonsoft));
 
@@ -60,22 +66,29 @@ namespace SensorThings.Server
             await text.WriteAsync(JsonConvert.SerializeObject(data)).ConfigureAwait(false);
         }
 
-        public Task RunAsync()
+        public async Task RunAsync()
         {
-            if (_mqttClient != null)
+            if (_mqttPublishClient != null)
             {
-                return Task.WhenAll(_mqttClient.ConnectAsync(_mqttClientOptions, CancellationToken.None), _server.RunAsync(_cancellationTokenSource.Token));
+                await _mqttPublishClient
+                    .ConnectAsync(_mqttClientOptionsFactory.NewPublisherOptions(), CancellationToken.None)
+                    .ConfigureAwait(false);
             }
-            else
+
+            if (_mqttSubscribeClient != null)
             {
-                return _server.RunAsync();
+                await _mqttSubscribeClient
+                    .ConnectAsync(_mqttClientOptionsFactory.NewSubscriberOptions(), CancellationToken.None)
+                    .ConfigureAwait(false);
             }
+
+            await _server.RunAsync(_cancellationTokenSource.Token);
         }
 
         public async Task StopAsync()
         {
             _cancellationTokenSource.Cancel();
-            await _mqttClient?.DisconnectAsync();
+            await _mqttPublishClient?.DisconnectAsync();
         }
     }
 }
