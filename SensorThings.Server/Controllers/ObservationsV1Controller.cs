@@ -9,6 +9,7 @@ using MQTTnet.Client;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
 using SensorThings.Entities;
+using SensorThings.Server.Mqtt;
 using SensorThings.Server.Repositories;
 using SensorThings.Server.Services;
 
@@ -52,12 +53,11 @@ namespace SensorThings.Server.Controllers
 
             Response.StatusCode = (int)HttpStatusCode.Created;
 
-            var json = JsonConvert.SerializeObject(observation);
-
             if (_mqttClient != null)
             {
-                await PublishObservation(ds.ID, json);
+                await ObservationsMqttController.PublishAsync(_mqttClient, observation);
             }
+
             return observation;
         }
 
@@ -109,22 +109,6 @@ namespace SensorThings.Server.Controllers
             var service = new ObservationsService(uow);
             await service.RemoveObservation(id);
             uow.Commit();
-        }
-
-        private async Task PublishObservation(long datastreamId, string observation)
-        {
-            var v1_0message = new MqttApplicationMessageBuilder()
-                .WithTopic($"Datastreams({datastreamId})/Observations")
-                .WithPayload(observation)
-                .Build();
-
-            var v1_1message = new MqttApplicationMessageBuilder()
-                .WithTopic($"v1.0/Datastreams({datastreamId})/Observations")
-                .WithPayload(observation)
-                .Build();
-
-            await _mqttClient.PublishAsync(v1_0message, CancellationToken.None);
-            await _mqttClient.PublishAsync(v1_1message, CancellationToken.None);
         }
     }
 }
