@@ -24,4 +24,10 @@
     <ProjectReference Include="..\SensorThings.Server\SensorThings.Server.csproj" />
   </ItemGroup>
 
+  <ItemGroup>
+    <None Remove="Mqtt\" />
+  </ItemGroup>
+  <ItemGroup>
+    <Folder Include="Mqtt\" />
+  </ItemGroup>
 </Project>
