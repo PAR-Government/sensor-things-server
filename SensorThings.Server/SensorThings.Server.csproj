@@ -28,4 +28,10 @@ One of the main goals of this implementation has been to enable the embedding of
   <ItemGroup>
     <ProjectReference Include="..\SensorThings.Entities\SensorThings.Entities.csproj" />
   </ItemGroup>
+  <ItemGroup>
+    <None Remove="Mqtt\" />
+  </ItemGroup>
+  <ItemGroup>
+    <Folder Include="Mqtt\" />
+  </ItemGroup>
 </Project>
