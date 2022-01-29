@@ -1,6 +1,6 @@
 ﻿using System;
 using System.Text.RegularExpressions;
-using MQTTnet;
+using System.Threading.Tasks;
 using SensorThings.Server.Utils;
 
 namespace SensorThings.Server.Mqtt
@@ -17,7 +17,7 @@ namespace SensorThings.Server.Mqtt
             _observationsController = observationsController;
         }
 
-        public bool Route(string topic, byte[] payload)
+        public async Task<bool> Route(string topic, byte[] payload)
         {
             var isHandled = false;
 
@@ -29,7 +29,7 @@ namespace SensorThings.Server.Mqtt
 
                 var stringPayload = PayloadUtils.ConvertUTF8BytesToString(payload);
 
-                _observationsController.Create(stringPayload);
+                await _observationsController.Create(stringPayload);
             }
 
             return isHandled;

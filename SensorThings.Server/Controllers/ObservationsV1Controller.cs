@@ -12,16 +12,17 @@ using SensorThings.Entities;
 using SensorThings.Server.Mqtt;
 using SensorThings.Server.Repositories;
 using SensorThings.Server.Services;
+using TinyIoC;
 
 namespace SensorThings.Server.Controllers
 {
     public class ObservationsV1Controller : BaseController
     {
-        private readonly IMqttClient _mqttClient;
+        private readonly MqttService mqttService;
 
-        public ObservationsV1Controller(IRepositoryFactory repoFactory, IMqttClient mqttClient) : base(repoFactory) 
+        public ObservationsV1Controller(IRepositoryFactory repoFactory) : base(repoFactory) 
         {
-            _mqttClient = mqttClient;
+            mqttService = TinyIoCContainer.Current.Resolve<MqttService>();
         }
 
         [Route(HttpVerbs.Post, "/Observations")]
@@ -53,10 +54,7 @@ namespace SensorThings.Server.Controllers
 
             Response.StatusCode = (int)HttpStatusCode.Created;
 
-            if (_mqttClient != null)
-            {
-                await ObservationsMqttController.PublishAsync(_mqttClient, observation);
-            }
+            await mqttService?.PublishObservationAsync(observation);
 
             return observation;
         }

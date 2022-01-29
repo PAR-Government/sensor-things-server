@@ -14,11 +14,6 @@ namespace TestDriver
     {
         public static async Task Main()
         {
-            // Create our MQTT pieces
-            var factory = new MqttFactory();
-            var mqttServer = factory.CreateMqttServer();
-            var mqttClient = factory.CreateMqttClient();
-
             // Figure out our listening interfaces
             //IPHostEntry ipHostInfo = Dns.GetHostEntry("localhost");
             //IPAddress ipAddress = ipHostInfo.AddressList[0];
@@ -48,20 +43,15 @@ namespace TestDriver
 
             var mqttServerOptions = mqttServerOptionsBuilder.Build();
 
-            // Start up MQTT broker
-            await mqttServer.StartAsync(mqttServerOptions);
-
-            // Configure MQTT Client. The server will connect it later
-            var mqttClientOptions = new MqttClientOptionsBuilder()
-                .WithTcpServer(mqttIpAddress.ToString())
-                .Build();
 
             // Our server will use SQLite for the storage backend
             var dbPath = Path.Combine(Environment.CurrentDirectory, "sensorthings.db");
             IRepositoryFactory sqlLiteRepoFactory = new SqliteRepositoryFactory(dbPath);
 
             // Create our server
-            var server = new Server($"http://{ipAddress}:8080", sqlLiteRepoFactory, mqttClient, mqttClientOptions);
+            //public Server(string url, IRepositoryFactory repoFactory, MqttServerOptionsBuilder mqttOptions)
+
+            var server = new Server($"http://{ipAddress}:8080", sqlLiteRepoFactory, mqttServerOptionsBuilder);
 
             // Init the server and then start it
             server.Configure();
@@ -71,7 +61,6 @@ namespace TestDriver
 
             // Shutdown
             await server.StopAsync();
-            await mqttServer.StopAsync();
         }
     }
 }
