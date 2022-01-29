@@ -25,13 +25,8 @@ One of the main goals of this implementation has been to enable the embedding of
     <PackageReference Include="Microsoft.Data.Sqlite" Version="6.0.1" />
     <PackageReference Include="MQTTnet" Version="3.1.1" />
   </ItemGroup>
+
   <ItemGroup>
     <ProjectReference Include="..\SensorThings.Entities\SensorThings.Entities.csproj" />
-  </ItemGroup>
-  <ItemGroup>
-    <None Remove="Mqtt\" />
-  </ItemGroup>
-  <ItemGroup>
-    <Folder Include="Mqtt\" />
   </ItemGroup>
 </Project>
