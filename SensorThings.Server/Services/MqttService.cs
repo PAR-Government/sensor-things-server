@@ -10,14 +10,26 @@ using TinyIoC;
 
 namespace SensorThings.Server.Services
 {
-    public class MqttService : IMqttServerClientConnectedHandler, IMqttServerClientDisconnectedHandler, IMqttApplicationMessageReceivedHandler
+    public interface IMqttService
+    {
+        public Task PublishObservationAsync(Observation observation);
+        public void Configure(IMqttServer mqtt);
+    }
+
+    public class MqttService : IMqttService, IMqttServerClientConnectedHandler, IMqttServerClientDisconnectedHandler, IMqttApplicationMessageReceivedHandler
     {
         private IMqttServer _mqtt;
         private MqttRouter _router;
 
+        public MqttService()
+        {
+        }
+
         public void Configure(IMqttServer mqtt)
         {
+            // If we constructor inject the router we will end up in a circular dependency
             _router = TinyIoCContainer.Current.Resolve<MqttRouter>();
+
             _mqtt = mqtt;
             _mqtt.ClientConnectedHandler = this;
             _mqtt.ClientDisconnectedHandler = this;
