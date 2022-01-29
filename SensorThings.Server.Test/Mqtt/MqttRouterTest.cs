@@ -6,6 +6,7 @@ using Moq;
 using SensorThings.Entities;
 using Newtonsoft.Json;
 using SensorThings.Server.Utils;
+using System.Threading.Tasks;
 
 namespace SensorThings.Server.Test.Mqtt
 {
@@ -22,38 +23,41 @@ namespace SensorThings.Server.Test.Mqtt
         }
 
         [Fact]
-        public void TestWithPrefix()
+        public async Task TestWithPrefix()
         {
             var observationController = new Mock<IObservationsMqttController>();
             var router = new MqttRouter(observationController.Object);
             var topic = $"v1.0/Observations";
 
-            router.Route(topic, observationBytes);
+            var handled = await router.Route(topic, observationBytes);
 
+            Assert.True(handled);
             observationController.Verify(m => m.Create(observationJson));
         }
 
         [Fact]
-        public void TestWithoutPrefix()
+        public async Task TestWithoutPrefix()
         {
             var observationController = new Mock<IObservationsMqttController>();
             var router = new MqttRouter(observationController.Object);
             var topic = $"Observations";
 
-            router.Route(topic, observationBytes);
+            var handled = await router.Route(topic, observationBytes);
 
+            Assert.True(handled);
             observationController.Verify(m => m.Create(observationJson));
         }
 
         [Fact]
-        public void TestWithBadPrefix()
+        public async Task TestWithBadPrefix()
         {
             var observationController = new Mock<IObservationsMqttController>();
             var router = new MqttRouter(observationController.Object);
             var topic = $"foo/Observations";
 
-            router.Route(topic, observationBytes);
+            var handled = await router.Route(topic, observationBytes);
 
+            Assert.False(handled);
             observationController.Verify(m => m.Create(observationJson), Times.Never);
         }
     }
