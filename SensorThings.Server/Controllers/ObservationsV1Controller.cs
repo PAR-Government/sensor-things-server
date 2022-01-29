@@ -1,15 +1,11 @@
 ﻿using System.Linq;
 using System.Net;
-using System.Threading;
 using System.Threading.Tasks;
 using EmbedIO;
 using EmbedIO.Routing;
-using MQTTnet;
-using MQTTnet.Client;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
 using SensorThings.Entities;
-using SensorThings.Server.Mqtt;
 using SensorThings.Server.Repositories;
 using SensorThings.Server.Services;
 using TinyIoC;
@@ -18,11 +14,11 @@ namespace SensorThings.Server.Controllers
 {
     public class ObservationsV1Controller : BaseController
     {
-        private readonly MqttService mqttService;
+        private readonly IMqttService mqttService;
 
         public ObservationsV1Controller(IRepositoryFactory repoFactory) : base(repoFactory) 
         {
-            mqttService = TinyIoCContainer.Current.Resolve<MqttService>();
+            mqttService = TinyIoCContainer.Current.Resolve<IMqttService>();
         }
 
         [Route(HttpVerbs.Post, "/Observations")]
@@ -54,7 +50,10 @@ namespace SensorThings.Server.Controllers
 
             Response.StatusCode = (int)HttpStatusCode.Created;
 
-            await mqttService?.PublishObservationAsync(observation);
+            if (mqttService != null)
+            {
+                await mqttService?.PublishObservationAsync(observation);
+            }
 
             return observation;
         }
