@@ -22,7 +22,7 @@ namespace SensorThings.Server.Controllers
             var data = await HttpContext.GetRequestBodyAsStringAsync();
             var property = JsonConvert.DeserializeObject<ObservedProperty>(data);
 
-            var service = new ObservedPropertiesService(uow);
+            var service = uow.ObservedPropertiesService;
             property = await service.AddObservedProperty(property);
             property.BaseUrl = GetBaseUrl();
 
@@ -37,7 +37,7 @@ namespace SensorThings.Server.Controllers
         public async Task<ObservedProperty> GetObservedPropertyAsync(int id)
         {
             using var uow = RepoFactory.CreateUnitOfWork();
-            var service = new ObservedPropertiesService(uow);
+            var service = uow.ObservedPropertiesService;
             var property = await service.GetObservedPropertyById(id);
             property.BaseUrl = GetBaseUrl();
 
@@ -49,7 +49,7 @@ namespace SensorThings.Server.Controllers
         {
             using var uow = RepoFactory.CreateUnitOfWork();
             var baseUrl = GetBaseUrl();
-            var service = new ObservedPropertiesService(uow);
+            var service = uow.ObservedPropertiesService;
             var properties = await service.GetObservedProperties();
 
             foreach (var property in properties)
@@ -69,7 +69,7 @@ namespace SensorThings.Server.Controllers
             var data = await HttpContext.GetRequestBodyAsStringAsync();
             var updates = JObject.Parse(data);
 
-            var service = new ObservedPropertiesService(uow);
+            var service = uow.ObservedPropertiesService;
             await service.UpdateObservedProperty(updates, id);
             uow.Commit();
         }
@@ -78,7 +78,7 @@ namespace SensorThings.Server.Controllers
         public async Task RemoveObservedPropertyAsync(int id)
         {
             using var uow = RepoFactory.CreateUnitOfWork();
-            var service = new ObservedPropertiesService(uow);
+            var service = uow.ObservedPropertiesService;
             await service.RemoveObservedProperty(id);
             uow.Commit();
         }

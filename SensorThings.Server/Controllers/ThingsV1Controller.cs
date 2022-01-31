@@ -22,7 +22,7 @@ namespace SensorThings.Server.Controllers
             var data = await HttpContext.GetRequestBodyAsStringAsync();
             var thing = JsonConvert.DeserializeObject<Thing>(data);
 
-            var service = new ThingsService(uow);
+            var service = uow.ThingsService;
             thing = await service.AddThing(thing);
             thing.BaseUrl = GetBaseUrl();
 
@@ -38,7 +38,7 @@ namespace SensorThings.Server.Controllers
         {
             using var uow = RepoFactory.CreateUnitOfWork();
             var baseUrl = GetBaseUrl();
-            var service = new ThingsService(uow);
+            var service = uow.ThingsService;
             var things = await service.GetThings();
 
             foreach (var thing in things)
@@ -55,7 +55,7 @@ namespace SensorThings.Server.Controllers
         public async Task<Thing> GetThingAsync(int id)
         {
             using var uow = RepoFactory.CreateUnitOfWork();
-            var service = new ThingsService(uow);
+            var service = uow.ThingsService;
             var thing = await service.GetThingById(id);
 
             if (thing == null) 
@@ -74,7 +74,7 @@ namespace SensorThings.Server.Controllers
         {
             using var uow = RepoFactory.CreateUnitOfWork();
             var baseUrl = GetBaseUrl();
-            var service = new ThingsService(uow);
+            var service = uow.ThingsService;
             var locations = await service.GetLocationsAsync(id);
 
             foreach (var location in locations)
@@ -94,7 +94,7 @@ namespace SensorThings.Server.Controllers
             var data = await HttpContext.GetRequestBodyAsStringAsync();
             var updates = JObject.Parse(data);
 
-            var service = new ThingsService(uow);
+            var service = uow.ThingsService;
             await service.UpdateThing(updates, id);
             uow.Commit();
         }
@@ -103,7 +103,7 @@ namespace SensorThings.Server.Controllers
         public async Task RemoveThingAsync(int id)
         {
             using var uow = RepoFactory.CreateUnitOfWork();
-            var service = new ThingsService(uow);
+            var service = uow.ThingsService;
             await service.RemoveThing(id);
             uow.Commit();
         }
@@ -112,7 +112,7 @@ namespace SensorThings.Server.Controllers
         public async Task<Listing<Datastream>> GetDatastreamsAsync(int id)
         {
             using var uow = RepoFactory.CreateUnitOfWork();
-            var service = new ThingsService(uow);
+            var service = uow.ThingsService;
             var datastreams = await service.GetAssociatedDatastreamsAsync(id);
             var listing = new Listing<Datastream> { Items = datastreams.ToList() };
 
@@ -123,7 +123,7 @@ namespace SensorThings.Server.Controllers
         public async Task<Listing<Location>> GetLocationsAsync(int id)
         {
             using var uow = RepoFactory.CreateUnitOfWork();
-            var service = new ThingsService(uow);
+            var service = uow.ThingsService;
             var locations = await service.GetAssociatedLocations(id);
             var listing = new Listing<Location> { Items = locations.ToList() };
 
@@ -134,7 +134,7 @@ namespace SensorThings.Server.Controllers
         public async Task<Listing<HistoricalLocation>> GetHistoricalLocationsAsync(int id)
         {
             using var uow = RepoFactory.CreateUnitOfWork();
-            var service = new ThingsService(uow);
+            var service = uow.ThingsService;
             var locations = await service.GetAssociatedHistoricalLocations(id);
             var listing = new Listing<HistoricalLocation> { Items = locations.ToList() };
 
@@ -145,7 +145,7 @@ namespace SensorThings.Server.Controllers
         public async Task<JObject> GetThingPropertyAsync(int id, string propertyName)
         {
             using var uow = RepoFactory.CreateUnitOfWork();
-            var service = new ThingsService(uow);
+            var service = uow.ThingsService;
             var thing = await service.GetThingById(id);
 
             var jsonThing = JObject.FromObject(thing);
@@ -168,7 +168,7 @@ namespace SensorThings.Server.Controllers
         public async Task<object> GetThingPropertyValueAsync(int id, string propertyName)
         {
             using var uow = RepoFactory.CreateUnitOfWork();
-            var service = new ThingsService(uow);
+            var service = uow.ThingsService;
             var thing = await service.GetThingById(id);
 
             var jsonThing = JObject.FromObject(thing);

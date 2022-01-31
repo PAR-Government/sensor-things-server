@@ -17,7 +17,7 @@ namespace SensorThings.Server.Controllers
         public async Task<HistoricalLocation> GetHistoricalLocationAsync(int id)
         {
             using var uow = RepoFactory.CreateUnitOfWork();
-            var service = new HistoricalLocationsService(uow);
+            var service = uow.HistoricalLocationsService;
             var location = await service.GetHistoricalLocationById(id);
             location.BaseUrl = GetBaseUrl();
 
@@ -29,7 +29,7 @@ namespace SensorThings.Server.Controllers
         {
             using var uow = RepoFactory.CreateUnitOfWork();
             var baseUrl = GetBaseUrl();
-            var service = new HistoricalLocationsService(uow);
+            var service = uow.HistoricalLocationsService;
             var locations = await service.GetHistoricalLocations();
 
             foreach (var location in locations)
@@ -49,7 +49,7 @@ namespace SensorThings.Server.Controllers
             var data = await HttpContext.GetRequestBodyAsStringAsync();
             var updates = JObject.Parse(data);
 
-            var service = new HistoricalLocationsService(uow);
+            var service = uow.HistoricalLocationsService;
             await service.UpdateHistoricalLocation(updates, id);
             uow.Commit();
         }
@@ -58,7 +58,7 @@ namespace SensorThings.Server.Controllers
         public async Task RemoveHistoricalLocationAsync(int id)
         {
             using var uow = RepoFactory.CreateUnitOfWork();
-            var service = new HistoricalLocationsService(uow);
+            var service = uow.HistoricalLocationsService;
             await service.RemoveHistoricalLocation(id);
             uow.Commit();
         }

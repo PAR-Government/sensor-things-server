@@ -1,4 +1,5 @@
 ﻿using SensorThings.Entities;
+using SensorThings.Server.Services;
 using System;
 using System.Collections.Generic;
 using System.Data;
@@ -11,6 +12,7 @@ namespace SensorThings.Server.Repositories
         internal IDbConnection _connection;
         internal IDbTransaction _transaction;
 
+        #region Low level repositories
         private IThingsRepository _thingsRepository;
         private IRepository<Location> _locationsRepository;
         private IHistoricalLocationsRepository _historicalLocationsRepository;
@@ -59,6 +61,49 @@ namespace SensorThings.Server.Repositories
         {
             get => _featuresOfInterestRepository ??= new SqliteFeaturesOfInterestRepository(_transaction);
         }
+        #endregion
+
+        #region high level repository services
+        public IDatastreamsService DatastreamsService
+        {
+            get => new DatastreamsService(this);
+        }
+
+        public IFeaturesOfInterestService FeaturesOfInterestService
+        {
+            get => new FeaturesOfInterestService(this);
+        }
+
+        public IHistoricalLocationsService HistoricalLocationsService
+        {
+            get => new HistoricalLocationsService(this);
+        }
+
+        public ILocationsService LocationsService
+        {
+            get => new LocationsService(this);
+        }
+
+        public IObservationsService ObservationsService
+        {
+            get => new ObservationsService(this);
+        }
+
+        public IObservedPropertiesService ObservedPropertiesService
+        {
+            get => new ObservedPropertiesService(this);
+        }
+
+        public ISensorsService SensorsService
+        {
+            get => new SensorsService(this);
+        }
+
+        public IThingsService ThingsService
+        {
+            get => new ThingsService(this);
+        }
+        #endregion
 
         public SqliteRepositoryUnitOfWork(IDbConnection connection)
         {

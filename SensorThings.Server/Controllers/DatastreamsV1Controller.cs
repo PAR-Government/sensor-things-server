@@ -24,8 +24,8 @@ namespace SensorThings.Server.Controllers
             var datastream = JsonConvert.DeserializeObject<Datastream>(data);
             var thing = datastream.Thing;
 
-            var service = new DatastreamsService(uow);
-            var thingService = new ThingsService(uow);
+            var service = uow.DatastreamsService;
+            var thingService = uow.ThingsService;
 
             datastream = await service.AddDatastream(datastream);
 
@@ -51,7 +51,7 @@ namespace SensorThings.Server.Controllers
         public async Task<Listing<Datastream>> GetDatastreamsAsync()
         {
             using var uow = RepoFactory.CreateUnitOfWork();
-            var service = new DatastreamsService(uow);
+            var service = uow.DatastreamsService;
             var datastreams = await service.GetDatastreams();
             var baseUrl = GetBaseUrl();
 
@@ -77,7 +77,7 @@ namespace SensorThings.Server.Controllers
         public async Task<Datastream> GetDatastreamAsync(int id)
         {
             using var uow = RepoFactory.CreateUnitOfWork();
-            var service = new DatastreamsService(uow);
+            var service = uow.DatastreamsService;
 
             var datastream = await service.GetDatastreamById(id);
             datastream.BaseUrl = GetBaseUrl();
@@ -100,7 +100,7 @@ namespace SensorThings.Server.Controllers
             var data = await HttpContext.GetRequestBodyAsStringAsync();
             var updates = JObject.Parse(data);
 
-            var service = new DatastreamsService(uow);
+            var service = uow.DatastreamsService;
             await service.UpdateDatastream(updates, id);
             uow.Commit();
         }
@@ -109,7 +109,7 @@ namespace SensorThings.Server.Controllers
         public async Task RemoveDatastreamAsync(int id)
         {
             using var uow = RepoFactory.CreateUnitOfWork();
-            var service = new DatastreamsService(uow);
+            var service = uow.DatastreamsService;
             await service.RemoveDatastream(id);
             uow.Commit();
         }

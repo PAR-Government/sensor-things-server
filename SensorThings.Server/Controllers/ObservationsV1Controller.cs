@@ -41,7 +41,7 @@ namespace SensorThings.Server.Controllers
                 throw HttpException.BadRequest("Missing Datastream link", errorDoc);
             }
 
-            var service = new ObservationsService(uow);
+            var service = uow.ObservationsService;
             observation = await service.AddObservation(observation, ds.ID);
             observation.BaseUrl = GetBaseUrl();
             ds.BaseUrl = GetBaseUrl();
@@ -62,7 +62,7 @@ namespace SensorThings.Server.Controllers
         public async Task<Observation> GetObservationAsync(int id)
         {
             using var uow = RepoFactory.CreateUnitOfWork();
-            var service = new ObservationsService(uow);
+            var service = uow.ObservationsService;
             var observation = await service.GetObservationById(id);
             observation.BaseUrl = GetBaseUrl();
 
@@ -74,7 +74,7 @@ namespace SensorThings.Server.Controllers
         {
             using var uow = RepoFactory.CreateUnitOfWork();
             var baseUrl = GetBaseUrl();
-            var service = new ObservationsService(uow);
+            var service = uow.ObservationsService;
             var observations = await service.GetObservations();
 
             foreach (var observation in observations)
@@ -94,7 +94,7 @@ namespace SensorThings.Server.Controllers
             var data = await HttpContext.GetRequestBodyAsStringAsync();
             var updates = JObject.Parse(data);
 
-            var service = new ObservationsService(uow);
+            var service = uow.ObservationsService;
             await service.UpdateObservation(updates, id);
             uow.Commit();
         }
@@ -103,7 +103,7 @@ namespace SensorThings.Server.Controllers
         public async Task RemoveObservationAsync(int id)
         {
             using var uow = RepoFactory.CreateUnitOfWork();
-            var service = new ObservationsService(uow);
+            var service = uow.ObservationsService;
             await service.RemoveObservation(id);
             uow.Commit();
         }

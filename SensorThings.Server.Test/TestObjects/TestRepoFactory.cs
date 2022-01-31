@@ -1,5 +1,6 @@
 ﻿using SensorThings.Entities;
 using SensorThings.Server.Repositories;
+using SensorThings.Server.Services;
 using System;
 
 namespace SensorThings.Server.Test.TestObjects
@@ -7,6 +8,7 @@ namespace SensorThings.Server.Test.TestObjects
 
     public class TestRepoFactory : IRepositoryFactory
     {
+        #region Low level repositories
         public IThingsRepository ThingsRepository { get; set; }
 
         public IRepository<Location> LocationsRepository { get; set; }
@@ -22,6 +24,25 @@ namespace SensorThings.Server.Test.TestObjects
         public IObservationsRepository ObservationsRepository { get; set; }
 
         public IRepository<FeatureOfInterest> FeaturesOfInterestRepository { get; set; }
+        #endregion
+
+        #region high level repository services
+        public IDatastreamsService DatastreamsService { get; set; }
+
+        public IFeaturesOfInterestService FeaturesOfInterestService { get; set; }
+
+        public IHistoricalLocationsService HistoricalLocationsService { get; set; }
+
+        public ILocationsService LocationsService { get; set; }
+
+        public IObservationsService ObservationsService { get; set; }
+
+        public IObservedPropertiesService ObservedPropertiesService { get; set; }
+
+        public ISensorsService SensorsService { get; set; }
+
+        public IThingsService ThingsService { get; set; }
+        #endregion
 
         public IRepositoryUnitOfWork CreateUnitOfWork()
         {
@@ -34,7 +55,16 @@ namespace SensorThings.Server.Test.TestObjects
                 SensorsRepository = SensorsRepository,
                 ObservedPropertiesRepository = ObservedPropertiesRepository,
                 ObservationsRepository = ObservationsRepository,
-                FeaturesOfInterestRepository = FeaturesOfInterestRepository
+                FeaturesOfInterestRepository = FeaturesOfInterestRepository,
+
+                DatastreamsService = DatastreamsService,
+                FeaturesOfInterestService = FeaturesOfInterestService,
+                HistoricalLocationsService = HistoricalLocationsService,
+                LocationsService = LocationsService,
+                ObservationsService = ObservationsService,
+                ObservedPropertiesService = ObservedPropertiesService,
+                SensorsService = SensorsService,
+                ThingsService = ThingsService
             };
         }
 
@@ -55,6 +85,22 @@ namespace SensorThings.Server.Test.TestObjects
             public IObservationsRepository ObservationsRepository { get; set; }
 
             public IRepository<FeatureOfInterest> FeaturesOfInterestRepository { get; set; }
+
+            public IDatastreamsService DatastreamsService { get; set; }
+
+            public IFeaturesOfInterestService FeaturesOfInterestService { get; set; }
+
+            public IHistoricalLocationsService HistoricalLocationsService { get; set; }
+
+            public ILocationsService LocationsService { get; set; }
+
+            public IObservationsService ObservationsService { get; set; }
+
+            public IObservedPropertiesService ObservedPropertiesService { get; set; }
+
+            public ISensorsService SensorsService { get; set; }
+
+            public IThingsService ThingsService { get; set; }
 
             public void Commit()
             {

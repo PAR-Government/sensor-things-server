@@ -10,12 +10,6 @@ using TinyIoC;
 
 namespace SensorThings.Server.Services
 {
-    public interface IMqttService
-    {
-        public Task PublishObservationAsync(Observation observation);
-        public void Configure(IMqttServer mqtt);
-    }
-
     public class MqttService : IMqttService, IMqttServerClientConnectedHandler, IMqttServerClientDisconnectedHandler, IMqttApplicationMessageReceivedHandler
     {
         private IMqttServer _mqtt;

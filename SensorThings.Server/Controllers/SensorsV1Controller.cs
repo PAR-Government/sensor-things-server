@@ -22,7 +22,7 @@ namespace SensorThings.Server.Controllers
             var data = await HttpContext.GetRequestBodyAsStringAsync();
             var sensor = JsonConvert.DeserializeObject<Sensor>(data);
 
-            var service = new SensorsService(uow);
+            var service = uow.SensorsService;
             sensor = await service.AddSensor(sensor);
             sensor.BaseUrl = GetBaseUrl();
 
@@ -37,7 +37,7 @@ namespace SensorThings.Server.Controllers
         public async Task<Sensor> GetSensorAsync(int id)
         {
             using var uow = RepoFactory.CreateUnitOfWork();
-            var service = new SensorsService(uow);
+            var service = uow.SensorsService;
             var sensor = await service.GetSensorById(id);
             sensor.BaseUrl = GetBaseUrl();
 
@@ -51,7 +51,7 @@ namespace SensorThings.Server.Controllers
             var data = await HttpContext.GetRequestBodyAsStringAsync();
             var updates = JObject.Parse(data);
 
-            var service = new SensorsService(uow);
+            var service = uow.SensorsService;
             await service.UpdateSensor(updates, id);
             uow.Commit();
         }
@@ -61,7 +61,7 @@ namespace SensorThings.Server.Controllers
         {
             using var uow = RepoFactory.CreateUnitOfWork();
             var baseUrl = GetBaseUrl();
-            var service = new SensorsService(uow);
+            var service = uow.SensorsService;
             var sensors = await service.GetSensors();
 
             foreach (var sensor in sensors)
@@ -78,7 +78,7 @@ namespace SensorThings.Server.Controllers
         public async Task RemoveSensorAsync(int id)
         {
             using var uow = RepoFactory.CreateUnitOfWork();
-            var service = new SensorsService(uow);
+            var service = uow.SensorsService;
             await service.RemoveSensor(id);
             uow.Commit();
         }

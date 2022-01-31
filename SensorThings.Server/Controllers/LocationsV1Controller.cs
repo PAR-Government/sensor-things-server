@@ -23,7 +23,7 @@ namespace SensorThings.Server.Controllers
             var data = await HttpContext.GetRequestBodyAsStringAsync();
             var location = JsonConvert.DeserializeObject<Location>(data);
 
-            var service = new LocationsService(uow);
+            var service = uow.LocationsService;
             location = await service.AddLocation(location);
 
             location.BaseUrl = GetBaseUrl();
@@ -39,7 +39,7 @@ namespace SensorThings.Server.Controllers
         public async Task<Location> GetLocationAsync(int id)
         {
             using var uow = RepoFactory.CreateUnitOfWork();
-            var service = new LocationsService(uow);
+            var service = uow.LocationsService;
             var location = await service.GetLocationById(id);
             location.BaseUrl = GetBaseUrl();
 
@@ -53,7 +53,7 @@ namespace SensorThings.Server.Controllers
             var data = await HttpContext.GetRequestBodyAsStringAsync();
             var updates = JObject.Parse(data);
 
-            var service = new LocationsService(uow);
+            var service = uow.LocationsService;
             await service.UpdateLocation(updates, id);
             uow.Commit();
         }
@@ -63,7 +63,7 @@ namespace SensorThings.Server.Controllers
         {
             using var uow = RepoFactory.CreateUnitOfWork();
             var baseUrl = GetBaseUrl();
-            var service = new LocationsService(uow);
+            var service = uow.LocationsService;
             var locations = await service.GetLocations();
 
             foreach (var location in locations)
@@ -80,7 +80,7 @@ namespace SensorThings.Server.Controllers
         public async Task RemoveLocationAsync(int id)
         {
             using var uow = RepoFactory.CreateUnitOfWork();
-            var service = new LocationsService(uow);
+            var service = uow.LocationsService;
             await service.RemoveLocation(id);
             uow.Commit();
         }

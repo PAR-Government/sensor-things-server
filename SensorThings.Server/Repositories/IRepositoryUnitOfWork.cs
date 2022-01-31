@@ -1,4 +1,5 @@
 ﻿using SensorThings.Entities;
+using SensorThings.Server.Services;
 using System;
 using System.Collections.Generic;
 using System.Text;
@@ -7,6 +8,7 @@ namespace SensorThings.Server.Repositories
 {
     public interface IRepositoryUnitOfWork : IDisposable
     {
+        #region low level repositories
         IThingsRepository ThingsRepository { get; }
 
         IRepository<Location> LocationsRepository { get; }
@@ -22,7 +24,27 @@ namespace SensorThings.Server.Repositories
         IObservationsRepository ObservationsRepository { get; }
 
         IRepository<FeatureOfInterest> FeaturesOfInterestRepository { get; }
+        #endregion
 
-        public void Commit();
+        #region high level repository services
+        // Higher level interfaces for typical interactions
+        IDatastreamsService DatastreamsService { get; }
+
+        IFeaturesOfInterestService FeaturesOfInterestService { get; }
+
+        IHistoricalLocationsService HistoricalLocationsService { get; }
+
+        ILocationsService LocationsService { get; }
+
+        IObservationsService ObservationsService { get; }
+
+        IObservedPropertiesService ObservedPropertiesService { get; }
+
+        ISensorsService SensorsService { get; }
+
+        IThingsService ThingsService { get; }
+        #endregion
+
+        void Commit();
     }
 }

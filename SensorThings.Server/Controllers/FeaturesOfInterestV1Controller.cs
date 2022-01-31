@@ -22,7 +22,7 @@ namespace SensorThings.Server.Controllers
             var data = await HttpContext.GetRequestBodyAsStringAsync();
             var featureOfInterest = JsonConvert.DeserializeObject<FeatureOfInterest>(data);
 
-            var service = new FeaturesOfInterestService(uow);
+            var service = uow.FeaturesOfInterestService;
             featureOfInterest = await service.AddFeature(featureOfInterest);
 
             featureOfInterest.BaseUrl = GetBaseUrl();
@@ -38,7 +38,7 @@ namespace SensorThings.Server.Controllers
         public async Task<FeatureOfInterest> GetFeatureOfInterestAsync(int id)
         {
             using var uow = RepoFactory.CreateUnitOfWork();
-            var service = new FeaturesOfInterestService(uow);
+            var service = uow.FeaturesOfInterestService;
             var feature = await service.GetFeatureById(id);
             feature.BaseUrl = GetBaseUrl();
 
@@ -52,7 +52,7 @@ namespace SensorThings.Server.Controllers
             var data = await HttpContext.GetRequestBodyAsStringAsync();
             var updates = JObject.Parse(data);
 
-            var service = new FeaturesOfInterestService(uow);
+            var service = uow.FeaturesOfInterestService;
             await service.UpdateFeature(updates, id);
             uow.Commit();
         }
@@ -62,7 +62,7 @@ namespace SensorThings.Server.Controllers
         {
             using var uow = RepoFactory.CreateUnitOfWork();
             var baseUrl = GetBaseUrl();
-            var service = new FeaturesOfInterestService(uow);
+            var service = uow.FeaturesOfInterestService;
             var features = await service.GetFeatures();
 
             foreach (var feature in features)
@@ -79,7 +79,7 @@ namespace SensorThings.Server.Controllers
         public async Task RemoveFeatureOfInterest(int id)
         {
             using var uow = RepoFactory.CreateUnitOfWork();
-            var service = new FeaturesOfInterestService(uow);
+            var service = uow.FeaturesOfInterestService;
             await service.RemoveFeature(id);
             uow.Commit();
         }

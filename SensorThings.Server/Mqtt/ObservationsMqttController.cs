@@ -40,7 +40,7 @@ namespace SensorThings.Server.Mqtt
                 return null;
             }
 
-            var service = new ObservationsService(uow);
+            var service = uow.ObservationsService;
             observation = await service.AddObservation(observation, ds.ID);
             observation.BaseUrl = BaseUrl;
             ds.BaseUrl = BaseUrl;

@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 
 namespace SensorThings.Server.Services
 {
-    public class ObservationsService
+    public class ObservationsService : IObservationsService
     {
         protected IRepositoryUnitOfWork UOW { get; private set; }
 
