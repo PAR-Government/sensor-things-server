@@ -6,11 +6,10 @@ using SensorThings.Server.Services;
 using SensorThings.Server.Test.TestObjects;
 using System;
 using System.Collections.Generic;
-using System.Text;
 using System.Threading.Tasks;
 using Xunit;
 
-namespace SensorThings.Server.Test
+namespace SensorThings.Server.Test.Services
 {
     public class SensorsServiceTest
     {

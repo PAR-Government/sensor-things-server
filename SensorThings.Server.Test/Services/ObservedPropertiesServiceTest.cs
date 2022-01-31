@@ -10,7 +10,7 @@ using System.Text;
 using System.Threading.Tasks;
 using Xunit;
 
-namespace SensorThings.Server.Test
+namespace SensorThings.Server.Test.Services
 {
     public class ObservedPropertiesServiceTest
     {
