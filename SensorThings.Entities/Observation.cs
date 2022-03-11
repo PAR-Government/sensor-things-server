@@ -13,7 +13,7 @@ namespace SensorThings.Entities
         public DateTime? ResultTime { get; set; }
 
         [JsonProperty("result")]
-        public JObject Result { get; set; }
+        public JToken Result { get; set; }
 
         // TODO: ResultQuality is not implemented
 

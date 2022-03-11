@@ -15,6 +15,7 @@ namespace SensorThings.Server.Repositories
         {
             SQLitePCL.Batteries.Init();
             SqlMapper.AddTypeHandler(DapperJObjectHandler.Instance);
+            SqlMapper.AddTypeHandler(DapperJTokenHandler.Instance);
             SqlMapper.AddTypeHandler(DapperOGCTimeHandler.Instance);
             SqlMapper.AddTypeHandler(DapperURIMapper.Instance);
 
