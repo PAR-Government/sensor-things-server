@@ -96,7 +96,9 @@ namespace SensorThings.Server.Test.Services
             var updatedObservation = await service.UpdateObservation(updates, id);
 
             obsRepoMock.Verify(m => m.UpdateAsync(updatedObservation));
-            Assert.Equal(24, updatedObservation.Result.GetValue("value").ToObject<int>());
+            var result = updatedObservation.Result as JObject;
+
+            Assert.Equal(24, result.GetValue("value").ToObject<int>());
         }
 
         [Fact]
