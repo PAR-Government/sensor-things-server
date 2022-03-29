@@ -14,4 +14,7 @@
     <ProjectReference Include="..\SensorThings.Server\SensorThings.Server.csproj" />
     <ProjectReference Include="..\SensorThings.Entities\SensorThings.Entities.csproj" />
   </ItemGroup>
+  <ItemGroup>
+    <None Remove="sensorthings.db" />
+  </ItemGroup>
 </Project>
