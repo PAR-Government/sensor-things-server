@@ -16,7 +16,13 @@
 One of the main goals of this implementation has been to enable the embedding of a SensorThings server into a Xamarin.Android application.</Description>
     <PackageLicenseExpression>LGPL-2.1-only</PackageLicenseExpression>
     <Product>PAR.SensorThings.Server</Product>
-    <PackageReleaseNotes>Revamped MQTT infrastructure to be a bit more streamlined</PackageReleaseNotes>
+    <PackageReleaseNotes>
+		Revamped MQTT infrastructure to be a bit more streamlined
+		Added ability to publish Observations over MQTT
+		Extracted interfaces from the server classes
+		Improved unit testing
+		Fixed bug where an Observation.Result could not be a scalar value
+	</PackageReleaseNotes>
   </PropertyGroup>
 
   <ItemGroup>

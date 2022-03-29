@@ -12,7 +12,13 @@
     <PackageLicenseExpression>LGPL-2.1-only</PackageLicenseExpression>
     <PackageProjectUrl>https://github.com/PAR-Government/sensor-things-server</PackageProjectUrl>
     <RepositoryUrl>https://github.com/PAR-Government/sensor-things-server</RepositoryUrl>
-    <PackageReleaseNotes>Revamped MQTT infrastructure to be a bit more streamlined</PackageReleaseNotes>
+    <PackageReleaseNotes>
+		Revamped MQTT infrastructure to be a bit more streamlined
+		Added ability to publish Observations over MQTT
+		Extracted interfaces from the server classes
+		Improved unit testing
+		Fixed bug where an Observation.Result could not be a scalar value
+	</PackageReleaseNotes>
   </PropertyGroup>
 
   <ItemGroup>
