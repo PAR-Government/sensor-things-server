@@ -2,7 +2,7 @@
 
   <PropertyGroup>
     <TargetFramework>netstandard2.1</TargetFramework>
-    <Version>1.0.0.6-alpha</Version>
+    <Version>1.0.0.7-alpha</Version>
     <Company>PAR Government Systems Corporation</Company>
     <Authors>Gregory Hasseler</Authors>
     <GeneratePackageOnBuild>true</GeneratePackageOnBuild>
@@ -12,7 +12,7 @@
     <PackageLicenseExpression>LGPL-2.1-only</PackageLicenseExpression>
     <PackageProjectUrl>https://github.com/PAR-Government/sensor-things-server</PackageProjectUrl>
     <RepositoryUrl>https://github.com/PAR-Government/sensor-things-server</RepositoryUrl>
-    <PackageReleaseNotes>Explicitly mark server responses as encoded with UTF8</PackageReleaseNotes>
+    <PackageReleaseNotes>Revamped MQTT infrastructure to be a bit more streamlined</PackageReleaseNotes>
   </PropertyGroup>
 
   <ItemGroup>
