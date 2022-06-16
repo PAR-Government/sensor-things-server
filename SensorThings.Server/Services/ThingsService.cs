@@ -1,6 +1,7 @@
 ﻿using Newtonsoft.Json.Linq;
 using SensorThings.Entities;
 using SensorThings.Server.Repositories;
+using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
 
@@ -17,6 +18,10 @@ namespace SensorThings.Server.Services
 
         public async Task<Thing> AddThing(Thing thing)
         {
+            // Create a unique ID that can be referenced later by clients
+            var guid = Guid.NewGuid();
+            thing.Properties?.Add("guid", guid.ToString());
+
             var id = await UOW.ThingsRepository.AddAsync(thing);
             thing.ID = id;
 
