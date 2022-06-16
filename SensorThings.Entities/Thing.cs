@@ -1,5 +1,6 @@
 ﻿using System.Collections.Generic;
 using Newtonsoft.Json;
+using Newtonsoft.Json.Linq;
 
 namespace SensorThings.Entities
 {
@@ -14,9 +15,9 @@ namespace SensorThings.Entities
         public string Description { get; set; }
 
         // Zero to One
-        private IDictionary<string, object> _properties = new Dictionary<string, object>();
+        private JObject _properties = new JObject();
         [JsonProperty("properties")]
-        public IDictionary<string, object> Properties 
+        public JObject Properties 
         { 
             get => _properties; 
             set => _properties = value; 

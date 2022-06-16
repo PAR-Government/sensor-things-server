@@ -57,8 +57,8 @@ namespace SensorThings.Server.Repositories
 
         public async Task<long> AddAsync(Thing item)
         {
-            var sql = @"INSERT INTO things (Name, Description) 
-                        Values(@Name, @Description); 
+            var sql = @"INSERT INTO things (Name, Description, Properties) 
+                        Values(@Name, @Description, @Properties); 
                         SELECT last_insert_rowid();";
             var id = await Connection.ExecuteScalarAsync<long>(sql, item, _transaction);
 
@@ -67,7 +67,7 @@ namespace SensorThings.Server.Repositories
 
         public async Task<IEnumerable<Thing>> GetAllAsync()
         {
-            var sql = @"SELECT ID, Name, Description FROM things;";
+            var sql = @"SELECT ID, Name, Description, Properties FROM things;";
             var things = await Connection.QueryAsync<Thing>(sql, _transaction);
 
             return things;
@@ -75,7 +75,7 @@ namespace SensorThings.Server.Repositories
 
         public async Task<Thing> GetByIdAsync(long id)
         {
-            var sql = @"SELECT ID, Name, Description FROM things WHERE id=@ID;";
+            var sql = @"SELECT ID, Name, Description, Properties FROM things WHERE id=@ID;";
             var thing = await Connection.QueryFirstAsync<Thing>(sql, new { ID = id }, _transaction);
 
             return thing;
@@ -91,7 +91,8 @@ namespace SensorThings.Server.Repositories
         {
             var sql = @"UPDATE things
                         SET Name = @Name,
-                            Description = @Description
+                            Description = @Description,
+                            Properties = @Properties
                         WHERE id = @ID";
             await Connection.ExecuteAsync(sql, item, _transaction);
         }
@@ -222,7 +223,8 @@ namespace SensorThings.Server.Repositories
                 @"Create Table things (
                     id INTEGER PRIMARY KEY AUTOINCREMENT,
                     Name TEXT NOT NULL,
-                    Description TEXT NULL
+                    Description TEXT NULL,
+                    Properties TEXT NULL
                 );";
             connection.ExecuteScalar(sql, transaction);
         }
