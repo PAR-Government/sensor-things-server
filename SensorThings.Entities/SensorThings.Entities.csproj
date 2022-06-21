@@ -2,7 +2,7 @@
 
   <PropertyGroup>
     <TargetFramework>netstandard2.1</TargetFramework>
-    <Version>1.0.0.7-alpha</Version>
+    <Version>1.0.0.8-alpha</Version>
     <Company>PAR Government Systems Corporation</Company>
     <Authors>Gregory Hasseler</Authors>
     <GeneratePackageOnBuild>true</GeneratePackageOnBuild>
@@ -13,11 +13,9 @@
     <PackageProjectUrl>https://github.com/PAR-Government/sensor-things-server</PackageProjectUrl>
     <RepositoryUrl>https://github.com/PAR-Government/sensor-things-server</RepositoryUrl>
     <PackageReleaseNotes>
-		Revamped MQTT infrastructure to be a bit more streamlined
-		Added ability to publish Observations over MQTT
-		Extracted interfaces from the server classes
-		Improved unit testing
-		Fixed bug where an Observation.Result could not be a scalar value
+Updated some dependencies
+Resolved issue where Properties field of a Thing was not being persisted
+Ensure that Thing entities are assigned a GUID
 	</PackageReleaseNotes>
   </PropertyGroup>
 
