@@ -113,5 +113,23 @@ namespace SensorThings.Server.Controllers
             await service.RemoveDatastream(id);
             uow.Commit();
         }
+
+        [Route(HttpVerbs.Get, "/Datastreams({id})/Observations")]
+        public async Task<Listing<Observation>> GetObservationsForDatastreamAsync(int id)
+        {
+            using var uow = RepoFactory.CreateUnitOfWork();
+            var baseUrl = GetBaseUrl();
+            var service = uow.DatastreamsService;
+            var observations = await service.GetLinkedObservations(id);
+
+            foreach (Observation o in observations)
+            {
+                o.BaseUrl = baseUrl;
+            }
+
+            var listing = new Listing<Observation> { Items = observations.ToList() };
+
+            return listing;
+        }
     }
 }
