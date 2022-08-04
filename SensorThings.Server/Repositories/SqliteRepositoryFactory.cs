@@ -1,6 +1,5 @@
 ﻿using Dapper;
 using Microsoft.Data.Sqlite;
-using SensorThings.Entities;
 using System;
 using System.Data;
 using System.Threading.Tasks;
@@ -17,6 +16,8 @@ namespace SensorThings.Server.Repositories
             SqlMapper.AddTypeHandler(DapperJObjectHandler.Instance);
             SqlMapper.AddTypeHandler(DapperJTokenHandler.Instance);
             SqlMapper.AddTypeHandler(DapperOGCTimeHandler.Instance);
+            SqlMapper.RemoveTypeMap(typeof(DateTime));
+            SqlMapper.AddTypeHandler(DapperDateTimeHandler.Instance);
             SqlMapper.AddTypeHandler(DapperURIMapper.Instance);
 
             cs = new SqliteConnectionStringBuilder()
