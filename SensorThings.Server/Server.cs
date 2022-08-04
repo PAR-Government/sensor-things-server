@@ -29,6 +29,11 @@ namespace SensorThings.Server
         private readonly MqttServerOptionsBuilder _mqttOptions;
         private readonly CancellationTokenSource _cancellationTokenSource = new CancellationTokenSource();
 
+        private readonly JsonSerializerSettings _jsonSettings = new JsonSerializerSettings
+        {
+            DateFormatString = "yyyy-MM-ddTHH:mm:ss.fffZ"
+        };
+
         public Server(string url, IRepositoryFactory repoFactory, MqttServerOptionsBuilder mqttOptions)
         {
             _serverConfig.BaseUrl = $"{url}/v1.0";
@@ -79,7 +84,7 @@ namespace SensorThings.Server
         {
             Validate.NotNull(nameof(context), context).Response.ContentType = MimeType.Json;
             using var text = context.OpenResponseText(new UTF8Encoding(true));
-            await text.WriteAsync(JsonConvert.SerializeObject(data)).ConfigureAwait(false);
+            await text.WriteAsync(JsonConvert.SerializeObject(data, _jsonSettings)).ConfigureAwait(false);
         }
 
         public async Task RunAsync()
