@@ -34,17 +34,7 @@ namespace SensorThings.Entities.JsonConverters
 
         public override void WriteJson(JsonWriter writer, OGCTime value, JsonSerializer serializer)
         {
-            var start = value.Start.ToString(dateFormat);
-            var stop = value.Stop.ToString(dateFormat);
-
-            if (value.Stop != DateTime.MinValue)
-            {
-                writer.WriteValue($"{start}/{stop}");
-            }
-            else
-            {
-                writer.WriteValue($"{start}");
-            }
+            writer.WriteValue(value.ToString());
         }
     }
 }
