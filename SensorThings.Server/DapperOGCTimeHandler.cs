@@ -1,9 +1,6 @@
-﻿using Newtonsoft.Json;
-using SensorThings.Entities;
+﻿using SensorThings.Entities;
 using System;
-using System.Collections.Generic;
 using System.Data;
-using System.Text;
 using static Dapper.SqlMapper;
 
 namespace SensorThings.Server
@@ -15,14 +12,13 @@ namespace SensorThings.Server
 
         public override OGCTime Parse(object value)
         {
-            var json = (string)value;
-            return json == null ? null : JsonConvert.DeserializeObject<OGCTime>(json);
+            string strValue = (string)value;
+            return OGCTime.FromString(strValue);
         }
 
         public override void SetValue(IDbDataParameter parameter, OGCTime value)
         {
-            var s = JsonConvert.SerializeObject(value, Newtonsoft.Json.Formatting.None);
-            parameter.Value = s;
+            parameter.Value = value.ToString();
         }
     }
 }
