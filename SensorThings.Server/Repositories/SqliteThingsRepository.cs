@@ -209,7 +209,8 @@ namespace SensorThings.Server.Repositories
                 @"SELECT
                     things.ID as ID,
                     things.Name as Name,
-                    things.Description as Description
+                    things.Description as Description,
+                    things.Properties as Properties
                 FROM datastreams
                 INNER JOIN things_datastreams on (datastreams.id = things_datastreams.datastream_id)
                 INNER JOIN things on (things.id = things_datastreams.thing_id)
