@@ -25,13 +25,18 @@ Resolved issue where some times were being double escaped when serialized to JSO
   </PropertyGroup>
 
   <ItemGroup>
-    <PackageReference Include="EmbedIO" Version="3.4.3" />
     <PackageReference Include="Dapper" Version="2.0.123" />
-    <PackageReference Include="Microsoft.Data.Sqlite" Version="6.0.4" />
     <PackageReference Include="MQTTnet" Version="3.1.2" />
+    <PackageReference Include="Microsoft.Data.Sqlite" Version="6.0.9" />
+    <PackageReference Include="EmbedIO" Version="3.5.0" />
+    <PackageReference Include="Unosquare.Swan.Lite" Version="3.1.0" />
   </ItemGroup>
 
   <ItemGroup>
     <ProjectReference Include="..\SensorThings.Entities\SensorThings.Entities.csproj" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Remove="EmbedIO" />
+    <None Remove="Unosquare.Swan.Lite" />
   </ItemGroup>
 </Project>
