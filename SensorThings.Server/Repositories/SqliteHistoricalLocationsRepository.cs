@@ -73,7 +73,7 @@ namespace SensorThings.Server.Repositories
                     ID, Time
                 FROM historical_locations
                 WHERE id = @ID";
-            var location = await Connection.QueryFirstAsync<HistoricalLocation>(sql, new { ID = id }, _transaction);
+            var location = await Connection.QuerySingleOrDefaultAsync<HistoricalLocation>(sql, new { ID = id }, _transaction);
 
             return location;
         }

@@ -66,7 +66,7 @@ namespace SensorThings.Server.Repositories
                     ID, Name, Description, EncodingType, Feature
                     FROM featuresOfInterest
                     WHERE id = @ID";
-            var feature = await Connection.QueryFirstAsync<FeatureOfInterest>(sql, new { ID = id }, _transaction);
+            var feature = await Connection.QuerySingleOrDefaultAsync<FeatureOfInterest>(sql, new { ID = id }, _transaction);
 
             return feature;
         }

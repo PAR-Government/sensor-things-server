@@ -82,7 +82,7 @@ namespace SensorThings.Server.Repositories
                         ID, Name, Description, ObservationType, UnitOfMeasurement, ObservedArea, PhenomenonTime, ResultTime
                         FROM datastreams
                         WHERE id = @ID;";
-            var datastream = await Connection.QueryFirstAsync<Datastream>(sql, new { ID = id }, _transaction);
+            var datastream = await Connection.QuerySingleOrDefaultAsync<Datastream>(sql, new { ID = id }, _transaction);
 
             return datastream;
         }
@@ -129,7 +129,7 @@ namespace SensorThings.Server.Repositories
                 INNER JOIN datastreams_sensors on (datastreams.id = datastreams_sensors.datastream_id)
                 INNER JOIN sensors on (sensors.id = datastreams_sensors.sensor_id)
                 WHERE datastreams.id = @datastreamId;";
-            var sensor = await Connection.QueryFirstAsync<Sensor>(sql, new { datastreamId }, _transaction);
+            var sensor = await Connection.QuerySingleOrDefaultAsync<Sensor>(sql, new { datastreamId }, _transaction);
 
             return sensor;
         }
@@ -184,7 +184,7 @@ namespace SensorThings.Server.Repositories
                 INNER JOIN datastreams_observedproperties on (datastreams.id = datastreams_observedproperties.datastream_id)
                 INNER JOIN observed_properties on (observed_properties.id = datastreams_observedproperties.observed_property_id)
                 WHERE datastreams.id = @datastreamId;";
-            var property = await Connection.QueryFirstAsync<ObservedProperty>(sql, new { datastreamId }, _transaction);
+            var property = await Connection.QuerySingleOrDefaultAsync<ObservedProperty>(sql, new { datastreamId }, _transaction);
 
             return property;
         }
@@ -269,7 +269,7 @@ namespace SensorThings.Server.Repositories
                 INNER JOIN datastreams_observations on (observations.id = datastreams_observations.observation_id)
                 INNER JOIN datastreams on (datastreams.id = datastreams_observations.datastream_id)
                 WHERE observations.id = @observationId;";
-            var datastreams = await Connection.QueryFirstAsync<Datastream>(sql, new { observationId }, _transaction);
+            var datastreams = await Connection.QuerySingleOrDefaultAsync<Datastream>(sql, new { observationId }, _transaction);
 
             return datastreams;
         }

@@ -56,7 +56,7 @@ namespace SensorThings.Server.Repositories
         public async Task<Location> GetByIdAsync(long id)
         {
             var sql = @"SELECT ID, Name, Description, EncodingType, Location as FeatureLocation FROM locations WHERE id=@ID";
-            var location = await Connection.QueryFirstAsync<Location>(sql, new { ID = id }, _transaction);
+            var location = await Connection.QuerySingleOrDefaultAsync<Location>(sql, new { ID = id }, _transaction);
 
             return location;
         }

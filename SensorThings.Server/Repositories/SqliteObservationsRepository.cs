@@ -72,7 +72,7 @@ namespace SensorThings.Server.Repositories
                 @"SELECT ID, PhenomenonTime, ResultTime, Result, ValidTime, Parameters
                     FROM observations
                     WHERE id = @ID";
-            var observation = await Connection.QueryFirstAsync<Observation>(sql, new { ID = id }, _transaction);
+            var observation = await Connection.QuerySingleOrDefaultAsync<Observation>(sql, new { ID = id }, _transaction);
 
             return observation;
         }
@@ -118,7 +118,7 @@ namespace SensorThings.Server.Repositories
                 INNER JOIN observations_featuresofinterest on (observations.id = observations_featuresofinterest.observation_id)
                 INNER JOIN featuresOfInterest on (featuresOfInterest.id = observations_featuresofinterest.feature_id)
                 WHERE observations.id = @observationId";
-            var feature = await Connection.QueryFirstAsync<FeatureOfInterest>(sql, new { observationId }, _transaction);
+            var feature = await Connection.QuerySingleOrDefaultAsync<FeatureOfInterest>(sql, new { observationId }, _transaction);
             return feature;
         }
 

@@ -76,7 +76,7 @@ namespace SensorThings.Server.Repositories
         public async Task<Thing> GetByIdAsync(long id)
         {
             var sql = @"SELECT ID, Name, Description, Properties FROM things WHERE id=@ID;";
-            var thing = await Connection.QueryFirstAsync<Thing>(sql, new { ID = id }, _transaction);
+            var thing = await Connection.QuerySingleOrDefaultAsync<Thing>(sql, new { ID = id }, _transaction);
 
             return thing;
         }

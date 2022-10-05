@@ -63,7 +63,7 @@ namespace SensorThings.Server.Repositories
                 @"SELECT ID, Name, Description, EncodingType, Metadata 
                     FROM sensors
                     WHERE id = @ID";
-            var sensor = await Connection.QueryFirstAsync<Sensor>(sql, new { ID = id }, _transaction);
+            var sensor = await Connection.QuerySingleOrDefaultAsync<Sensor>(sql, new { ID = id }, _transaction);
 
             return sensor;
         }

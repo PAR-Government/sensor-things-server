@@ -64,7 +64,7 @@ namespace SensorThings.Server.Repositories
                 @"SELECT ID, Name, Definition, Description
                     FROM observed_properties
                     WHERE id = @Id;";
-            var observedProperty = await Connection.QueryFirstAsync<ObservedProperty>(sql, new { Id = id }, _transaction);
+            var observedProperty = await Connection.QuerySingleOrDefaultAsync<ObservedProperty>(sql, new { Id = id }, _transaction);
 
             return observedProperty;
         }
