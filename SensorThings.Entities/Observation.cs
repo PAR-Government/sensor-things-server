@@ -10,7 +10,7 @@ namespace SensorThings.Entities
         public OGCTime PhenomenonTime { get; set; }
 
         [JsonProperty("resultTime")]
-        public DateTime? ResultTime { get; set; }
+        public OGCTime ResultTime { get; set; }
 
         [JsonProperty("result")]
         public JToken Result { get; set; }
