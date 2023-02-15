@@ -5,7 +5,7 @@ VisualStudioVersion = 16.0.31313.79
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "SensorThings.Entities", "SensorThings.Entities\SensorThings.Entities.csproj", "{5F29B59A-F864-4991-B108-3D6E0B859035}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "SensorThings.Server", "SensorThings.Server\SensorThings.Server.csproj", "{A37E7F8A-59B9-4A5C-8A7C-A98B39E2BCBD}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SensorThings.Server", "SensorThings.Server\SensorThings.Server.csproj", "{A37E7F8A-59B9-4A5C-8A7C-A98B39E2BCBD}"
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "TestDriver", "TestDriver\TestDriver.csproj", "{57739D76-BD17-47C2-8131-81365282EC36}"
 EndProject
@@ -39,5 +39,8 @@ Global
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {0D386FBE-6942-4CD3-A94C-A35E3F663318}
+	EndGlobalSection
+	GlobalSection(MonoDevelopProperties) = preSolution
+		version = 1.0.0.10-RC1
 	EndGlobalSection
 EndGlobal
