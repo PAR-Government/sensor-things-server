@@ -3,7 +3,7 @@
   <PropertyGroup>
     <TargetFramework>netstandard2.1</TargetFramework>
     <Company>PAR Government Systems Corporation</Company>
-    <Version>1.0.0.10-RC1</Version>
+    <Version>1.0.0.10-RC2</Version>
     <GeneratePackageOnBuild>true</GeneratePackageOnBuild>
     <RepositoryUrl>https://github.com/PAR-Government/sensor-things-server</RepositoryUrl>
     <RepositoryType></RepositoryType>
@@ -15,14 +15,13 @@
 
 One of the main goals of this implementation has been to enable the embedding of a SensorThings server into a Xamarin.Android application.</Description>
     <PackageLicenseExpression>LGPL-2.1-only</PackageLicenseExpression>
+    <PackageReadmeFile>README.md</PackageReadmeFile>
+
     <Product>PAR.SensorThings.Server</Product>
     <PackageReleaseNotes>
-Implemented Datastreams/Observations path
-Resolved missing properties field when retrieving a Thing via an associated Datastream
-Resolved issue where some times were being stored as escaped strings in the database
-Resolved issue where some times were being double escaped when serialized to JSON
-	</PackageReleaseNotes>
-    <ReleaseVersion>1.0.0.10-RC1</ReleaseVersion>
+Release Candidate
+    </PackageReleaseNotes>
+    <ReleaseVersion>1.0.0.10-RC2</ReleaseVersion>
   </PropertyGroup>
 
   <ItemGroup>
@@ -37,6 +36,7 @@ Resolved issue where some times were being double escaped when serialized to JSO
     <ProjectReference Include="..\SensorThings.Entities\SensorThings.Entities.csproj" />
   </ItemGroup>
   <ItemGroup>
+    <None Include="..\README.md" Pack="true" PackagePath="\"/>
     <None Remove="EmbedIO" />
     <None Remove="Unosquare.Swan.Lite" />
   </ItemGroup>

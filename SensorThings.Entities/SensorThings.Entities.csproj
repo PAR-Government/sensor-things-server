@@ -2,7 +2,7 @@
 
   <PropertyGroup>
     <TargetFramework>netstandard2.1</TargetFramework>
-    <Version>1.0.0.10-RC1</Version>
+    <Version>1.0.0.10-RC2</Version>
     <Company>PAR Government Systems Corporation</Company>
     <Authors>Gregory Hasseler</Authors>
     <GeneratePackageOnBuild>true</GeneratePackageOnBuild>
@@ -10,18 +10,21 @@
     <Product>PAR.SensorThings.Entities</Product>
     <Description>Entities component for the PAR.SensorThings.Server package.</Description>
     <PackageLicenseExpression>LGPL-2.1-only</PackageLicenseExpression>
+    <PackageReadmeFile>README.md</PackageReadmeFile>
     <PackageProjectUrl>https://github.com/PAR-Government/sensor-things-server</PackageProjectUrl>
     <RepositoryUrl>https://github.com/PAR-Government/sensor-things-server</RepositoryUrl>
     <PackageReleaseNotes>
-Implemented Datastreams/Observations path
-Resolved missing properties field when retrieving a Thing via an associated Datastream
-Resolved issue where some times were being stored as escaped strings in the database
-Resolved issue where some times were being double escaped when serialized to JSON
-	</PackageReleaseNotes>
-    <ReleaseVersion>1.0.0.10-RC1</ReleaseVersion>
+Release Candidiate
+    </PackageReleaseNotes>
+    <ReleaseVersion>1.0.0.10-RC2</ReleaseVersion>
   </PropertyGroup>
 
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
+    <NoStdLib>true</NoStdLib>
+    <NoStdLib>true</NoStdLib>
+  </PropertyGroup>
   <ItemGroup>
+    <None Include="..\README.md" Pack="true" PackagePath="\"/>
     <PackageReference Include="GeoJSON.Net" Version="1.2.19" />
     <PackageReference Include="Newtonsoft.Json" Version="13.0.1" />
   </ItemGroup>
