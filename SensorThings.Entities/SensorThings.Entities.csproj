@@ -19,10 +19,6 @@ Release Candidiate
     <ReleaseVersion>1.0.0.10-RC2</ReleaseVersion>
   </PropertyGroup>
 
-  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
-    <NoStdLib>true</NoStdLib>
-    <NoStdLib>true</NoStdLib>
-  </PropertyGroup>
   <ItemGroup>
     <None Include="..\README.md" Pack="true" PackagePath="\"/>
     <PackageReference Include="GeoJSON.Net" Version="1.2.19" />
