@@ -36,7 +36,7 @@ Release Candidate
     <ProjectReference Include="..\SensorThings.Entities\SensorThings.Entities.csproj" />
   </ItemGroup>
   <ItemGroup>
-    <None Include="..\README.md" Pack="true" PackagePath="\"/>
+    <None Include="..\README.md" Pack="true" PackagePath="\" />
     <None Remove="EmbedIO" />
     <None Remove="Unosquare.Swan.Lite" />
   </ItemGroup>
