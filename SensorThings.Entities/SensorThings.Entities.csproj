@@ -2,7 +2,7 @@
 
   <PropertyGroup>
     <TargetFramework>netstandard2.1</TargetFramework>
-    <Version>1.0.0.10-RC2</Version>
+    <Version>1.0.0.10-RC3</Version>
     <Company>PAR Government Systems Corporation</Company>
     <Authors>Gregory Hasseler</Authors>
     <GeneratePackageOnBuild>true</GeneratePackageOnBuild>
@@ -16,7 +16,7 @@
     <PackageReleaseNotes>
 Release Candidiate
     </PackageReleaseNotes>
-    <ReleaseVersion>1.0.0.10-RC2</ReleaseVersion>
+    <ReleaseVersion>1.0.0.10-RC3</ReleaseVersion>
   </PropertyGroup>
 
   <ItemGroup>
