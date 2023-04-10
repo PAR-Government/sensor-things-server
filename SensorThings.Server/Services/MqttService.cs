@@ -53,7 +53,8 @@ namespace SensorThings.Server.Services
 
         public async Task PublishAsync(MqttApplicationMessageBuilder message)
         {
-            await _mqtt.PublishAsync(message.Build());
+            var result = await _mqtt.PublishAsync(message.Build());
+            Console.WriteLine("Publish Result: " + result.ReasonCode);
         }
 
         public async Task PublishObservationAsync(Observation observation)
@@ -67,10 +68,10 @@ namespace SensorThings.Server.Services
                 .WithPayload(json);
 
             // Publish for SensorThings 1.0
-            await _mqtt.PublishAsync(msg.Build());
+            await PublishAsync(msg);
 
             // Publish for SensorThings 1.1
-            _ = await _mqtt.PublishAsync(msg.WithTopic($"v1.0/{rootTopic}").Build());
+            await PublishAsync(msg.WithTopic($"v1.0/{rootTopic}"));
         }
     }
 }
