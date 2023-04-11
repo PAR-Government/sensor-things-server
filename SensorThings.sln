@@ -41,6 +41,6 @@ Global
 		SolutionGuid = {0D386FBE-6942-4CD3-A94C-A35E3F663318}
 	EndGlobalSection
 	GlobalSection(MonoDevelopProperties) = preSolution
-		version = 1.0.0.10-RC3
+		version = 1.0.0.10-RC4
 	EndGlobalSection
 EndGlobal

@@ -3,7 +3,7 @@
   <PropertyGroup>
     <OutputType>Exe</OutputType>
     <TargetFramework>net6.0</TargetFramework>
-    <ReleaseVersion>1.0.0.10-RC3</ReleaseVersion>
+    <ReleaseVersion>1.0.0.10-RC4</ReleaseVersion>
   </PropertyGroup>
 
   <ItemGroup>
