@@ -15,7 +15,7 @@
     <PackageProjectUrl>https://github.com/PAR-Government/sensor-things-server</PackageProjectUrl>
     <RepositoryUrl>https://github.com/PAR-Government/sensor-things-server</RepositoryUrl>
     <PackageReleaseNotes>
-Release Candidiate
+Debut release of the first (hopefully) stable version!
     </PackageReleaseNotes>
   </PropertyGroup>
 

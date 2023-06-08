@@ -20,7 +20,7 @@ One of the main goals of this implementation has been to enable the embedding of
 
     <Product>PAR.SensorThings.Server</Product>
     <PackageReleaseNotes>
-Release Candidate
+Debut release of the first (hopefully) stable version!
     </PackageReleaseNotes>
   </PropertyGroup>
 
