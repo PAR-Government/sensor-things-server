@@ -52,12 +52,12 @@ namespace SensorThings.Server.Repositories
 
             // Order matters and most coincide with ensuring foreign key contraints in the underlying tables are removed first
             await SqliteDatastreamsRepository.DropAssociationTables(connection, transaction);
-            await SqliteFeaturesOfInterestRepository.DropAssociationTables(connection, transaction);
+            SqliteFeaturesOfInterestRepository.DropAssociationTables(connection, transaction);
             await SqliteHistoricalLocationsRepository.DropAssociationTables(connection, transaction);
-            await SqliteLocationsRepository.DropAssociationTables(connection, transaction);
+            SqliteLocationsRepository.DropAssociationTables(connection, transaction);
             await SqliteObservationsRepository.DropAssociationTables(connection, transaction);
-            await SqliteObservedPropertiesRepository.DropAssociationTables(connection, transaction);
-            await SqliteSensorsRepository.DropAssociationTables(connection, transaction);
+            SqliteObservedPropertiesRepository.DropAssociationTables(connection, transaction);
+            SqliteSensorsRepository.DropAssociationTables(connection, transaction);
             await SqliteThingsRepository.DropAssociationTables(connection, transaction);
 
             await SqliteThingsRepository.DropTables(connection, transaction);
