@@ -25,7 +25,7 @@ namespace SensorThings.Server.Repositories
             }
         }
 
-        public static async Task DropAssociationTables(IDbConnection connection, IDbTransaction transaction)
+        public static void DropAssociationTables(IDbConnection connection, IDbTransaction transaction)
         {
             // no op
         }
