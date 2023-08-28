@@ -27,14 +27,19 @@ namespace SensorThings.Server.Services
             _ = await _router.Route(e.ApplicationMessage.Topic, e.ApplicationMessage.PayloadSegment.ToArray()); // Convert from ArraySegment to byte[]
         }
 
-        private void OnConnected(MqttClientConnectedEventArgs e)
+        public Task HandleClientConnectedAsync(ClientConnectedEventArgs eventArgs)
         {
-            Console.WriteLine($"Client connected.");
+            Console.WriteLine($"Client connected. ID: {eventArgs.ClientId}");
+
+            return Task.CompletedTask;
+
         }
 
-        private void OnDisconnected(MqttClientDisconnectedEventArgs e)
+        public Task HandleClientDisconnectedAsync(ClientDisconnectedEventArgs eventArgs)
         {
-            Console.WriteLine($"Client disconnected. Reason: {e.ReasonString}");
+            Console.WriteLine($"Client disconnected. ID: {eventArgs.ClientId}");
+
+            return Task.CompletedTask;
         }
 
         public async Task PublishAsync(MqttApplicationMessageBuilder message)
@@ -70,22 +75,12 @@ namespace SensorThings.Server.Services
             _router = TinyIoCContainer.Current.Resolve<MqttRouter>();
 
             _mqtt = mqtt;
-            _mqtt.ClientConnectedHandler = new MqttServerClientConnectedHandlerDelegate(e =>
-            {
-                System.Console.WriteLine("ClientId[" + e.ClientId + "] connected event fired.");
-            });
-            _mqtt.ClientDisconnectedHandler = new MqttServerClientDisconnectedHandlerDelegate(e =>
-            {
-                System.Console.WriteLine("ClientId[" + e.ClientId + "] disconnected event fired, Reason=" + e.DisconnectType.ToString());
-            });
-            _mqtt.ClientSubscribedTopicHandler = new MqttServerClientSubscribedHandlerDelegate(e =>
-            {
-                System.Console.WriteLine("ClientId[" + e.ClientId + "] subscribe topic[ " + e.TopicFilter.Topic + "] event fired.");
-            });
-            _mqtt.ApplicationMessageReceivedHandler = new MqttApplicationMessageReceivedHandlerDelegate(e =>
-            {
-                System.Console.WriteLine("ClientId[" + e.ClientId + "] message topic[ " + e.ApplicationMessage.Topic + "] event fired.");
-            });
+            _mqtt.ClientConnectedAsync += this.HandleClientConnectedAsync;
+            _mqtt.ClientDisconnectedAsync += this.HandleClientDisconnectedAsync;
+            _mqtt.InterceptingPublishAsync += async e => { // ApplicationMessageReceivedHandler was removed in 4.0
+                if (e.ClientId == null) return;
+                _ = await _router.Route(e.ApplicationMessage.Topic, e.ApplicationMessage.PayloadSegment.ToArray()); // Convert from ArraySegment to byte[]
+            };
         }
     }
 }
