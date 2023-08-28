@@ -7,6 +7,6 @@ namespace SensorThings.Server.Services
     public interface IMqttService
     {
         public Task PublishObservationAsync(Observation observation);
-        public void Configure(IMqttServer mqtt);
+        public void Configure(MqttServer mqtt);
     }
 }

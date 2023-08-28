@@ -2,8 +2,6 @@
 using SensorThings.Server;
 using System.IO;
 using SensorThings.Server.Repositories;
-using MQTTnet;
-using MQTTnet.Client.Options;
 using MQTTnet.Server;
 using System.Net;
 using System.Threading.Tasks;
@@ -25,11 +23,7 @@ namespace TestDriver
 
             // Configure MQTT broker. If you are reusing an existing broker, then you don't need
             // to run this one. Instead just point the client to your existing broker
-            var mqttServerOptionsBuilder = new MqttServerOptionsBuilder()
-                .WithConnectionValidator(c =>
-                {
-                    c.ReasonCode = MQTTnet.Protocol.MqttConnectReasonCode.Success;
-                });
+            var mqttServerOptionsBuilder = new MqttServerOptionsBuilder(); // Removed WithConnectionValidator.
 
             // Please not that localhost or loopback may not work on Android per the MQTTnet project
             if (mqttIpAddress.AddressFamily == System.Net.Sockets.AddressFamily.InterNetworkV6)
