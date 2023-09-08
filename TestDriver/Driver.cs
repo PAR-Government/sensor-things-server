@@ -35,7 +35,7 @@ namespace TestDriver
                 mqttServerOptionsBuilder.WithDefaultEndpointBoundIPAddress(mqttIpAddress);
             }
 
-            var mqttServerOptions = mqttServerOptionsBuilder.Build();
+            var mqttServerOptions = mqttServerOptionsBuilder.WithDefaultEndpointPort(8080).Build();
 
 
             // Our server will use SQLite for the storage backend
