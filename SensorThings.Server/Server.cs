@@ -58,7 +58,7 @@ namespace SensorThings.Server
 
             // Configure our Mqtt Service
             var mqttService = TinyIoCContainer.Current.Resolve<IMqttService>();
-            _mqttServer = new MqttFactory().CreateMqttServer(_mqttOptions.WithDefaultEndpointPort(8080).Build());
+            _mqttServer = new MqttFactory().CreateMqttServer(_mqttOptions.WithDefaultEndpoint().Build());
             _mqttServer.ValidatingConnectionAsync += this.ValidateConnectionAsync;
             mqttService.Configure(_mqttServer);
 
