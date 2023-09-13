@@ -35,7 +35,7 @@ namespace TestDriver
                 mqttServerOptionsBuilder.WithDefaultEndpointBoundIPAddress(mqttIpAddress);
             }
 
-            var mqttServerOptions = mqttServerOptionsBuilder.Build();
+            var mqttServerOptions = mqttServerOptionsBuilder.WithDefaultEndpoint().Build();
 
 
             // Our server will use SQLite for the storage backend
@@ -45,7 +45,7 @@ namespace TestDriver
             // Create our server
             //public Server(string url, IRepositoryFactory repoFactory, MqttServerOptionsBuilder mqttOptions)
 
-            var server = new Server($"http://{ipAddress}:8080", sqlLiteRepoFactory, mqttServerOptionsBuilder);
+            var server = new Server($"http://{ipAddress}:8080", sqlLiteRepoFactory, mqttServerOptionsBuilder.WithDefaultEndpoint());
 
             // Init the server and then start it
             server.Configure();
