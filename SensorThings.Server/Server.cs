@@ -1,5 +1,4 @@
-﻿using System;
-using System.Text;
+﻿using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
 using EmbedIO;
@@ -24,7 +23,7 @@ namespace SensorThings.Server
         private WebServer _server;
         private Task _webServerTask;
 
-        private IMqttServer _mqttServer;
+        private MqttServer _mqttServer;
 
         private readonly MqttServerOptionsBuilder _mqttOptions;
         private readonly CancellationTokenSource _cancellationTokenSource = new CancellationTokenSource();
@@ -59,7 +58,8 @@ namespace SensorThings.Server
 
             // Configure our Mqtt Service
             var mqttService = TinyIoCContainer.Current.Resolve<IMqttService>();
-            _mqttServer = new MqttFactory().CreateMqttServer();
+            _mqttServer = new MqttFactory().CreateMqttServer(_mqttOptions.WithDefaultEndpoint().Build());
+            _mqttServer.ValidatingConnectionAsync += this.ValidateConnectionAsync;
             mqttService.Configure(_mqttServer);
 
             // Configure our embedded web server
@@ -90,7 +90,7 @@ namespace SensorThings.Server
         public async Task RunAsync()
         {
             _webServerTask = _server.RunAsync(_cancellationTokenSource.Token);
-            await _mqttServer.StartAsync(_mqttOptions.Build());
+            await _mqttServer.StartAsync();
         }
 
         public async Task StopAsync()
@@ -106,6 +106,22 @@ namespace SensorThings.Server
             {
                 await _mqttServer.StopAsync();
             }
+        }
+
+        private Task ValidateConnectionAsync(ValidatingConnectionEventArgs args)
+        {
+            return Task.Run(() =>
+            {
+                // replaces this, because WithConnectionValidator got removed
+                // Relevant discussion: https://github.com/dotnet/MQTTnet/discussions/1521 
+
+                //var mqttServerOptionsBuilder = new MqttServerOptionsBuilder()
+                //    .WithConnectionValidator(c =>
+                //    {
+                //        c.ReasonCode = MQTTnet.Protocol.MqttConnectReasonCode.Success;
+                //    });
+                return args.ReasonCode;
+            });
         }
     }
 }

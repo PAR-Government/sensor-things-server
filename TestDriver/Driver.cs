@@ -2,8 +2,6 @@
 using SensorThings.Server;
 using System.IO;
 using SensorThings.Server.Repositories;
-using MQTTnet;
-using MQTTnet.Client.Options;
 using MQTTnet.Server;
 using System.Net;
 using System.Threading.Tasks;
@@ -25,11 +23,7 @@ namespace TestDriver
 
             // Configure MQTT broker. If you are reusing an existing broker, then you don't need
             // to run this one. Instead just point the client to your existing broker
-            var mqttServerOptionsBuilder = new MqttServerOptionsBuilder()
-                .WithConnectionValidator(c =>
-                {
-                    c.ReasonCode = MQTTnet.Protocol.MqttConnectReasonCode.Success;
-                });
+            var mqttServerOptionsBuilder = new MqttServerOptionsBuilder(); // Removed WithConnectionValidator.
 
             // Please not that localhost or loopback may not work on Android per the MQTTnet project
             if (mqttIpAddress.AddressFamily == System.Net.Sockets.AddressFamily.InterNetworkV6)
@@ -41,7 +35,7 @@ namespace TestDriver
                 mqttServerOptionsBuilder.WithDefaultEndpointBoundIPAddress(mqttIpAddress);
             }
 
-            var mqttServerOptions = mqttServerOptionsBuilder.Build();
+            var mqttServerOptions = mqttServerOptionsBuilder.WithDefaultEndpoint().Build();
 
 
             // Our server will use SQLite for the storage backend
@@ -51,7 +45,7 @@ namespace TestDriver
             // Create our server
             //public Server(string url, IRepositoryFactory repoFactory, MqttServerOptionsBuilder mqttOptions)
 
-            var server = new Server($"http://{ipAddress}:8080", sqlLiteRepoFactory, mqttServerOptionsBuilder);
+            var server = new Server($"http://{ipAddress}:8080", sqlLiteRepoFactory, mqttServerOptionsBuilder.WithDefaultEndpoint());
 
             // Init the server and then start it
             server.Configure();
