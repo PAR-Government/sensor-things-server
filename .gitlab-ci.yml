@@ -1,0 +1,28 @@
+image: mcr.microsoft.com/dotnet/sdk:6.0
+variables:
+  PROJECT_NAME: "SensorThings"
+  buildConfiguration: 'Release'
+before_script:
+  - echo "starting build for %PROJECT_NAME%"
+  #include:
+  #- template: 'Workflows/Branch-Pipelines.gitlab-ci.yml'
+  #- project: 'devsecops/gitlab-ci-common'
+  #  ref: master
+stages:
+  - build
+  - test
+build:
+  stage: build
+  script:
+  - 'cd "/builds/northstar/sensor-things"'
+  - 'dotnet build -c Release'
+  - 'dotnet pack SensorThings.Entities/SensorThings.Entities.csproj -c Release'
+  - 'dotnet pack SensorThings.Server/SensorThings.Server.csproj -c Release'
+  artifacts:
+    untracked: true
+test:
+  stage: test
+  script:
+  - 'dotnet test -c Release'
+  dependencies:
+  - build
