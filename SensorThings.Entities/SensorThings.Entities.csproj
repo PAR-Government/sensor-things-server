@@ -2,7 +2,7 @@
 
   <PropertyGroup>
     <TargetFramework>netstandard2.1</TargetFramework>
-    <ReleaseVersion>1.0.0.10</ReleaseVersion>
+    <ReleaseVersion>1.0.1</ReleaseVersion>
     <Version>$(ReleaseVersion)</Version>
     <Company>PAR Government Systems Corporation</Company>
     <Authors>Gregory Hasseler</Authors>
@@ -15,7 +15,7 @@
     <PackageProjectUrl>https://github.com/PAR-Government/sensor-things-server</PackageProjectUrl>
     <RepositoryUrl>https://github.com/PAR-Government/sensor-things-server</RepositoryUrl>
     <PackageReleaseNotes>
-Debut release of the first (hopefully) stable version!
+First maintenance release featuring mainly library updates
     </PackageReleaseNotes>
   </PropertyGroup>
 
