@@ -1,15 +1,15 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
-# Visual Studio Version 16
-VisualStudioVersion = 16.0.31313.79
+# Visual Studio Version 17
+VisualStudioVersion = 17.4.33205.214
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "SensorThings.Entities", "SensorThings.Entities\SensorThings.Entities.csproj", "{5F29B59A-F864-4991-B108-3D6E0B859035}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SensorThings.Server", "SensorThings.Server\SensorThings.Server.csproj", "{A37E7F8A-59B9-4A5C-8A7C-A98B39E2BCBD}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "SensorThings.Server", "SensorThings.Server\SensorThings.Server.csproj", "{A37E7F8A-59B9-4A5C-8A7C-A98B39E2BCBD}"
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "TestDriver", "TestDriver\TestDriver.csproj", "{57739D76-BD17-47C2-8131-81365282EC36}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SensorThings.Server.Test", "SensorThings.Server.Test\SensorThings.Server.Test.csproj", "{4FC8D2D8-368A-4075-BE49-1796F4909816}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "SensorThings.Server.Test", "SensorThings.Server.Test\SensorThings.Server.Test.csproj", "{4FC8D2D8-368A-4075-BE49-1796F4909816}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution

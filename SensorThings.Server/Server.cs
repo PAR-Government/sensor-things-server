@@ -1,4 +1,6 @@
-﻿using System.Text;
+﻿using System.Data;
+using System;
+using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
 using EmbedIO;
@@ -63,7 +65,7 @@ namespace SensorThings.Server
             mqttService.Configure(_mqttServer);
 
             // Configure our embedded web server
-            _server.WithWebApi("/echo", m => m.WithController<EchoController>());
+            _server.WithWebApi("/Health", m => m.WithController<HealthController>());
 
             var apiModule = new WebApiModule("/v1.0", SerializeWithNewtonsoft)
                 .WithController(() => new ResourceV1Controller(RepoFactory))
