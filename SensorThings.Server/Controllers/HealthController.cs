@@ -12,11 +12,11 @@ namespace SensorThings.Server.Controllers
 		}
 
         [Route(HttpVerbs.Get, "/")]
-        public void GetHealth()
+        public string GetHealth()
         {
             Response.StatusCode = (int)HttpStatusCode.OK;
 
-            return;
+            return "Healthy";
         }
     }
 }
