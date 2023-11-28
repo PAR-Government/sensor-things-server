@@ -24,6 +24,7 @@ namespace SensorThings.Server.Repositories
         IObservationsRepository ObservationsRepository { get; }
 
         IRepository<FeatureOfInterest> FeaturesOfInterestRepository { get; }
+
         #endregion
 
         #region high level repository services
