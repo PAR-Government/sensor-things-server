@@ -47,7 +47,5 @@ Added health endpoint capability to server
   </ItemGroup>
   <ItemGroup>
     <None Include="..\README.md" Pack="true" PackagePath="\" />
-    <None Remove="EmbedIO" />
-    <None Remove="Unosquare.Swan.Lite" />
   </ItemGroup>
 </Project>
