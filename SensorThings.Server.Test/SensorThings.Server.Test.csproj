@@ -1,8 +1,6 @@
 <Project Sdk="Microsoft.NET.Sdk">
-
   <PropertyGroup>
     <TargetFramework>net6.0</TargetFramework>
-
     <IsPackable>false</IsPackable>
     <ReleaseVersion>1.1</ReleaseVersion>
   </PropertyGroup>
@@ -31,12 +29,5 @@
 
   <ItemGroup>
     <ProjectReference Include="..\SensorThings.Server\SensorThings.Server.csproj" />
-  </ItemGroup>
-
-  <ItemGroup>
-    <None Remove="Mqtt\" />
-  </ItemGroup>
-  <ItemGroup>
-    <Folder Include="Mqtt\" />
   </ItemGroup>
 </Project>
