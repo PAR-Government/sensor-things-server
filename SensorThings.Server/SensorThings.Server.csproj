@@ -2,7 +2,7 @@
 
   <PropertyGroup>
     <TargetFramework>netstandard2.1</TargetFramework>
-    <ReleaseVersion>1.0.1</ReleaseVersion>
+    <ReleaseVersion>1.1</ReleaseVersion>
     <Company>PAR Government Systems Corporation</Company>
     <Version>$(ReleaseVersion)</Version>
     <GeneratePackageOnBuild>true</GeneratePackageOnBuild>
@@ -20,7 +20,7 @@ One of the main goals of this implementation has been to enable the embedding of
 
     <Product>PAR.SensorThings.Server</Product>
     <PackageReleaseNotes>
-First maintenance release featuring mainly library updates
+Added health endpoint capability to server
     </PackageReleaseNotes>
   </PropertyGroup>
 
